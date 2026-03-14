@@ -1,0 +1,20 @@
+• Có điều quan trọng sau. Mỗi đề tài có thuật toán:  làm sao nhanh nhất.
+• Danh sách luôn tăng dần theo tên sách.
+• Câu c. Đánh mà sách tự động sao cho tìm thông tin mã sách tương ứng. Phương pháp nào nhanh nhất
+Tìm tên sách lưu ý 4 trường hợp
+
+1. Tìm tên sách có mã sách tương ứng.
+2. Tìm tên sách có mã sách không tương ứng. (là tìm tên sách có mã sách khác với mã sách cần tìm)
+3. Tìm tên sách có mã sách tương ứng nhưng không tồn tại trong danh sách.
+4. Tìm tên sách có mã sách không tương ứng và không tồn tại trong danh sách
+
+• Câu d. Tìm mã sách lưu ý 4 trường hợp
+1. Tìm mã sách có tên sách tương ứng.
+2. Tìm mã sách có tên sách không tương ứng.
+3. Tìm mã sách có tên sách tương ứng nhưng không tồn tại trong danh sách.
+4. Tìm mã sách có tên sách không tương ứng và không tồn tại trong danh sách.
+
+1/ Thuật toán phải nhanh nhất:
+a. Tìm tên sách có mã sách tương ứng: Sử dụng thuật toán tìm kiếm nhị phân trên danh sách đã được sắp xếp theo tên sách. Nếu tìm thấy tên sách, kiểm tra mã sách có tương ứng hay không.
+b. Tìm tên sách có mã sách không tương ứng: Sử dụng thuật toán tìm kiếm nhị phân trên danh sách đã được sắp xếp theo tên sách. Nếu tìm thấy tên sách, kiểm tra mã sách có tương ứng hay không.
+c. Tìm tên sách có mã sách tương ứng nhưng không tồn tại trong danh sách:

@@ -1,0 +1,5 @@
+• Có điều quan trọng sau. Mỗi đề tài có thuật toán:  làm sao nhanh nhất.
+• Danh sách luôn tăng dần theo tên sách.
+• Câu c. Đánh mà sách tự động sao cho tìm thông tin mã sách tương ứng. Phương pháp nào nhanh nhất
+Tìm tên sách lưu ý 4 trường hợp
+
