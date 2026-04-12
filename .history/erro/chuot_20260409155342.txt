@@ -1,0 +1,207 @@
+#include <iostream>
+#include <windows.h>
+#include <string>
+
+using namespace std;
+
+// Số lượng nút tối đa cho menu
+#define MAX_BUTTONS 10
+
+// Cấu trúc chứa thông tin sự kiện tổng hợp
+struct InputEvent {
+    enum Type { NONE, MOUSE_CLICK, KEY_PRESS };
+    Type type;
+    
+    // Thông tin chuột
+    int mouseX, mouseY;
+    
+    // Thông tin bàn phím
+    char keyChar;
+    int keyCode;
+};
+
+struct Button {
+    int x, y, width, height;
+    string label;
+    int id;
+};
+
+class InputControl {
+private:
+    HANDLE hInput;
+    HANDLE hOutput;
+    DWORD prev_mode;
+
+public:
+    InputControl() {
+        hInput = GetStdHandle(STD_INPUT_HANDLE);
+        hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+        GetConsoleMode(hInput, &prev_mode);
+        
+        // Bật cả Mouse Input và Window Input (để nhận diện thay đổi kích thước)
+        // Tắt QuickEdit để chuột hoạt động tự nhiên
+        DWORD new_mode = ENABLE_EXTENDED_FLAGS | ENABLE_MOUSE_INPUT | ENABLE_WINDOW_INPUT | ENABLE_INSERT_MODE;
+        SetConsoleMode(hInput, new_mode);
+        
+        // Ẩn con trỏ nhấp nháy
+        showCursor(false);
+    }
+
+    void showCursor(bool show) {
+        CONSOLE_CURSOR_INFO cursorInfo;
+        GetConsoleCursorInfo(hOutput, &cursorInfo);
+        cursorInfo.bVisible = show;
+        SetConsoleCursorInfo(hOutput, &cursorInfo);
+    }
+
+    void gotoxy(int x, int y) {
+        COORD coord = {(short)x, (short)y};
+        SetConsoleCursorPosition(hOutput, coord);
+    }
+
+    void setColor(int color) {
+        SetConsoleTextAttribute(hOutput, color);
+    }
+
+    // Hàm quan trọng nhất: Đọc và phân loại sự kiện
+    InputEvent pollEvent() {
+        DWORD events = 0;
+        GetNumberOfConsoleInputEvents(hInput, &events);
+
+        if (events > 0) {
+            INPUT_RECORD irInBuf[128];
+            DWORD cNumRead;
+            ReadConsoleInput(hInput, irInBuf, 128, &cNumRead);
+
+            for (DWORD i = 0; i < cNumRead; i++) {
+                // 1. XỬ LÝ CHUỘT
+                if (irInBuf[i].EventType == MOUSE_EVENT) {
+                    MOUSE_EVENT_RECORD mer = irInBuf[i].Event.MouseEvent;
+                    if (mer.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
+                        InputEvent ev;
+                        ev.type = InputEvent::MOUSE_CLICK;
+                        ev.mouseX = mer.dwMousePosition.X;
+                        ev.mouseY = mer.dwMousePosition.Y;
+                        return ev;
+                    }
+                }
+                // 2. XỬ LÝ BÀN PHÍM
+                else if (irInBuf[i].EventType == KEY_EVENT) {
+                    KEY_EVENT_RECORD ker = irInBuf[i].Event.KeyEvent;
+                    if (ker.bKeyDown) { // Chỉ tính khi nhấn xuống
+                        InputEvent ev;
+                        ev.type = InputEvent::KEY_PRESS;
+                        ev.keyChar = ker.uChar.AsciiChar;
+                        ev.keyCode = ker.wVirtualKeyCode;
+                        return ev;
+                    }
+                }
+            }
+        }
+        InputEvent ev;
+        ev.type = InputEvent::NONE;
+        return ev;
+    }
+
+    ~InputControl() {
+        SetConsoleMode(hInput, prev_mode);
+        showCursor(true);
+    }
+};
+
+void drawUI(InputControl &ic, Button btns[], int count) {
+    for (int i = 0; i < count; i++) {
+        Button b = btns[i];
+        ic.gotoxy(b.x, b.y);
+        ic.setColor(11);
+        cout << "+" << string(b.width - 2, '-') << "+";
+        ic.gotoxy(b.x, b.y + 1);
+        cout << "| " << b.label << string(b.width - 4 - b.label.length(), ' ') << " |";
+        ic.gotoxy(b.x, b.y + 2);
+        cout << "+" << string(b.width - 2, '-') << "+";
+    }
+    ic.setColor(7);
+}
+
+int main() {
+    InputControl ic;
+    Button menuButtons[3] = {
+        {5, 5, 25, 3, "1. NHAP DU LIEU", 1},
+        {5, 9, 25, 3, "2. TIM KIEM", 2},
+        {5, 13, 25, 3, "0. THOAT", 0}
+    };
+    int nButtons = 3;
+
+    string typedData = "";
+    bool isTypingMode = false;
+
+    system("cls");
+    ic.setColor(14);
+    ic.gotoxy(5, 2);
+    cout << "=== CONSOLE MULTI-MODAL (MOUSE + KEYBOARD) ===";
+    drawUI(ic, menuButtons, nButtons);
+
+    ic.gotoxy(35, 5);
+    ic.setColor(8);
+    cout << "Trang thai: Dang cho lenh...";
+
+    bool running = true;
+    while (running) {
+        InputEvent ev = ic.pollEvent();
+
+        // XỬ LÝ CHUỘT
+        if (ev.type === InputEvent::MOUSE_CLICK) {
+            for (int i = 0; i < nButtons; i++) {
+                Button b = menuButtons[i];
+                if (ev.mouseX >= b.x && ev.mouseX < b.x + b.width &&
+                    ev.mouseY >= b.y && ev.mouseY < b.y + b.height) {
+                    
+                    if (b.id === 1) {
+                        isTypingMode = true;
+                        ic.showCursor(true);
+                        ic.gotoxy(35, 5);
+                        ic.setColor(10);
+                        cout << "Trang thai: DANG NHAP LIEU...      ";
+                        ic.gotoxy(35, 7);
+                        cout << "Nhap: " << typedData << "_       ";
+                    }
+                    if (b.id === 0) running = false;
+                }
+            }
+        }
+
+        // XỬ LÝ BÀN PHÍM (Nếu đang ở chế độ nhập liệu)
+        if (ev.type === InputEvent::KEY_PRESS) {
+            if (isTypingMode) {
+                if (ev.keyCode === VK_RETURN) { // Nhấn Enter để xong
+                    isTypingMode = false;
+                    ic.showCursor(false);
+                    ic.gotoxy(35, 5);
+                    ic.setColor(11);
+                    cout << "Trang thai: DA LUU DU LIEU!        ";
+                }
+                else if (ev.keyCode === VK_BACK) { // Xử lý phím Backspace
+                    if (typedData.length() > 0) typedData.pop_back();
+                }
+                else if (ev.keyChar >= 32 && ev.keyChar <= 126) { // Các ký tự in được
+                    typedData += ev.keyChar;
+                }
+
+                // Cập nhật hiển thị text đang gõ
+                ic.gotoxy(35, 7);
+                ic.setColor(15);
+                cout << "Nhap: " << typedData << "  "; // In thêm khoảng trắng để xóa dấu gạch cũ
+                ic.setColor(10);
+                cout << "_ "; 
+            }
+            else {
+                // Nếu không ở chế độ nhập, vẫn có thể bắt phím tắt (VD: Esc để thoát)
+                if (ev.keyCode === VK_ESCAPE) running = false;
+            }
+        }
+
+        Sleep(20);
+    }
+
+    return 0;
+}

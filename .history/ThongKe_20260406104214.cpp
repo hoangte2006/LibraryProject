@@ -1,0 +1,50 @@
+#include "Thongke.h"
+#include "Docgia.h"
+#include "Sach.h"
+#include "MuonTra.h"
+#include <iostream>
+
+using namespace std;
+
+// Ham nay tinh so ngay qua han lon nhat cua 1 doc gia.
+int tinhQuaHanMax(const DocGia* docGia, const Ngay& ngayHienTai) {
+    if (docGia == nullptr) return 0;
+
+    int maxQuaHan = 0;
+    MuonTra* temp = docGia->dsMuonTra.pHead;
+
+    while (temp != nullptr) {
+        if (temp->trangThai == 0) { 
+            int soNgay = tinhSoNgay(temp->ngayMuon, ngayHienTai);
+            int quaHan = soNgay - HAN_MUON;
+            if (quaHan > maxQuaHan) {
+                maxQuaHan = quaHan;
+            }
+        }
+        temp = temp->pNext;
+    }
+
+    return maxQuaHan;
+}
+
+void 
+
+int medianOfThreeQH(DocGiaQuaHan arr[], int left, int right) {
+    int mid = left + (right - left) / 2;
+
+    if (soSanhQH(arr[left], arr[mid]) < 0)
+        swapQH(arr[left], arr[mid]);
+
+    if (soSanhQH(arr[left], arr[right]) < 0)
+        swapQH(arr[left], arr[right]);
+
+    if (soSanhQH(arr[mid], arr[right]) < 0)
+        swapQH(arr[mid], arr[right]);
+
+    return mid;
+}
+
+
+void lietKeDocGiaQuaHan(TREE_DocGia root) {
+
+}
