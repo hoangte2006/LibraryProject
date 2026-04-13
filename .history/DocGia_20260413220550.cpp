@@ -11,7 +11,7 @@ using namespace std;
 
 static int currentX = 0;
 
-void khoiTaoKhoMaThe(TREE_DocGia root) { 
+void khoiTaoKhoMaThe(TREE_DocGia root) { // hàm này 
     currentX = 0; 
 }
 
@@ -409,7 +409,7 @@ void inTheoTen(TREE_DocGia root)
         return;
     }
     DocGia** arr = new DocGia*[maxDocGia];
-    int n = 0;
+    int n = 0; // dem truoc di 
 
     BSTtoArray(root, arr, n);
     if (n > 0)

@@ -97,12 +97,14 @@ void quickSortQH(DocGiaQuaHan arr[], int left, int right) {
     quickSortQH(arr, pivot + 1, right);
 }
 
-// Ham de quy thu thap doc gia qua han vao mang listQH, dem so doc gia qua han va sap xep giam dan theo so ngay qua han.
+// 1. Hàm đệ quy phụ trợ: Vừa duyệt cây vừa nhặt trực tiếp người quá hạn vào mảng
 static void thuThapDocGiaQuaHan(TREE_DocGia root, Ngay ngayHT, DocGiaQuaHan listQH[], int &countQH) {
     if (root == nullptr) return;
 
+    // Duyệt node con trái
     thuThapDocGiaQuaHan(root->pLeft, ngayHT, listQH, countQH);
 
+    // Xử lý node hiện tại: Kiểm tra quá hạn trực tiếp từ Tree
     int QH = tinhQuaHanMax(root, ngayHT);
     if (QH > 0) {
         listQH[countQH].dg = root;
@@ -110,22 +112,27 @@ static void thuThapDocGiaQuaHan(TREE_DocGia root, Ngay ngayHT, DocGiaQuaHan list
         countQH++;
     }
 
+    // Duyệt node con phải
     thuThapDocGiaQuaHan(root->pRight, ngayHT, listQH, countQH);
 }
 
+// 2. Hàm chính (Đã được tối ưu RAM)
 void lietKeDocGiaQuaHan(TREE_DocGia root) {
     if (root == nullptr) {
         cout << "Danh sach doc gia rong!\n";
         return;
     }
 
+    // Đếm tổng số độc giả hiện có để cấp phát mảng vừa đủ xài (Tiết kiệm RAM)
     int maxDocGia = countDocGia(root); 
     if (maxDocGia == 0) return;
 
+    // Cấp phát động mảng listQH, không thèm xài mảng tĩnh MAX_DOCGIA nữa
     DocGiaQuaHan* listQH = new DocGiaQuaHan[maxDocGia];
     int countQH = 0;
     Ngay ngayHT = layNgayHienTai();
 
+    // Gọi hàm đệ quy để hốt trực tiếp từ Cây vào listQH
     thuThapDocGiaQuaHan(root, ngayHT, listQH, countQH);
 
     if (countQH == 0) {
@@ -183,7 +190,7 @@ void inTop10SachMuonNhieu(const ListDauSach &ds) {
         return;
     }
 
-    DauSach** arr = new DauSach*[ds.n];
+    DauSach* arr[MAX_DAUSACH];
     
     for (int i = 0; i < ds.n; i++) {
         arr[i] = ds.nodes[i];
@@ -216,7 +223,6 @@ void inTop10SachMuonNhieu(const ListDauSach &ds) {
 
         heapify(arr, n, 0);
     }
-    delete[] arr;
 }
 
 // -------------------------------------------------------------------------------------
@@ -247,6 +253,10 @@ static void capNhatSoLuotMuonCuaDauSachDFS(TREE_DocGia root, ListDauSach &ds) {
 // Ham chay chinh: Nap DauSach -> Quet DFS Cay Doc Gia
 void capNhatSoLuotMuonCuaDauSach(TREE_DocGia root, ListDauSach &ds) {
     if (ds.n == 0) return;
+    if (root == nullptr) {
+        cout << "Cay doc gia rong, khong the cap nhat so luot muon cua dau sach!\n";
+        return;
+    }
     
     for (int i = 0; i < ds.n; i++) {
         if (ds.nodes[i] != nullptr) {
@@ -266,7 +276,7 @@ void thongKeSoLuongTheoTheLoai(const ListDauSach &ds) {
         return;
     }
 
-    DauSach** arr = new DauSach*[ds.n];
+    DauSach* arr[MAX_DAUSACH];
     for (int i = 0; i < ds.n; i++) {
         arr[i] = ds.nodes[i];
     }
@@ -286,5 +296,4 @@ void thongKeSoLuongTheoTheLoai(const ListDauSach &ds) {
         }
     }
     cout << "The loai: " << arr[ds.n-1]->theLoai << " | So luong: " << count << endl;
-    delete[] arr;
 }

@@ -14,7 +14,7 @@ void timMaxMaThe(TREE_DocGia root, int &maxID);
 void khoiTaoKhoMaThe(TREE_DocGia root);
 int taoMaTheMoi(TREE_DocGia root);
 void nhapDocGia(TREE_DocGia &root);
-int countDocGia(TREE_DocGia root);
+
 
 // 2. NHOM HAM TIM KIEM VA TRUY XUAT
 DocGia* timDocGia(const TREE_DocGia root, int maThe);

@@ -213,20 +213,20 @@ void capNhatTrangThaiSachDangMuon(TREE_DocGia root, ListDauSach& ds)
 
     while (mt != nullptr)
     {
-        if (mt->trangThai == 0) // chi cap nhat trang thai cua sach dang duoc muon (trangThai == 0) sang da muon (trangThai == 1) trong danh sach dau sach, de thong tin ve trang thai cua sach trong he thong luon duoc cap nhat chinh xac.
+        if (mt->trangThai == 0) 
         {
-            DauSach* dauSach = nullptr; // khai bao con tro dauSach de luu dia chi cua dau sach tim thay trong danh sach dau sach khi tim theo ma sach tu thong tin muon tra (mt) hien tai.
+            DauSach* dauSach = nullptr;
 
-            Sach* s = timSachTheoMa(ds, mt->maSach, dauSach); // ham timSachTheoMa se tra ve con tro s tro den cuon sach co ma sach trung khop voi ma sach trong thong tin muon tra hien tai (mt->maSach), va cung cap dia chi cua dau sach chua cuon sach do qua con tro dauSach. Neu tim thay cuon sach co ma sach trung khop, s se khac nullptr va ta se cap nhat trang thai cua cuon sach do sang da muon (trangThai = 1) de dong bo thong tin trang thai cua sach trong he thong sau khi da load du lieu tu file.
+            Sach* s = timSachTheoMa(ds, mt->maSach, dauSach);
 
-            if (s != nullptr) // kiem tra neu tim thay cuon sach co ma sach trung khop trong danh sach dau sach, neu s khac nullptr thi cap nhat trang thai cua cuon sach do sang da muon (trangThai = 1) de dong bo thong tin trang thai cua sach trong he thong sau khi da load du lieu tu file.
+            if (s != nullptr) 
             {
-                s->trangThai = 1; // cap nhat trang thai cua cuon sach do sang da muon (trangThai = 1) de dong bo thong tin trang thai cua sach trong he thong sau khi da load du lieu tu file, chi cap nhat khi tim thay cuon sach co ma sach trung khop voi ma sach trong thong tin muon tra hien tai (mt->maSach) de dam bao thong tin trang thai cua sach trong he thong luon duoc cap nhat chinh xac sau khi load du lieu tu file.
+                s->trangThai = 1;
             }
         }
 
         mt = mt->pNext;
     }
 
-    capNhatTrangThaiSachDangMuon(root->pRight, ds); // tiep tuc de quy sang cay con ben phai de cap nhat trang thai cua sach dang muon trong cay con ben phai, de dam bao thong tin trang thai cua sach trong he thong luon duoc cap nhat chinh xac sau khi load du lieu tu file.
+    capNhatTrangThaiSachDangMuon(root->pRight, ds); 
 }

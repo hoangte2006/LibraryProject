@@ -47,7 +47,7 @@ void runMenu()
 
     cout << "Da load du lieu thanh cong!\n";
 
-    khoiTaoKhoMaThe(root);
+khoiTaoKhoMaThe(root);
 
     int choice;
     do {

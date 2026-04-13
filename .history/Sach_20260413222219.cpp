@@ -627,7 +627,7 @@ void inTheoTheLoai_TrongDoTenTangDan(ListDauSach &ds) {
         return;
     }
 
-    DauSach** arr = new DauSach*[ds.n];
+    DauSach* arr = new arr[ds.n];
 
     for (int i = 0; i < ds.n; i++) {
         arr[i] = ds.nodes[i];
@@ -650,7 +650,6 @@ void inTheoTheLoai_TrongDoTenTangDan(ListDauSach &ds) {
         cout << "- " << arr[i]->tenSach
              << " (ISBN: " << arr[i]->ISBN << ")\n";
     }
-    delete[] arr;
 }
 
 // ----------------------------------------------------------

@@ -41,13 +41,11 @@ void runMenu()
 
     loadDauSach("Input_file/DauSach.txt", ds);
     loadDocGia("Input_file/DocGia.txt", root);
+    cout << "Da load du lieu thanh cong!\n";
 
     capNhatTrangThaiSachDangMuon(root, ds);
     capNhatSoLuotMuonCuaDauSach(root, ds);
 
-    cout << "Da load du lieu thanh cong!\n";
-
-    khoiTaoKhoMaThe(root);
 
     int choice;
     do {

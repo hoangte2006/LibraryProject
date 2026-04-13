@@ -650,7 +650,6 @@ void inTheoTheLoai_TrongDoTenTangDan(ListDauSach &ds) {
         cout << "- " << arr[i]->tenSach
              << " (ISBN: " << arr[i]->ISBN << ")\n";
     }
-    delete[] arr;
 }
 
 // ----------------------------------------------------------

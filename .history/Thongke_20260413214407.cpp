@@ -97,40 +97,29 @@ void quickSortQH(DocGiaQuaHan arr[], int left, int right) {
     quickSortQH(arr, pivot + 1, right);
 }
 
-// Ham de quy thu thap doc gia qua han vao mang listQH, dem so doc gia qua han va sap xep giam dan theo so ngay qua han.
-static void thuThapDocGiaQuaHan(TREE_DocGia root, Ngay ngayHT, DocGiaQuaHan listQH[], int &countQH) {
-    if (root == nullptr) return;
-
-    thuThapDocGiaQuaHan(root->pLeft, ngayHT, listQH, countQH);
-
-    int QH = tinhQuaHanMax(root, ngayHT);
-    if (QH > 0) {
-        listQH[countQH].dg = root;
-        listQH[countQH].soNgayQuaHan = QH;
-        countQH++;
-    }
-
-    thuThapDocGiaQuaHan(root->pRight, ngayHT, listQH, countQH);
-}
-
 void lietKeDocGiaQuaHan(TREE_DocGia root) {
-    if (root == nullptr) {
-        cout << "Danh sach doc gia rong!\n";
-        return;
-    }
+    DocGia* arr[MAX_DOCGIA];
+    int n = 0;
 
-    int maxDocGia = countDocGia(root); 
-    if (maxDocGia == 0) return;
+    BSTtoArray(root, arr, n);
 
-    DocGiaQuaHan* listQH = new DocGiaQuaHan[maxDocGia];
+    DocGiaQuaHan listQH[MAX_DOCGIA];
     int countQH = 0;
+
     Ngay ngayHT = layNgayHienTai();
 
-    thuThapDocGiaQuaHan(root, ngayHT, listQH, countQH);
+    for (int i = 0; i < n; i++) {
+        int QH = tinhQuaHanMax(arr[i], ngayHT);
+
+        if (QH > 0) {
+            listQH[countQH].dg = arr[i];
+            listQH[countQH].soNgayQuaHan = QH;
+            countQH++;
+        }
+    }
 
     if (countQH == 0) {
         cout << "Khong co doc gia nao qua han!\n";
-        delete[] listQH; 
         return;
     }
 
@@ -143,8 +132,6 @@ void lietKeDocGiaQuaHan(TREE_DocGia root) {
              << " | So ngay qua han: " << listQH[i].soNgayQuaHan
              << endl;
     }
-
-    delete[] listQH; 
 }
 
 bool luotMuonLonHon(DauSach* a, DauSach* b) {
@@ -183,7 +170,7 @@ void inTop10SachMuonNhieu(const ListDauSach &ds) {
         return;
     }
 
-    DauSach** arr = new DauSach*[ds.n];
+    DauSach* arr[MAX_DAUSACH];
     
     for (int i = 0; i < ds.n; i++) {
         arr[i] = ds.nodes[i];
@@ -216,7 +203,6 @@ void inTop10SachMuonNhieu(const ListDauSach &ds) {
 
         heapify(arr, n, 0);
     }
-    delete[] arr;
 }
 
 // -------------------------------------------------------------------------------------
@@ -266,7 +252,7 @@ void thongKeSoLuongTheoTheLoai(const ListDauSach &ds) {
         return;
     }
 
-    DauSach** arr = new DauSach*[ds.n];
+    DauSach* arr[MAX_DAUSACH];
     for (int i = 0; i < ds.n; i++) {
         arr[i] = ds.nodes[i];
     }
@@ -286,5 +272,4 @@ void thongKeSoLuongTheoTheLoai(const ListDauSach &ds) {
         }
     }
     cout << "The loai: " << arr[ds.n-1]->theLoai << " | So luong: " << count << endl;
-    delete[] arr;
 }

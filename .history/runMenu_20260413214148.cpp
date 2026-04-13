@@ -38,16 +38,12 @@ void runMenu()
     ListDauSach ds;
     ds.n = 0;
 
-
     loadDauSach("Input_file/DauSach.txt", ds);
     loadDocGia("Input_file/DocGia.txt", root);
 
-    capNhatTrangThaiSachDangMuon(root, ds);
-    capNhatSoLuotMuonCuaDauSach(root, ds);
-
-    cout << "Da load du lieu thanh cong!\n";
-
-    khoiTaoKhoMaThe(root);
+    if (capNhatTrangThaiSachDangMuon(root, ds)) {
+        capNhatSoLuotMuonCuaDauSach(root, ds);
+    }
 
     int choice;
     do {

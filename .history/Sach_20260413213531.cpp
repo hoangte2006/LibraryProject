@@ -70,10 +70,10 @@ unsigned long hashStringISBN(const char* str) {
 void insertHashISBN(ListDauSach &ds, DauSach* dsPtr) {
     int idx = hashStringISBN(dsPtr->ISBN);
     int startIdx = idx;
-    while (ds.hashTable[idx].daCoDuLieu && !ds.hashTable[idx].daXoa) {
+    while (ds.hashTable[idx].daCoDuLieu && !ds.hashTable[idx].daXoa) { // while chạy khi diều kiện đúng: đã có dữ liệu và chưa bị xóa
         if (strcmp(ds.hashTable[idx].isbn, dsPtr->ISBN) == 0) return; 
         idx = (idx + 1) % HASH_SIZE;
-        // Bang day (Khong xay ra vi MAX = 1000, HASH_SIZE = 2003)
+        if (idx == startIdx) return; // Bang day (Khong xay ra vi MAX = 1000, HASH_SIZE = 2003)
         if (idx == startIdx) {
             cout << "LOI NGHIEM TRONG: Bang bam (Hash Table) da day! Vui long kiem tra lai HASH_SIZE.\n";
             return; 
@@ -627,7 +627,7 @@ void inTheoTheLoai_TrongDoTenTangDan(ListDauSach &ds) {
         return;
     }
 
-    DauSach** arr = new DauSach*[ds.n];
+    DauSach* arr[MAX_DAUSACH];
 
     for (int i = 0; i < ds.n; i++) {
         arr[i] = ds.nodes[i];
@@ -650,7 +650,6 @@ void inTheoTheLoai_TrongDoTenTangDan(ListDauSach &ds) {
         cout << "- " << arr[i]->tenSach
              << " (ISBN: " << arr[i]->ISBN << ")\n";
     }
-    delete[] arr;
 }
 
 // ----------------------------------------------------------

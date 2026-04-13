@@ -122,6 +122,7 @@ void lietKeDocGiaQuaHan(TREE_DocGia root) {
     int maxDocGia = countDocGia(root); 
     if (maxDocGia == 0) return;
 
+    // Cấp phát động mảng listQH, không thèm xài mảng tĩnh MAX_DOCGIA nữa
     DocGiaQuaHan* listQH = new DocGiaQuaHan[maxDocGia];
     int countQH = 0;
     Ngay ngayHT = layNgayHienTai();
@@ -183,7 +184,7 @@ void inTop10SachMuonNhieu(const ListDauSach &ds) {
         return;
     }
 
-    DauSach** arr = new DauSach*[ds.n];
+    DauSach* arr[MAX_DAUSACH];
     
     for (int i = 0; i < ds.n; i++) {
         arr[i] = ds.nodes[i];
@@ -216,7 +217,6 @@ void inTop10SachMuonNhieu(const ListDauSach &ds) {
 
         heapify(arr, n, 0);
     }
-    delete[] arr;
 }
 
 // -------------------------------------------------------------------------------------
@@ -247,6 +247,10 @@ static void capNhatSoLuotMuonCuaDauSachDFS(TREE_DocGia root, ListDauSach &ds) {
 // Ham chay chinh: Nap DauSach -> Quet DFS Cay Doc Gia
 void capNhatSoLuotMuonCuaDauSach(TREE_DocGia root, ListDauSach &ds) {
     if (ds.n == 0) return;
+    if (root == nullptr) {
+        cout << "Cay doc gia rong, khong the cap nhat so luot muon cua dau sach!\n";
+        return;
+    }
     
     for (int i = 0; i < ds.n; i++) {
         if (ds.nodes[i] != nullptr) {
@@ -266,7 +270,7 @@ void thongKeSoLuongTheoTheLoai(const ListDauSach &ds) {
         return;
     }
 
-    DauSach** arr = new DauSach*[ds.n];
+    DauSach* arr[MAX_DAUSACH];
     for (int i = 0; i < ds.n; i++) {
         arr[i] = ds.nodes[i];
     }
@@ -286,5 +290,4 @@ void thongKeSoLuongTheoTheLoai(const ListDauSach &ds) {
         }
     }
     cout << "The loai: " << arr[ds.n-1]->theLoai << " | So luong: " << count << endl;
-    delete[] arr;
 }

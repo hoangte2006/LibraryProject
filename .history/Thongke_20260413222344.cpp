@@ -216,7 +216,6 @@ void inTop10SachMuonNhieu(const ListDauSach &ds) {
 
         heapify(arr, n, 0);
     }
-    delete[] arr;
 }
 
 // -------------------------------------------------------------------------------------

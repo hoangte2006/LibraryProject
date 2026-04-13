@@ -183,7 +183,7 @@ void inTop10SachMuonNhieu(const ListDauSach &ds) {
         return;
     }
 
-    DauSach** arr = new DauSach*[ds.n];
+    DauSach* arr[MAX_DAUSACH];
     
     for (int i = 0; i < ds.n; i++) {
         arr[i] = ds.nodes[i];
@@ -216,7 +216,6 @@ void inTop10SachMuonNhieu(const ListDauSach &ds) {
 
         heapify(arr, n, 0);
     }
-    delete[] arr;
 }
 
 // -------------------------------------------------------------------------------------
@@ -266,7 +265,7 @@ void thongKeSoLuongTheoTheLoai(const ListDauSach &ds) {
         return;
     }
 
-    DauSach** arr = new DauSach*[ds.n];
+    DauSach* arr[MAX_DAUSACH];
     for (int i = 0; i < ds.n; i++) {
         arr[i] = ds.nodes[i];
     }
@@ -286,5 +285,4 @@ void thongKeSoLuongTheoTheLoai(const ListDauSach &ds) {
         }
     }
     cout << "The loai: " << arr[ds.n-1]->theLoai << " | So luong: " << count << endl;
-    delete[] arr;
 }

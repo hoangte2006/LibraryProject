@@ -1,6 +1,9 @@
 #pragma once
 #include "Structs.h"
 
+//
+// -- Code Hoang Te -- 
+//
 
 #include <iostream>
 #include <cstring>
@@ -14,7 +17,6 @@ void timMaxMaThe(TREE_DocGia root, int &maxID);
 void khoiTaoKhoMaThe(TREE_DocGia root);
 int taoMaTheMoi(TREE_DocGia root);
 void nhapDocGia(TREE_DocGia &root);
-int countDocGia(TREE_DocGia root);
 
 // 2. NHOM HAM TIM KIEM VA TRUY XUAT
 DocGia* timDocGia(const TREE_DocGia root, int maThe);
@@ -45,3 +47,12 @@ void insertionSortDocGia(DocGia* arr[], int n);
 void BSTtoArray(TREE_DocGia root, DocGia* arr[], int &index);
 int soSanhTen(DocGia* a, DocGia* b);
 void sortDocGiaTheoTen(DocGia* arr[], int n);
+
+//
+// -- Code Huu Tri -- 
+//
+
+
+//
+// -- Code Ho Nghia -- 
+//
