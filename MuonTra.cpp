@@ -145,46 +145,60 @@ bool traSach(TREE_DocGia root, ListDauSach &ds, int maThe, const char* maSach, N
         return false;
     }
 
+    // 1. Tim phieu muon tuong ung cua doc gia (Tim cuc bo truoc de toi uu thoi gian)
+    MuonTra* muonTra = docGia->dsMuonTra.pHead;
+    while (muonTra != nullptr) {
+        if (strcmp(muonTra->maSach, maSach) == 0 && muonTra->trangThai == 0) { 
+            break;
+        }
+        muonTra = muonTra->pNext;
+    }
+
+    if (muonTra == nullptr) {
+        cout << "Khong tim thay thong tin muon sach cho ma sach: " << maSach << " cua doc gia nay!\n";
+        return false;
+    }
+
+    if (!soSanhNgay(muonTra->ngayMuon, ngayTra)) {
+        cout << "Ngay tra khong hop le (Nho hon ngay muon)!\n";
+        return false;
+    }
+
+    // 2. Sau khi xac nhan doc gia co muon sach do, moi tim den sach trong thu vien de cap nhat
     DauSach* dauSach = nullptr;
     Sach* sachTra = timSachTheoMa(ds, maSach, dauSach);
 
     if (sachTra == nullptr) {
-        cout << "Khong tim thay sach trong he thong!\n";
+        cout << "Loi du lieu: Khong tim thay sach nay trong he thong!\n";
         return false;
     }
 
-    if (sachTra->trangThai != 1) {
-        cout << "Sach khong o trang thai dang muon!\n";
-        return false;
-    }
-    // ---------------------------------
+    // 3. Cap nhat cac trang thai
+    muonTra->trangThai = 1;
+    muonTra->ngayTra = ngayTra;
+    sachTra->trangThai = 0;
 
-    if (docGia->dsMuonTra.pHead == nullptr) {
-        cout << "Doc gia chua muon sach nao!\n";
-        return false;
-    }
-
-    MuonTra* muonTra = docGia->dsMuonTra.pHead;
-
-    while (muonTra != nullptr) {
-        if (strcmp(muonTra->maSach, maSach) == 0 && muonTra->trangThai == 0) { 
-
-            if (!soSanhNgay(muonTra->ngayMuon, ngayTra)) {
-                cout << "Ngay tra khong hop le!\n";
-                return false;
+    // 4. Tu dong mo khoa the neu thoa dieu kien
+    if (docGia->trangThaiThe == 0) {
+        bool vanConQuaHan = false;
+        MuonTra* tempMT = docGia->dsMuonTra.pHead;
+        while (tempMT != nullptr) {
+            // Neu co sach bi mat (2) hoac sach dang muon (0) nhung qua han thi khong the mo the
+            if (tempMT->trangThai == 2 || (tempMT->trangThai == 0 && tinhSoNgay(tempMT->ngayMuon, ngayTra) > HAN_MUON)) {
+                vanConQuaHan = true;
+                break;
             }
-
-            muonTra->trangThai = 1;
-            muonTra->ngayTra = ngayTra;
-            sachTra->trangThai = 0;
-
-            cout << "Tra sach thanh cong!\n";
-            return true;
+            tempMT = tempMT->pNext;
         }
-        muonTra = muonTra->pNext;
+        
+        if (!vanConQuaHan) {
+            docGia->trangThaiThe = 1;
+            cout << "He thong da tu dong mo khoa the do doc gia khong con sach qua han hay lam mat.\n";
+        }
     }
-    cout << "Khong tim thay thong tin muon sach cho ma sach: " << maSach << " va ma the: " << maThe << "\n";
-    return false;
+
+    cout << "Tra sach thanh cong!\n";
+    return true;
 }
 
 // Ham bao mat sach khi doc gia lam mat sach dang muon.

@@ -106,6 +106,8 @@ bool loadDauSach(const char* filename, ListDauSach& ds)
 
         insertHashISBN(ds, dsNew); 
 
+        getline(file, line); // Bo qua dong #BOOK
+
         while (getline(file, line))
         {
             if (line == "END") break;

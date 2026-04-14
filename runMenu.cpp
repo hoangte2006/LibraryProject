@@ -65,8 +65,7 @@ void runMenu()
             cout << "3. Hieu chinh\n";
             cout << "4. Khoa / Mo the\n";
             cout << "5. In danh sach\n";
-            cout << "Chon: ";
-            cin >> c; cin.ignore(1000,'\n');
+            c = nhapSoNguyenHopLe("Chon: "); cin.ignore(1000,'\n');
 
             switch (c) {
             case 1: nhapDocGia(root); break;
@@ -128,8 +127,7 @@ void runMenu()
             cout << "5. Tra cuu theo ten\n";
             cout << "6. In danh sach\n";
             cout << "7. In theo the loai\n";
-            cout << "Chon: ";
-            cin >> c; cin.ignore(1000,'\n');
+            c = nhapSoNguyenHopLe("Chon: "); cin.ignore(1000,'\n');
 
             switch (c) {
             case 1: themDauSach(ds); break;
@@ -176,8 +174,7 @@ void runMenu()
             cout << "2. Tra sach\n";
             cout << "3. Bao mat\n";
             cout << "4. Xem sach dang muon\n";
-            cout << "Chon: ";
-            cin >> c; cin.ignore(1000,'\n');
+            c = nhapSoNguyenHopLe("Chon: "); cin.ignore(1000,'\n');
 
             switch (c) {
 
@@ -261,8 +258,7 @@ void runMenu()
             cout << "1. Doc gia qua han\n";
             cout << "2. Top 10 sach muon nhieu\n";
             cout << "3. Thong ke theo the loai\n";
-            cout << "Chon: ";
-            cin >> c; cin.ignore(1000,'\n');
+            c = nhapSoNguyenHopLe("Chon: "); cin.ignore(1000,'\n');
 
             switch (c) {
             case 1:
