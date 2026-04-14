@@ -18,13 +18,6 @@ static void copyCStringSafe(char* dest, size_t destSize, const string& src) {
     strncpy(dest, src.c_str(), destSize - 1); 
     dest[destSize - 1] = '\0';
 }
-// Ham copy va chuyen sang chu thuong
-static void copyLowerCStringSafe(char* dest, size_t destSize, const string& src) {
-    copyCStringSafe(dest, destSize, src);
-    for (size_t i = 0; dest[i] != '\0'; i++) {
-        dest[i] = (char)tolower((unsigned char)dest[i]); 
-    }
-}
 
 
 //////////////////////////////////////////////////////////
