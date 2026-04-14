@@ -114,7 +114,6 @@ bool muonSach(TREE_DocGia root, ListDauSach &ds, int maThe, const char* maSach) 
     }       
 
     if (biQuaHan) {
-        docGia->trangThaiThe = 0; 
         cout << "Ban dang co sach qua han! Vui long tra sach truoc khi muon sach moi!\n";
         return false;
     }
@@ -236,9 +235,10 @@ bool baoMatSach(TREE_DocGia root, ListDauSach &ds, int maThe, const char* maSach
         { 
             sach->trangThai = 2; 
             muonTra->trangThai = 2; 
+            docGia->trangThaiThe = 0; // Khoa the do lam mat sach
             // dauSach->dsSach.tongSoSach--; mat sach != xoa sach   
 
-            cout << "Da ghi nhan sach bi mat!\n";
+            cout << "Da ghi nhan sach bi mat! The cua doc gia da bi khoa.\n";
             return true;
         }
 
