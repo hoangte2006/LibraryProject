@@ -188,6 +188,7 @@ bool loadDocGia(const char* filename, TREE_DocGia& root)
         getline(file, line); // #MUONTRA
 
         if (!inserted) {
+            delete dg; 
             while (getline(file, line)) {
                 if (line == "END") break;
             }
