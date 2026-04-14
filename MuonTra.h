@@ -15,4 +15,4 @@ bool baoMatSach(TREE_DocGia root, ListDauSach &ds, int maThe, const char* maSach
 
 // RULE NGHIEP VU:
 bool coSachQuaHan(const DocGia* docGia);
-void xemSachDangMuon(const DocGia* docGia);
+void xemSachDangMuon(const DocGia* docGia, const ListDauSach& ds);

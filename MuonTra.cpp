@@ -266,14 +266,28 @@ bool coSachQuaHan(const DocGia* docGia) {
     return false;
 }
 
-void xemSachDangMuon(const DocGia* docGia) {
+void xemSachDangMuon(const DocGia* docGia, const ListDauSach& ds) {
     MuonTra* temp = docGia->dsMuonTra.pHead;
+    bool coSach = false;
 
     while (temp != nullptr) {
-        if (temp->trangThai == 0) {
-            cout << "Ma sach: " << temp->maSach << " | Ngay muon: " 
-                << temp->ngayMuon.ngay << "/" << temp->ngayMuon.thang << "/" << temp->ngayMuon.nam << endl;
+        if (temp->trangThai == 0) { // Dang muon
+            coSach = true;
+            DauSach* dauSach = nullptr;
+            Sach* sach = timSachTheoMa(ds, temp->maSach, dauSach);
+            
+            cout << "- Ma sach: " << temp->maSach;
+            if (dauSach != nullptr) {
+                cout << " | Ten sach: " << dauSach->tenSach;
+            } else {
+                cout << " | Ten sach: (Khong ro - da bi xoa khoi he thong?)";
+            }
+            cout << " | Ngay muon: " << temp->ngayMuon.ngay << "/" << temp->ngayMuon.thang << "/" << temp->ngayMuon.nam << endl;
         }
         temp = temp->pNext;
+    }
+    
+    if (!coSach) {
+         cout << "  (Hien tai khong muon cuon sach nao)\n";
     }
 }

@@ -185,7 +185,16 @@ void runMenu()
                 cout << "Ma doc gia: ";
                 cin >> ma; cin.ignore(1000,'\n');
 
-                cout << "Ma sach: ";
+                DocGia* dg = timDocGia(root, ma);
+                if (dg != nullptr) {
+                    cout << "Danh sach cac cuon sach doc gia nay dang muon:\n";
+                    xemSachDangMuon(dg, ds);
+                } else {
+                    cout << "Khong tim thay doc gia co ma the: " << ma << "\n";
+                    break;
+                }
+
+                cout << "Ma sach can muon: ";
                 cin.getline(ms,25);
 
                 if (muonSach(root, ds, ma, ms)) {
@@ -243,7 +252,7 @@ void runMenu()
                 cin >> ma; cin.ignore(1000, '\n');
 
                 DocGia* dg = timDocGia(root, ma);
-                if (dg) xemSachDangMuon(dg);
+                if (dg) xemSachDangMuon(dg, ds);
                 else cout << "Khong tim thay!\n";
                 break;
             }
