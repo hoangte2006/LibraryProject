@@ -31,6 +31,7 @@ Sach* timSachTheoMa(const ListDauSach& ds, const char* maSach, DauSach*& dauSach
 
 void traCuuTheoTenNangCao(const ListDauSach &ds, const char* key);
 void toLowerCase(char* str);
+void chuanHoaChuoiSearch(const char* src, char* dest);
 
 // CAC THAO TAC MUON TRA SACH
 bool muonSach(TREE_DocGia root, ListDauSach &ds, int maThe, const char* maSach);
