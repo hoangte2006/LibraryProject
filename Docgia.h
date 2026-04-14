@@ -12,6 +12,7 @@ DocGia* taoDocGia(int maThe);
 bool themDocGia(TREE_DocGia& root, DocGia* newnode);
 void timMaxMaThe(TREE_DocGia root, int &maxID);
 void khoiTaoKhoMaThe(TREE_DocGia root);
+void luuKhoMaThe();
 int taoMaTheMoi(TREE_DocGia root);
 void nhapDocGia(TREE_DocGia &root);
 int countDocGia(TREE_DocGia root);

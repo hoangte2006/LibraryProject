@@ -287,6 +287,7 @@ void runMenu()
         case 0:
             saveDocGia("Input_file/DocGia.txt", root);
             saveDauSach("Input_file/DauSach.txt", ds);
+            luuKhoMaThe();
             cout << "Da luu du lieu!\n";
             cout << "Tam biet!\n";
             break;

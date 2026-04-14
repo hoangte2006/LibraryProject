@@ -5,6 +5,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 
 using namespace std;
 
@@ -13,7 +14,24 @@ using namespace std;
 static int currentX = 0;
 
 void khoiTaoKhoMaThe(TREE_DocGia root) { 
-    currentX = time(nullptr) % SO_LUONG_MA; 
+    ifstream fileConfig("Input_file/config_ma.txt");
+    if (fileConfig.is_open()) {
+        fileConfig >> currentX;
+        fileConfig.close();
+    } else {
+        // lan chay dau tien khi chua co file config
+        // ramdom bat ki bang thoi gian hien tai
+        currentX = time(nullptr) % SO_LUONG_MA; 
+    }
+}
+
+// Ham nay de goi khi tat phan mem (luu lai currentX)
+void luuKhoMaThe() {
+    ofstream fileConfig("Input_file/config_ma.txt");
+    if (fileConfig.is_open()) {
+        fileConfig << currentX;
+        fileConfig.close();
+    }
 }
 
 // O(1) tao ma the moi
