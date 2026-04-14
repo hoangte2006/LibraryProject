@@ -178,7 +178,7 @@ bool loadDocGia(const char* filename, TREE_DocGia& root)
 
         dg->trangThaiThe = trangThai;
 
-        dg->pLeft = nullptr; // khoi tao con tro pLeft va pRight cua doc gia moi duoc tao thanh nullptr de biet rang chua co doc gia nao duoc them vao cay nhi phan tim kiem doc gia nay.
+        dg->pLeft = nullptr; 
         dg->pRight = nullptr;
 
         dg->dsMuonTra.pHead = dg->dsMuonTra.pTail = nullptr;

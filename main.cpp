@@ -21,8 +21,7 @@ using namespace std;
 
 int main()
 {
-    srand((unsigned int)time(nullptr));
-
+    
 #if TEST_MODE // nếu 0 thì chạy menu, nếu 1 thì chạy test;
 
     // BẮT BUỘC: Thiết lập Terminal Ubuntu sang chế độ đọc phím thô 

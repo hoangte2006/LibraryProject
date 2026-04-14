@@ -9,10 +9,6 @@
 
 using namespace std;
 
-//
-// -- Code Hoang Te -- 
-//
-
 void chuanHoaChuoiSearch(const char* src, char* dest) {
     int i = 0, j = 0;
     bool space = false;
@@ -437,7 +433,7 @@ void traCuuTheoTenNangCao(const ListDauSach &ds, const char* key) {
 
         if (ds.nodes[i] == nullptr) continue; 
 
-        if (ds.nodes[i]->tenSachSearch[0] == '\0') {
+        if (ds.nodes[i]->tenSachSearch[0] == '\0') { 
             capNhatTenSachSearch(ds.nodes[i]);
         }
 

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
@@ -12,7 +13,7 @@ using namespace std;
 static int currentX = 0;
 
 void khoiTaoKhoMaThe(TREE_DocGia root) { 
-    currentX = 0; 
+    currentX = time(nullptr) % SO_LUONG_MA; 
 }
 
 // O(1) tao ma the moi
