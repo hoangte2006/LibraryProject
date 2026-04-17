@@ -1,5 +1,6 @@
 #include "InputUtils.h"
 #include <iostream>
+#include <limits>
 
 using namespace std;
 
@@ -20,11 +21,18 @@ bool kiemTraNgayHopLe(const Ngay& ngay) {
 
 int nhapSoNguyenHopLe(const char* thongBao) {
     int so;
-    cout << thongBao;
-    while (!(cin >> so)) {
-        cout << "Sai kieu du lieu! Vui long chi nhap so: ";
-        cin.clear();
-        cin.ignore(1000, '\n');
+    while (true) {
+        cout << thongBao;
+        if (cin >> so) {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Xoa bo nho dem sau khi nhap so
+            return so;
+        } else {
+            if (cin.eof()) {
+                exit(0);
+            }
+            cout << "Loi: Vui long chi nhap so nguyen!" << endl;
+            cin.clear(); 
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Xoa bo nho dem de cho lan nhap tiep theo
+        }
     }
-    return so;
 }

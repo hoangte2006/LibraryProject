@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "/home/hoangte/Documents/Code/ProJect/LibraryProject",
-      "program": "/home/hoangte/Documents/Code/ProJect/LibraryProject/build/Debug/outDebug",
+      "cwd": "d:/HOC DAI HOC/Code/Project/LibraryProject",
+      "program": "d:/HOC DAI HOC/Code/Project/LibraryProject/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
