@@ -7,11 +7,9 @@ void luuKhoMaThe();
 int taoMaTheMoi(TREE_DocGia root);
 
 // Quan ly Doc gia (Su dung struct QuanLyDocGia moi)
-void nhapDocGia(QuanLyDocGia &ql);
 DocGia* taoDocGia(int maThe);
 bool themDocGia(QuanLyDocGia &ql, DocGia* newnode);
 bool xoaDocGia(QuanLyDocGia &ql, int maThe);
-void hieuChinhDocGia(TREE_DocGia root, int maThe);
 void khoaMoThe(TREE_DocGia root, int maThe);
 
 // Tim kiem va In an

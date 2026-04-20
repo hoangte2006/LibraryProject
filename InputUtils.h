@@ -1,15 +1,25 @@
 #pragma once
-#include <iostream>
-#include <conio.h>
-#include <cctype>
 #include "Structs.h"
+#include <iostream>
 
-// Kiểm tra ngày hợp lệ
+// UI Helper Functions (declarations)
+void gotoxy(int x, int y);
+void showCursor(bool show);
+void setColor(int color);
+void resetColor();
+
 bool kiemTraNgayHopLe(const Ngay& ngay);
-
 int nhapSoNguyenHopLe(const char* thongBao);
 
-// --- Cac ham nhap lieu nang cao (bat tung ky tu) ---
-void nhapMa(const char* thongBao, char* result, int maxLen);
-void nhapTen(const char* thongBao, char* result, int maxLen);
-void nhapChuoiTuDo(const char* thongBao, char* result, int maxLen);
+bool nhapMa(const char* thongBao, char* result, int maxLen, const char* initialValue = "");
+bool nhapTen(const char* thongBao, char* result, int maxLen, const char* initialValue = "");
+bool nhapChuoiTuDo(const char* thongBao, char* result, int maxLen, const char* initialValue = "");
+
+// --- Form Input Functions ---
+#define INPUT_OK 0
+#define INPUT_CANCEL -1
+#define INPUT_UP -2
+#define INPUT_DOWN -3
+
+int nhapChuoiForm(int x, int y, char* result, int maxLen, bool chiNhanSo = false, bool chiNhanChu = false);
+int nhapSoForm(int x, int y, int& result);

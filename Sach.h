@@ -2,13 +2,9 @@
 #include "Structs.h"
 
 // CAC THAO TAC TREN DAU SACH
-int timViTriChen(const ListDauSach &ds, const char* tenSach);
 DauSach* timTheoISBN(const ListDauSach &ds, const char* ISBN);
-void themDauSach(ListDauSach &ds);
 void inDanhSachDauSach(const ListDauSach &ds);
 bool xoaDauSach(ListDauSach &ds, const char* ISBN);
-void hieuChinhDauSach(ListDauSach &ds);
-void xoaDauSachUI(ListDauSach &ds);
 
 // BANG BAM (HASH TABLE) CHO ISBN
 unsigned long hashStringISBN(const char* str);
@@ -23,6 +19,10 @@ void inDanhSachCuonSach(const DauSach* dauSach);
 
 
 // CAC THAO TAC TIM KIEM
+int timViTriChen(const ListDauSach &ds, const char* tenSach);
+
+void capNhatTenSachSearch(DauSach* dauSach);
+void capNhatTacGiaSearch(DauSach* dauSach);
 
 void chuanHoaISBN(char* isbn);
 // Ham ho tro tach ma ISBN
@@ -31,12 +31,11 @@ void tachMaISBN(const char* maSach, char* isbnOut);
 Sach* timSachTheoMa(const ListDauSach& ds, const char* maSach, DauSach*& dauSachTimThay);
 
 void traCuuTheoTenNangCao(const ListDauSach &ds, const char* key);
+void traCuuTheoTacGia(const ListDauSach &ds, const char* key);
 void toLowerCase(char* str);
 void chuanHoaChuoiSearch(const char* src, char* dest);
 
 // CAC THAO TAC MUON TRA SACH
-bool muonSach(TREE_DocGia root, ListDauSach &ds, int maThe, const char* maSach);
-bool traSach(TREE_DocGia root, ListDauSach &ds, int maThe, const char* maSach, Ngay ngayTra);
 void addTailMuonTra(ListMuonTra &list, MuonTra* newNode);
 void addTailSach(ListSach &list, Sach* newSach);
 

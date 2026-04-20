@@ -28,9 +28,14 @@ void chuanHoaChuoiSearch(const char* src, char* dest) {
     dest[j] = '\0';
 }
 
-static void capNhatTenSachSearch(DauSach* dauSach) {
+void capNhatTenSachSearch(DauSach* dauSach) {
     if (dauSach == nullptr) return;
     chuanHoaChuoiSearch(dauSach->tenSach, dauSach->tenSachSearch);
+}
+
+void capNhatTacGiaSearch(DauSach* dauSach) {
+    if (dauSach == nullptr) return;
+    chuanHoaChuoiSearch(dauSach->tacGia, dauSach->tacGiaSearch);
 }
 
 void chuanHoaISBN(char* isbn) {
@@ -120,71 +125,19 @@ DauSach* timTheoISBN(const ListDauSach &ds, const char* ISBN) {
 }
 // ---------------------------------------------------------------------------------
 
-void themDauSach(ListDauSach &ds) {    
-    if (ds.n >= MAX_DAUSACH) {
-        cout << "Danh sach dau sach da day!\n";
-        return;
-    }
-
-    DauSach* p = new DauSach; 
-
-    nhapMa("Nhap ISBN: ", p->ISBN, 20);
-    chuanHoaISBN(p->ISBN);
-
-    if (timTheoISBN(ds, p->ISBN) != nullptr) {
-        cout << "ISBN da ton tai! Them dau sach that bai.\n";
-        delete p; 
-        return;
-    }
-    
-    nhapTen("Nhap ten sach: ", p->tenSach, 100);
-    capNhatTenSachSearch(p);
-
-    nhapTen("Nhap tac gia: ", p->tacGia, 50);
-
-    nhapTen("Nhap the loai: ", p->theLoai, 30);
-
-    do {
-        p->soTrang = nhapSoNguyenHopLe("Nhap so trang (>0): "); 
-        if (p->soTrang <= 0) cout << "So trang phai lon hon 0!\n";
-    } while (p->soTrang <= 0);
-
-    do {
-        p->namXuatBan = nhapSoNguyenHopLe("Nhap nam xuat ban: ");
-        if (p->namXuatBan > 2026) cout << "Nam xuat ban khong duoc vuot qua nam hien tai!\n";
-    } while (p->namXuatBan > 2026);
-
-    p->soLuotMuon = 0;
-    p->dsSach.pHead = p->dsSach.pTail = nullptr;
-    p->dsSach.tongSoSach = 0;
-
-    // may truong hop 0,1,2 ngon lanh
-    int pos = timViTriChen(ds, p->tenSach); 
-
-    for (int i = ds.n; i > pos; i--) {
-        ds.nodes[i] = ds.nodes[i - 1];
-    }
-    ds.nodes[pos] = p;
-    ds.n++;
-
-    insertHashISBN(ds, p); // O(1) chen vao bang bam
-
-    cout << "Them dau sach thanh cong" << endl;
-}
-
 void inDanhSachDauSach(const ListDauSach &ds) {
     if (ds.n == 0) {
         cout << "Danh sach dau sach rong! \n";
         return;
     }
 
-    cout << " ┌" << string(5, '─') << "┬" << string(17, '─') << "┬" << string(32, '─') << "┬" << string(22, '─') << "┬" << string(17, '─') << "┐" << endl;
+    cout << " ┌" << string(5, '-') << "┬" << string(17, '-') << "┬" << string(32, '-') << "┬" << string(22, '-') << "┬" << string(17, '-') << "┐" << endl;
     cout << " │ " << left << setw(3) << "STT"
          << " │ " << left << setw(15) << "ISBN"
          << " │ " << left << setw(30) << "Ten Sach"
          << " │ " << left << setw(20) << "Tac Gia"
          << " │ " << left << setw(15) << "The Loai" << " │" << endl;
-    cout << " ├" << string(5, '─') << "┼" << string(17, '─') << "┼" << string(32, '─') << "┼" << string(22, '─') << "┼" << string(17, '─') << "┤" << endl;
+    cout << " ├" << string(5, '-') << "┼" << string(17, '-') << "┼" << string(32, '-') << "┼" << string(22, '-') << "┼" << string(17, '-') << "┤" << endl;
 
     for (int i = 0; i < ds.n; i++) {
         string tenSach = ds.nodes[i]->tenSach;
@@ -198,7 +151,7 @@ void inDanhSachDauSach(const ListDauSach &ds) {
              << " │ " << left << setw(20) << tacGia
              << " │ " << left << setw(15) << ds.nodes[i]->theLoai << " │" << endl;
     }
-    cout << " └" << string(5, '─') << "┴" << string(17, '─') << "┴" << string(32, '─') << "┴" << string(22, '─') << "┴" << string(17, '─') << "┘" << endl;
+    cout << " └" << string(5, '-') << "┴" << string(17, '-') << "┴" << string(32, '-') << "┴" << string(22, '-') << "┴" << string(17, '-') << "┘" << endl;
 }
 
 template <typename ListT, typename NodeT>
@@ -233,8 +186,12 @@ void themCuonSach(DauSach* dauSach) {
 
     cout << "Ma sach duoc tao: " << newSach->maSach << endl;
     
-    nhapChuoiTuDo("Nhap vi tri: ", newSach->viTri, sizeof(newSach->viTri));
-    
+    if (!nhapChuoiTuDo("Nhap vi tri: ", newSach->viTri, sizeof(newSach->viTri))) {
+        cout << "Da huy them cuon sach.\n";
+        delete newSach;
+        return;
+    }
+
     newSach->trangThai = 0; 
     newSach->pNext = nullptr; 
 
@@ -353,9 +310,9 @@ void inDanhSachCuonSach(const DauSach* dauSach) {
 
     cout << "\n--- DANH SACH CAC CUON SACH (ISBN: " << dauSach->ISBN << ") ---\n";
     cout << "Ten sach: " << dauSach->tenSach << "\n";
-    cout << " ┌" << string(5, '─') << "┬" << string(26, '─') << "┬" << string(22, '─') << "┬" << string(17, '─') << "┐" << endl;
+    cout << " ┌" << string(5, '-') << "┬" << string(26, '-') << "┬" << string(22, '-') << "┬" << string(17, '-') << "┐" << endl;
     cout << " │ " << left << setw(3) << "STT" << " │ " << left << setw(24) << "Ma Sach" << " │ " << left << setw(20) << "Vi Tri" << " │ " << left << setw(15) << "Trang Thai" << " │" << endl;
-    cout << " ├" << string(5, '─') << "┼" << string(26, '─') << "┼" << string(22, '─') << "┼" << string(17, '─') << "┤" << endl;
+    cout << " ├" << string(5, '-') << "┼" << string(26, '-') << "┼" << string(22, '-') << "┼" << string(17, '-') << "┤" << endl;
 
     int stt = 1; 
     while (temp != nullptr) {
@@ -373,7 +330,7 @@ void inDanhSachCuonSach(const DauSach* dauSach) {
         stt++;
         temp = temp->pNext;
     }
-    cout << " └" << string(5, '─') << "┴" << string(26, '─') << "┴" << string(22, '─') << "┴" << string(17, '─') << "┘" << endl;
+    cout << " └" << string(5, '-') << "┴" << string(26, '-') << "┴" << string(22, '-') << "┴" << string(17, '-') << "┘" << endl;
 }
 
 // Ham ho tro tach ma ISBN tu ma sach (VD: "HP01_1" -> "HP01")
@@ -447,6 +404,33 @@ void traCuuTheoTenNangCao(const ListDauSach &ds, const char* key) {
     }
 }
 
+void traCuuTheoTacGia(const ListDauSach &ds, const char* key) {
+    bool found = false;
+    
+    if (ds.n == 0) {
+        cout << "Danh sach dau sach rong!\n";
+        return;
+    }
+
+    char keyLower[100]; 
+    chuanHoaChuoiSearch(key, keyLower);
+
+    cout << "Cac dau sach co ten tac gia tuong doi giong voi: " << key << "\n";
+    for (int i = 0; i < ds.n; i++) { 
+
+        if (ds.nodes[i] == nullptr) continue; 
+
+        if (strstr(ds.nodes[i]->tacGiaSearch, keyLower) != nullptr) {
+            cout << "- " << ds.nodes[i]->tenSach << " (ISBN: " << ds.nodes[i]->ISBN << ")\n";
+            cout << "  Tac gia: " << ds.nodes[i]->tacGia << ", The loai: " << ds.nodes[i]->theLoai << "\n";
+            found = true;
+        }
+    }
+    if (!found) {
+        cout << "Khong tim thay dau sach co ten tac gia giong voi: " << key << "\n";
+    }
+}
+
 void giaiPhongDanhSachDauSach(ListDauSach &ds) {
     for (int i = 0; i < ds.n; i++) {
         Sach* temp = ds.nodes[i]->dsSach.pHead;
@@ -472,77 +456,6 @@ int laySTTMoi(DauSach* dauSach)
         return atoi(pos + 1) + 1; 
     }
     return dauSach->dsSach.tongSoSach + 1;
-}
-
-void hieuChinhDauSach(ListDauSach &ds) {
-    char isbn[20];
-    nhapMa("Nhap ISBN can sua: ", isbn, 20);
-    chuanHoaISBN(isbn);
-
-    DauSach* d = timTheoISBN(ds, isbn);
-    if (!d) {
-        cout << "Khong tim thay!\n";
-        return;
-    }
-
-    char tenMoi[100];
-    nhapTen("Nhap ten sach moi: ", tenMoi, 100);
-    nhapTen("Nhap tac gia moi: ", d->tacGia, 50);
-    nhapTen("Nhap the loai moi: ", d->theLoai, 30);
-
-    do {
-        d->soTrang = nhapSoNguyenHopLe("Nhap so trang moi (>0): "); 
-        if (d->soTrang <= 0) cout << "So trang phai lon hon 0!\n";
-    } while (d->soTrang <= 0);
-
-    do {
-        d->namXuatBan = nhapSoNguyenHopLe("Nhap nam xuat ban moi: ");
-        if (d->namXuatBan > 2026) cout << "Nam xuat ban khong duoc vuot qua nam hien tai!\n";
-    } while (d->namXuatBan > 2026);
-
-    int i;
-    for (i = 0; i < ds.n; i++) {
-        if (ds.nodes[i] == d) break;
-    }
-
-    if (i == ds.n) {
-        cout << "Loi nghiem trong: Khong tim thay dau sach trong mang!\n";
-        return;
-    }
-
-    for (int j = i; j < ds.n - 1; j++) {
-        ds.nodes[j] = ds.nodes[j + 1];
-    }
-    ds.n--;
-
-    strcpy(d->tenSach, tenMoi); 
-    capNhatTenSachSearch(d);
-
-    // CHÈN LẠI đúng vị trí
-    int pos = timViTriChen(ds, d->tenSach);
-    for (int j = ds.n; j > pos; j--) {
-        ds.nodes[j] = ds.nodes[j - 1];
-    }
-    ds.nodes[pos] = d;
-    ds.n++;
-
-    cout << "Cap nhat thanh cong!\n";
-}
-void xoaDauSachUI(ListDauSach &ds) {
-    char isbn[20];
-    nhapMa("Nhap ISBN can xoa: ", isbn, 20);
-    chuanHoaISBN(isbn);
-
-    cout << "Ban co chac chan muon xoa dau sach ISBN: " << isbn << " khong? (Y/N): ";
-    char confirm;
-    cin >> confirm;
-    cin.ignore(1000, '\n');
-    
-    if (toupper(confirm) == 'Y') {
-        xoaDauSach(ds, isbn);
-    } else {
-        cout << "Huy xoa dau sach.\n";
-    }
 }
 
 //

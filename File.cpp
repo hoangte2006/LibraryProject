@@ -89,6 +89,7 @@ bool loadDauSach(const char* filename, ListDauSach& ds)
         copyCStringSafe(dsNew->tenSach, sizeof(dsNew->tenSach), tenSach);
         chuanHoaChuoiSearch(dsNew->tenSach, dsNew->tenSachSearch); 
         copyCStringSafe(dsNew->tacGia, sizeof(dsNew->tacGia), tacGia);
+        chuanHoaChuoiSearch(dsNew->tacGia, dsNew->tacGiaSearch);
         copyCStringSafe(dsNew->theLoai, sizeof(dsNew->theLoai), theLoai);
 
         dsNew->soTrang = soTrang;

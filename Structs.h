@@ -76,6 +76,7 @@ struct ListSach {
 struct DauSach {
     char ISBN[20], tenSach[100], tacGia[50], theLoai[30];
     char tenSachSearch[100]; // tenSach da chuan hoa lowercase de tra cuu nhanh
+    char tacGiaSearch[50];   // tacGia da chuan hoa de tra cuu nhanh
     int soTrang, namXuatBan; 
     int soLuotMuon = 0; // dem top 10
 

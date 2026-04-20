@@ -57,37 +57,6 @@ int taoMaTheMoi(TREE_DocGia root) {
     return maTheMoi;
 }
 
-// Ham nhap rieng
-void nhapThongTinDocGia(DocGia* dg) {
-    nhapTen("Nhap ho: ", dg->ho, 50);
-    
-    nhapTen("Nhap ten: ", dg->ten, 20);
-    
-    int chonGT;
-    do {
-        cout << "Gioi tinh (1. NAM | 2. NU): ";
-        chonGT = nhapSoNguyenHopLe("");
-        if (chonGT == 1) strcpy(dg->giotinh, "NAM"); 
-        else if (chonGT == 2) strcpy(dg->giotinh, "NU");
-        else cout << "Loi: Vui long chon 1 hoac 2!\n";
-    } while (chonGT != 1 && chonGT != 2);
-}
-
-// Ham nhap thong tin doc gia
-void nhapDocGia(QuanLyDocGia &ql) {
-    int maThe = taoMaTheMoi(ql.root);
-
-    DocGia* docgia = taoDocGia(maThe);
-
-    cout << "Ma the tu dong: " << maThe << endl;
-
-    nhapThongTinDocGia(docgia);
-
-    if (themDocGia(ql, docgia)) {
-        cout << "Them doc gia thanh cong!\n";
-    }
-}
-
 // Ham tao mot doc gia moi voi ma the duoc truyen vao
 // va cac truong thong tin con lai duoc khoi tao mac dinh
 // sau do tra ve con tro den doc gia moi duoc tao ra.
@@ -261,16 +230,16 @@ void inDanhSachDocGia(const TREE_DocGia root) {
         return;
     }
 
-    cout << " ┌" << string(12, '─') << "┬" << string(27, '─') << "┬" << string(12, '─') << "┬" << string(17, '─') << "┐" << endl;
+    cout << " ┌" << string(12, '-') << "┬" << string(27, '-') << "┬" << string(12, '-') << "┬" << string(17, '-') << "┐" << endl;
     cout << " │ " << left << setw(10) << "Ma The"
          << " │ " << left << setw(25) << "Ho Ten"
          << " │ " << left << setw(10) << "Gioi Tinh"
          << " │ " << left << setw(15) << "Trang Thai" << " │" << endl;
-    cout << " ├" << string(12, '─') << "┼" << string(27, '─') << "┼" << string(12, '─') << "┼" << string(17, '─') << "┤" << endl;
+    cout << " ├" << string(12, '-') << "┼" << string(27, '-') << "┼" << string(12, '-') << "┼" << string(17, '-') << "┤" << endl;
 
     inDanhSachDocGia_DeQuy(root);
 
-    cout << " └" << string(12, '─') << "┴" << string(27, '─') << "┴" << string(12, '─') << "┴" << string(17, '─') << "┘" << endl;
+    cout << " └" << string(12, '-') << "┴" << string(27, '-') << "┴" << string(12, '-') << "┴" << string(17, '-') << "┘" << endl;
 }
 
 // Ham nay lam nhiem vu giai phong bo nho cho toan bo danh sach muon tra cua mot doc gia.
@@ -299,20 +268,6 @@ void giaiPhongCay(TREE_DocGia &root) {
 
     delete root;
     root = nullptr;
-}
-
-void hieuChinhDocGia(TREE_DocGia root, int maThe)
-{
-    DocGia* docgia = timDocGia(root, maThe);
-
-    if (docgia == nullptr) {
-        cout << "Khong tim thay doc gia!\n";
-        return;
-    }   
-
-    nhapThongTinDocGia(docgia);
-
-    cout << "Cap nhat thanh cong!\n";
 }
 
 void khoaMoThe(TREE_DocGia root, int maThe)
@@ -440,9 +395,9 @@ void inTheoTen(QuanLyDocGia &ql)
         quickSortDocGia(arr, 0, n - 1);
 
     cout << "\n--- DANH SACH DOC GIA SAP XEP THEO TEN ---\n";
-    cout << " ┌" << string(12, '─') << "┬" << string(40, '─') << "┐" << endl;
+    cout << " ┌" << string(12, '-') << "┬" << string(40, '-') << "┐" << endl;
     cout << " │ " << left << setw(10) << "Ma The" << " │ " << left << setw(38) << "Ho Ten" << " │" << endl;
-    cout << " ├" << string(12, '─') << "┼" << string(40, '─') << "┤" << endl;
+    cout << " ├" << string(12, '-') << "┼" << string(40, '-') << "┤" << endl;
 
     for (int i = 0; i < n; i++) {
         string hoTen = string(arr[i]->ho) + " " + string(arr[i]->ten);
@@ -451,7 +406,7 @@ void inTheoTen(QuanLyDocGia &ql)
              << " │ " << left << setw(38) << hoTen << " │" << endl;
     }
 
-    cout << " └" << string(12, '─') << "┴" << string(40, '─') << "┘" << endl;
+    cout << " └" << string(12, '-') << "┴" << string(40, '-') << "┘" << endl;
 
     delete[] arr; 
 }

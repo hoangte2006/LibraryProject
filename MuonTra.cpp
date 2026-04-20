@@ -94,7 +94,7 @@ bool muonSach(DocGia* docGia, ListDauSach &ds, const char* maSach) {
     addTailMuonTra(docGia->dsMuonTra, muonTra);
     sachMuon->trangThai = 1;
     dauSach->soLuotMuon++;
-    docGia->soSachDangMuon++; // Cap nhat O(1)
+    docGia->soSachDangMuon++; 
 
     cout << "Muon sach thanh cong!\n";
     return true;
@@ -103,39 +103,39 @@ bool muonSach(DocGia* docGia, ListDauSach &ds, const char* maSach) {
 bool traSach(DocGia* docGia, ListDauSach &ds, const char* maSach, Ngay ngayTra) {
     if (docGia == nullptr) return false;
 
-    MuonTra* muonTra = docGia->dsMuonTra.pHead;
-    while (muonTra != nullptr) {
-        if (strcmp(muonTra->maSach, maSach) == 0 && muonTra->trangThai == 0) break;
-        muonTra = muonTra->pNext;
+    MuonTra* muonTraCanTra = nullptr;
+    bool vanConLoi = false;
+    MuonTra* tempMT = docGia->dsMuonTra.pHead;
+
+    while (tempMT != nullptr) {
+        if (strcmp(tempMT->maSach, maSach) == 0 && tempMT->trangThai == 0) { 
+            muonTraCanTra = tempMT; // Tim thay sach can tra, luu lai
+        } else {
+    
+            if (tempMT->trangThai == 2 || (tempMT->trangThai == 0 && tinhSoNgay(tempMT->ngayMuon, ngayTra) > HAN_MUON)) {
+                vanConLoi = true;
+            }
+        }
+        tempMT = tempMT->pNext;
     }
 
-    if (muonTra == nullptr) {
+    if (muonTraCanTra == nullptr) {
         cout << "Khong tim thay thong tin muon sach cho ma nay!\n";
         return false;
     }
 
     DauSach* dauSach = nullptr;
-    Sach* sachTra = timSachTheoMa(ds, maSach, dauSach);
-    if (sachTra == nullptr) return false;
+    Sach* sachTra = timSachTheoMa(ds, maSach, dauSach); 
+    if (sachTra == nullptr) { cout << "Loi du lieu: Khong tim thay cuon sach trong danh muc!\n"; return false; }
 
-    muonTra->trangThai = 1;
-    muonTra->ngayTra = ngayTra;
+    muonTraCanTra->trangThai = 1;
+    muonTraCanTra->ngayTra = ngayTra;
     sachTra->trangThai = 0;
-    docGia->soSachDangMuon--; // Cap nhat O(1)
+    dauSach->soLuotMuon--;
+    docGia->soSachDangMuon--; 
 
     // Tu dong mo khoa the
-    if (docGia->trangThaiThe == 0) {
-        bool vanConLoi = false; 
-        MuonTra* tempMT = docGia->dsMuonTra.pHead;
-        while (tempMT != nullptr) {
-            if (tempMT->trangThai == 2 || (tempMT->trangThai == 0 && tinhSoNgay(tempMT->ngayMuon, ngayTra) > HAN_MUON)) {
-                vanConLoi = true;
-                break;
-            }
-            tempMT = tempMT->pNext;
-        }
-        if (!vanConLoi) docGia->trangThaiThe = 1; // Mo khoa the
-    }
+    if (docGia->trangThaiThe == 0 && !vanConLoi) docGia->trangThaiThe = 1;
 
     cout << "Tra sach thanh cong!\n";
     return true;
@@ -153,7 +153,8 @@ bool baoMatSach(DocGia* docGia, ListDauSach &ds, const char* maSach) {
             
             muonTra->trangThai = 2;
             docGia->trangThaiThe = 0; // Khoa the
-            docGia->soSachDangMuon--; // Sach mat thi khong tinh la dang muon nua
+            dauSach->soLuotMuon--; // Sach mat cung la giam so luong dang muon
+            docGia->soSachDangMuon--; 
             
             cout << "Da ghi nhan sach bi mat! The da bi khoa.\n";
             return true;

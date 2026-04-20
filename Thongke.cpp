@@ -136,11 +136,11 @@ void lietKeDocGiaQuaHan(QuanLyDocGia &ql) {
     quickSortQH(listQH, 0, countQH - 1);
 
     cout << "\n--- DANH SACH DOC GIA QUA HAN ---\n";
-    cout << " ┌" << string(12, '─') << "┬" << string(27, '─') << "┬" << string(20, '─') << "┐" << endl;
+    cout << " ┌" << string(12, '-') << "┬" << string(27, '-') << "┬" << string(20, '-') << "┐" << endl;
     cout << " │ " << left << setw(10) << "Ma The"
          << " │ " << left << setw(25) << "Ho Ten"
          << " │ " << left << setw(18) << "So Ngay Qua Han" << " │" << endl;
-    cout << " ├" << string(12, '─') << "┼" << string(27, '─') << "┼" << string(20, '─') << "┤" << endl;
+    cout << " ├" << string(12, '-') << "┼" << string(27, '-') << "┼" << string(20, '-') << "┤" << endl;
 
     for (int i = 0; i < countQH; i++) {
         string hoTen = string(listQH[i].dg->ho) + " " + string(listQH[i].dg->ten);
@@ -151,7 +151,7 @@ void lietKeDocGiaQuaHan(QuanLyDocGia &ql) {
              << " │ " << left << setw(18) << listQH[i].soNgayQuaHan << " │" << endl;
     }
 
-    cout << " └" << string(12, '─') << "┴" << string(27, '─') << "┴" << string(20, '─') << "┘" << endl;
+    cout << " └" << string(12, '-') << "┴" << string(27, '-') << "┴" << string(20, '-') << "┘" << endl;
     
     delete[] listQH; 
 }
@@ -201,11 +201,11 @@ void inTop10SachMuonNhieu(const ListDauSach &ds) {
     buildHeap(arr, ds.n);
 
     cout << "--- TOP 10 SACH MUON NHIEU ---\n";
-    cout << " ┌" << string(5, '─') << "┬" << string(42, '─') << "┬" << string(15, '─') << "┐" << endl;
+    cout << " ┌" << string(5, '-') << "┬" << string(42, '-') << "┬" << string(15, '-') << "┐" << endl;
     cout << " │ " << left << setw(3) << "Top"
          << " │ " << left << setw(40) << "Ten Sach"
          << " │ " << left << setw(13) << "Luot Muon" << " │" << endl;
-    cout << " ├" << string(5, '─') << "┼" << string(42, '─') << "┼" << string(15, '─') << "┤" << endl;
+    cout << " ├" << string(5, '-') << "┼" << string(42, '-') << "┼" << string(15, '-') << "┤" << endl;
 
     int n = ds.n;
     int limit;
@@ -232,7 +232,7 @@ void inTop10SachMuonNhieu(const ListDauSach &ds) {
 
         heapify(arr, n, 0);
     }
-    cout << " └" << string(5, '─') << "┴" << string(42, '─') << "┴" << string(15, '─') << "┘" << endl;
+    cout << " └" << string(5, '-') << "┴" << string(42, '-') << "┴" << string(15, '-') << "┘" << endl;
     delete[] arr;
 }
 
@@ -290,18 +290,35 @@ void thongKeSoLuongTheoTheLoai(const ListDauSach &ds) {
 
     hybridSortDauSach(arr, 0, ds.n - 1);
 
-    cout << "\n===== THONG KE THE LOAI =====\n";
+    cout << "--- THONG KE SO LUONG THEO THE LOAI ---\n";
+    cout << " ┌" << string(5, '-') << "┬" << string(30, '-') << "┬" << string(12, '-') << "┐" << endl;
+    cout << " │ " << left << setw(3) << "STT"
+         << " │ " << left << setw(28) << "The Loai"
+         << " │ " << left << setw(10) << "So Luong" << " │" << endl;
+    cout << " ├" << string(5, '-') << "┼" << string(30, '-') << "┼" << string(12, '-') << "┤" << endl;
 
     int count = 1;
+    int stt = 1;
 
     for (int i = 1; i < ds.n; i++) {
-        if (strcmp(arr[i]->theLoai,arr[i-1]->theLoai) == 0) {
+        if (strcmp(arr[i]->theLoai, arr[i-1]->theLoai) == 0) {
             count++;
         } else {
-            cout << "The loai: " << arr[i-1]->theLoai << " | So luong: " << count << endl;
+            string theLoai = arr[i-1]->theLoai;
+            if (theLoai.length() > 28) theLoai = theLoai.substr(0, 25) + "...";
+            cout << " │ " << left << setw(3) << stt++
+                 << " │ " << left << setw(28) << theLoai
+                 << " │ " << left << setw(10) << count << " │" << endl;
             count = 1;
         }
     }
-    cout << "The loai: " << arr[ds.n-1]->theLoai << " | So luong: " << count << endl;
+    string theLoai = arr[ds.n-1]->theLoai;
+    if (theLoai.length() > 28) theLoai = theLoai.substr(0, 25) + "...";
+    cout << " │ " << left << setw(3) << stt++
+         << " │ " << left << setw(28) << theLoai
+         << " │ " << left << setw(10) << count << " │" << endl;
+
+    cout << " └" << string(5, '-') << "┴" << string(30, '-') << "┴" << string(12, '-') << "┘" << endl;
+
     delete[] arr;
 }
