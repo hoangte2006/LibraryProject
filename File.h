@@ -7,7 +7,7 @@ bool loadDauSach(const char* filename, ListDauSach& ds);
 bool loadDocGia(const char* filename, QuanLyDocGia& ql); // Su dung QuanLyDocGia
 
 // Save du lieu
-bool saveDauSach(const char* filename, ListDauSach ds);
+bool saveDauSach(const char* filename, const ListDauSach& ds);
 bool saveDocGia(const char* filename, TREE_DocGia root);
 
 // Dong bo trang thai

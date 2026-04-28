@@ -90,11 +90,27 @@ int partitionQH(DocGiaQuaHan arr[], int left, int right) {
     return i + 1;
 }
 
+static void insertionSortQH(DocGiaQuaHan arr[], int left, int right) {
+    for (int i = left + 1; i <= right; i++) {
+        DocGiaQuaHan key = arr[i];
+        int j = i - 1;
+        while (j >= left && soSanhQH(arr[j], key) < 0) { // giam dan
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+
 void quickSortQH(DocGiaQuaHan arr[], int left, int right) {
     if (left >= right) return;
 
-    int pivot = partitionQH(arr, left, right);
+    if (right - left + 1 <= INSERTION_THRESHOLD) {
+        insertionSortQH(arr, left, right);
+        return;
+    }
 
+    int pivot = partitionQH(arr, left, right);
     quickSortQH(arr, left, pivot - 1);
     quickSortQH(arr, pivot + 1, right);
 }

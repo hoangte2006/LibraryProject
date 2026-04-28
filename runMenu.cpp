@@ -455,7 +455,7 @@ void formNhapDauSach(ListDauSach& ds, DauSach* dsPtr, bool isThemMoi) {
         gotoxy(winX + 17, winY + 7); cout << string(35, ' '); gotoxy(winX + 17, winY + 7); cout << soTrang;
         gotoxy(winX + 17, winY + 8); cout << string(35, ' '); gotoxy(winX + 17, winY + 8); cout << namXB;
 
-        int status;
+        int status = INPUT_CANCEL;
         switch (currentField) {
             case 0: status = isThemMoi ? nhapChuoiForm(winX + 17, winY + 3, isbn, 20) : INPUT_DOWN; break;
             case 1: status = nhapChuoiForm(winX + 17, winY + 4, tenSach, 100, false, true); break;
@@ -566,7 +566,7 @@ void formNhapDocGia(QuanLyDocGia& ql, DocGia* dg, bool isThemMoi) {
             cout << "  (<- / -> NAM <-> NU)";
             resetColor();
         }
-        int status;
+        int status = INPUT_CANCEL;
         switch (currentField) {
             case 0:
                 status = nhapChuoiForm(winX + 13, winY + 3, ho, 50, false, true);
@@ -603,10 +603,10 @@ void formNhapDocGia(QuanLyDocGia& ql, DocGia* dg, bool isThemMoi) {
             return;
         } else if (status == INPUT_OK) {
             currentField = (currentField + 1);
-            if (currentField >= 3) { // Reached end of form, process save
+            if (currentField >= 3) {
                 if (strlen(ho) == 0 || strlen(ten) == 0) {
                     gotoxy(winX + 2, winY + 7); setColor(31); cout << "Ho va Ten khong duoc de trong!"; resetColor();
-                    currentField = (strlen(ho) == 0) ? 0 : 1; // Focus on the empty field
+                    currentField = (strlen(ho) == 0) ? 0 : 1;
                     _getch();
                     gotoxy(winX + 2, winY + 7); cout << string(winW - 4, ' ');
                     continue;
@@ -614,6 +614,10 @@ void formNhapDocGia(QuanLyDocGia& ql, DocGia* dg, bool isThemMoi) {
 
                 if (isThemMoi) {
                     int maThe = taoMaTheMoi(ql.root);
+                    if (maThe == -1) {
+                        gotoxy(winX + 2, winY + 7); setColor(31); cout << "Loi: Het ma the kha dung!"; resetColor();
+                        _getch(); return;
+                    }
                     DocGia* newDg = taoDocGia(maThe);
                     strcpy_s(newDg->ho, ho);
                     strcpy_s(newDg->ten, ten);
@@ -1094,7 +1098,9 @@ void runMenu() {
             saveDauSach("Input_file/DauSach.txt", ds);
             luuKhoMaThe();
             cout << "Da luu du lieu. Tam biet!\n";
-            
+
+            giaiPhongDanhSachDauSach(ds);
+            giaiPhongCay(qlDocGia.root);
             break;
         }
 
