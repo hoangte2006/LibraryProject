@@ -2,7 +2,7 @@
 #include "Structs.h"
 
 // Khoi tao va luu tru ma the
-void khoiTaoKhoMaThe(TREE_DocGia root);
+void khoiTaoKhoMaThe();
 void luuKhoMaThe();
 int taoMaTheMoi(TREE_DocGia root);
 

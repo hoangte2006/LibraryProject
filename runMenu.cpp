@@ -119,10 +119,14 @@ int chonTuBangDocGia(QuanLyDocGia& ql) {
     int full_n = 0;
     BSTtoArray(ql.root, fullArr, full_n);
 
-    char searchKeyword[100] = "";
+    char searchKeyword[100] = ""; 
+    int vtSearch = 0;
     bool searchMode = false; 
+    bool isTypingSearch = false;
     int luaChon = 0;
     const int ITEM_PER_PAGE = 10;
+
+    system("cls");
 
     while (true) {
         DocGia** displayArr = new DocGia*[full_n];
@@ -143,69 +147,101 @@ int chonTuBangDocGia(QuanLyDocGia& ql) {
             n = full_n;
         }
 
-        system("cls");
+        gotoxy(0, 0); // ve de len ma khong giat
+
         if (n == 0) {
-            cout << "--- CHON DOC GIA ---\n";
-            cout << "Khong tim thay doc gia nao khop voi '" << searchKeyword << "'!\n\n";
-            cout << "(F) de tim kiem lai | ESC de thoat\n";
+            cout << "--- CHON DOC GIA ---" << string(50, ' ') << "\n";
+            if (isTypingSearch || searchMode) {
+                cout << "Tim kiem: " << searchKeyword << (isTypingSearch ? "_" : "") << string(40, ' ') << "\n";
+            } else {
+                cout << string(80, ' ') << "\n";
+            }
+            cout << "Khong tim thay doc gia nao khop voi '" << searchKeyword << "'!" << string(30, ' ') << "\n";
+            for(int i=0; i<13; ++i) cout << string(80, ' ') << "\n"; 
         } else {
             if (luaChon >= n) luaChon = max(0, n - 1);
             int tongTrang = (n > 0) ? ((n - 1) / ITEM_PER_PAGE + 1) : 1;
             int trang = luaChon / ITEM_PER_PAGE;
 
-            cout << "--- CHON DOC GIA (Trang " << trang + 1 << "/" << tongTrang << ") ---\n";
-            if (searchMode) cout << "Tim kiem: '" << searchKeyword << "'\n";
-            cout << "   ┌" << string(12, '-') << "┬" << string(27, '-') << "┬" << string(12, '-') << "┬" << string(17, '-') << "┐" << endl;
-            cout << "   │ " << left << setw(10) << "Ma The" << " │ " << left << setw(25) << "Ho Ten" << " │ " << left << setw(10) << "Gioi Tinh" << " │ " << left << setw(15) << "Trang Thai" << " │" << endl;
-            cout << "   ├" << string(12, '-') << "┼" << string(27, '-') << "┼" << string(12, '-') << "┼" << string(17, '-') << "┤" << endl;
+            cout << "--- CHON DOC GIA (Trang " << trang + 1 << "/" << tongTrang << ") ---" << string(30, ' ') << "\n";
+            if (isTypingSearch || searchMode) {
+                cout << "Tim kiem: " << searchKeyword << (isTypingSearch ? "_" : "") << string(40, ' ') << "\n";
+            } else {
+                cout << string(80, ' ') << "\n";
+            }
+            cout << "   ┌" << string(12, '-') << "┬" << string(27, '-') << "┬" << string(12, '-') << "┬" << string(17, '-') << "┐   " << endl;
+            cout << "   │ " << left << setw(10) << "Ma The" << " │ " << left << setw(25) << "Ho Ten" << " │ " << left << setw(10) << "Gioi Tinh" << " │ " << left << setw(15) << "Trang Thai" << " │   " << endl;
+            cout << "   ├" << string(12, '-') << "┼" << string(27, '-') << "┼" << string(12, '-') << "┼" << string(17, '-') << "┤   " << endl;
 
             int start = trang * ITEM_PER_PAGE;
             int end = min(start + ITEM_PER_PAGE, n);
 
-            for (int i = start; i < end; i++) {
-                if (i == luaChon) { setColor(47); cout << ">> "; } 
-                else { cout << "   "; }
+            for (int i = 0; i < ITEM_PER_PAGE; i++) {
+                if (start + i < end) {
+                    int idx = start + i;
+                    if (idx == luaChon) { setColor(47); cout << ">> "; } 
+                    else { cout << "   "; }
 
-                string hoTen = string(displayArr[i]->ho) + " " + string(displayArr[i]->ten);
-                if (hoTen.length() > 25) hoTen = hoTen.substr(0, 22) + "...";
+                    string hoTen = string(displayArr[idx]->ho) + " " + string(displayArr[idx]->ten);
+                    if (hoTen.length() > 25) hoTen = hoTen.substr(0, 22) + "...";
 
-                cout << "│ " << left << setw(10) << displayArr[i]->maThe << " │ " << left << setw(25) << hoTen << " │ " << left << setw(10) << displayArr[i]->giotinh << " │ " << left << setw(15) << (displayArr[i]->trangThaiThe == 1 ? "Hoat dong" : "Khoa") << " │";
-                
-                if (i == luaChon) resetColor();
-                cout << endl;
+                    cout << "│ " << left << setw(10) << displayArr[idx]->maThe << " │ " << left << setw(25) << hoTen << " │ " << left << setw(10) << displayArr[idx]->giotinh << " │ " << left << setw(15) << (displayArr[idx]->trangThaiThe == 1 ? "Hoat dong" : "Khoa") << " │   ";
+                    
+                    if (idx == luaChon) resetColor();
+                    cout << endl;
+                } else {
+                    cout << "   │ " << string(10, ' ') << " │ " << string(25, ' ') << " │ " << string(10, ' ') << " │ " << string(15, ' ') << " │   \n";
+                }
             }
 
-            cout << "   └" << string(12, '-') << "┴" << string(27, '-') << "┴" << string(12, '-') << "┴" << string(17, '-') << "┘" << endl;
-            cout << "   (Mui ten: Len/Xuong, PgUp/PgDn, Enter: Chon, F: Tim, ESC: Thoat)\n";
+            cout << "   └" << string(12, '-') << "┴" << string(27, '-') << "┴" << string(12, '-') << "┴" << string(17, '-') << "┘   " << endl;
         }
 
+        setColor(36);
+        cout << "   (Mui ten: Len/Xuong, PgUp/PgDn, Enter: Chon, F: Tim, ESC: Thoat)" << string(10, ' ') << "\n";
+        resetColor();
+        
+        // Xoa cac dong thua ben duoi de tranh bi luu lai chu cua khung cu
+        for(int i=0; i<3; ++i) cout << string(80, ' ') << "\n";
+
         int key = _getch();
-        if (key == 'f' || key == 'F') {
-            showCursor(true);
-            gotoxy(0, 20); cout << string(80, ' ');
-            gotoxy(0, 20);
-            if (nhapChuoiTuDo("Tim kiem (Ma The/Ten, de trong de xem tat ca): ", searchKeyword, 100)) {
-                searchMode = (strlen(searchKeyword) > 0);
-                luaChon = 0;
+        
+        if (isTypingSearch) {
+            if (key == 27) { 
+                isTypingSearch = false;
+            } else if (key == 13) { 
+                isTypingSearch = false;
+            } else if (key == 8) { 
+                if (vtSearch > 0) {
+                    vtSearch--; searchKeyword[vtSearch] = '\0'; searchMode = (vtSearch > 0); luaChon = 0;
+                } else { searchMode = false; }
+            } else if (key == 224 || key == 0) { 
+                key = _getch();
+                if (key == 72) luaChon = max(0, luaChon - 1);
+                else if (key == 80) luaChon = min(n - 1, luaChon + 1);
+                else if (key == 73) luaChon = max(0, luaChon - ITEM_PER_PAGE);
+                else if (key == 81) luaChon = min(n - 1, luaChon + ITEM_PER_PAGE);
+            } else if (isprint(key) && vtSearch < 99) {
+                searchKeyword[vtSearch++] = (char)key; searchKeyword[vtSearch] = '\0'; searchMode = true; luaChon = 0;
             }
-            showCursor(false);
-        } else if (key == 224) {
-            key = _getch();
-            if (key == 72) luaChon = max(0, luaChon - 1); // UP
-            else if (key == 80) luaChon = min(n - 1, luaChon + 1); // DOWN
-            else if (key == 73) luaChon = max(0, luaChon - ITEM_PER_PAGE); // PGUP
-            else if (key == 81) luaChon = min(n - 1, luaChon + 10); // PGDN
-        } else if (key == 13) {
-            if (n > 0) {
-                int maThe = displayArr[luaChon]->maThe;
-                delete[] displayArr;
-                delete[] fullArr;
-                return maThe;
+        } else {
+            if (key == 'f' || key == 'F') {
+                isTypingSearch = true;
+                searchMode = true;
+            } else if (key == 224 || key == 0) {
+                key = _getch();
+                if (key == 72) luaChon = max(0, luaChon - 1); 
+                else if (key == 80) luaChon = min(n - 1, luaChon + 1);
+                else if (key == 73) luaChon = max(0, luaChon - ITEM_PER_PAGE);
+                else if (key == 81) luaChon = min(n - 1, luaChon + ITEM_PER_PAGE);
+            } else if (key == 13) {
+                if (n > 0) {
+                    int maThe = displayArr[luaChon]->maThe;
+                    delete[] displayArr; delete[] fullArr; return maThe;
+                }
+            } else if (key == 27) {
+                delete[] displayArr; delete[] fullArr; return -1;
             }
-        } else if (key == 27) {
-            delete[] displayArr;
-            delete[] fullArr;
-            return -1;
         }
         delete[] displayArr;
     }
@@ -220,53 +256,140 @@ DauSach* chonTuBangDauSach(ListDauSach& ds, DocGia* dg = nullptr) {
     int luaChon = 0;
     int trang = 0;
     const int ITEM_PER_PAGE = 10;
-    int tongTrang = (ds.n > 0) ? ((ds.n - 1) / ITEM_PER_PAGE + 1) : 1;
+    char searchKeyword[100] = "";
+    int vtSearch = 0;
+    bool searchMode = false;
+    bool isTypingSearch = false;
+
+    system("cls"); 
 
     while (true) {
-        system("cls");
-        if (dg != nullptr) {
-            setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
-            xemSachDangMuon(dg, ds);
-            cout << "------------------------------------------\n";
-        }
-        cout << "--- CHON DAU SACH (Trang " << trang + 1 << "/" << tongTrang << ") ---\n";
-        cout << "   ┌" << string(17, '-') << "┬" << string(32, '-') << "┬" << string(22, '-') << "┬" << string(17, '-') << "┐" << endl;
-        cout << "   │ " << left << setw(15) << "ISBN" << " │ " << left << setw(30) << "Ten Sach" << " │ " << left << setw(20) << "Tac Gia" << " │ " << left << setw(15) << "The Loai" << " │" << endl;
-        cout << "   ├" << string(17, '-') << "┼" << string(32, '-') << "┼" << string(22, '-') << "┼" << string(17, '-') << "┤" << endl;
+        DauSach** displayArr = new DauSach*[ds.n];
+        int n = 0;
 
-        int start = trang * ITEM_PER_PAGE;
-        int end = min(start + ITEM_PER_PAGE, ds.n);
-
-        for (int i = start; i < end; i++) {
-            if (i == luaChon) { setColor(47); cout << ">> "; } 
-            else { cout << "   "; }
-
-            string tenSach = ds.nodes[i]->tenSach;
-            if (tenSach.length() > 30) tenSach = tenSach.substr(0, 27) + "...";
-            string tacGia = ds.nodes[i]->tacGia;
-            if (tacGia.length() > 20) tacGia = tacGia.substr(0, 17) + "...";
-
-            cout << "│ " << left << setw(15) << ds.nodes[i]->ISBN << " │ " << left << setw(30) << tenSach << " │ " << left << setw(20) << tacGia << " │ " << left << setw(15) << ds.nodes[i]->theLoai << " │";
+        if (searchMode && strlen(searchKeyword) > 0) {
+            string keywordLower = searchKeyword;
+            transform(keywordLower.begin(), keywordLower.end(), keywordLower.begin(), [](unsigned char c){ return tolower(c); });
             
-            if (i == luaChon) resetColor();
-            cout << endl;
+            string keywordUpper = searchKeyword;
+            transform(keywordUpper.begin(), keywordUpper.end(), keywordUpper.begin(), [](unsigned char c){ return toupper(c); });
+            for (int i = 0; i < ds.n; i++) {
+                if (strstr(ds.nodes[i]->tenSachSearch, keywordLower.c_str()) != nullptr ||
+                    strstr(ds.nodes[i]->tacGiaSearch, keywordLower.c_str()) != nullptr ||
+                    strstr(ds.nodes[i]->ISBN, keywordUpper.c_str()) != nullptr) {
+                    displayArr[n++] = ds.nodes[i];
+                }
+            }
+        } else {
+            for (int i = 0; i < ds.n; i++) {
+                displayArr[n++] = ds.nodes[i];
+            }
         }
-        cout << "   └" << string(17, '-') << "┴" << string(32, '-') << "┴" << string(22, '-') << "┴" << string(17, '-') << "┘" << endl;
-        cout << "   (Mui ten: Len/Xuong, PgUp/PgDn: Chuyen trang, Enter: Chon, ESC: Thoat)\n";
+
+        gotoxy(0, 0);
+        if (dg != nullptr) {
+            setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===" << string(30, ' ') << "\n"; resetColor();
+            xemSachDangMuon(dg, ds);
+            cout << "------------------------------------------" << string(30, ' ') << "\n";
+        }
+        
+        if (n == 0) {
+            cout << "--- CHON DAU SACH ---" << string(30, ' ') << "\n";
+            if (isTypingSearch || searchMode) {
+                cout << "Tim kiem: " << searchKeyword << (isTypingSearch ? "_" : "") << string(40, ' ') << "\n";
+            } else {
+                cout << string(80, ' ') << "\n";
+            }
+            cout << "Khong tim thay dau sach nao khop voi '" << searchKeyword << "'!" << string(30, ' ') << "\n";
+            for(int i=0; i<15; ++i) cout << string(80, ' ') << "\n"; 
+        } else {
+            if (luaChon >= n) luaChon = max(0, n - 1);
+            int tongTrang = (n > 0) ? ((n - 1) / ITEM_PER_PAGE + 1) : 1;
+            trang = luaChon / ITEM_PER_PAGE;
+            
+            cout << "--- CHON DAU SACH (Trang " << trang + 1 << "/" << tongTrang << ") ---" << string(30, ' ') << "\n";
+            if (isTypingSearch || searchMode) {
+                cout << "Tim kiem: " << searchKeyword << (isTypingSearch ? "_" : "") << string(40, ' ') << "\n";
+            } else {
+                cout << string(80, ' ') << "\n";
+            }
+            
+            cout << "   ┌" << string(17, '-') << "┬" << string(32, '-') << "┬" << string(22, '-') << "┬" << string(17, '-') << "┐   " << endl;
+            cout << "   │ " << left << setw(15) << "ISBN" << " │ " << left << setw(30) << "Ten Sach" << " │ " << left << setw(20) << "Tac Gia" << " │ " << left << setw(15) << "The Loai" << " │   " << endl;
+            cout << "   ├" << string(17, '-') << "┼" << string(32, '-') << "┼" << string(22, '-') << "┼" << string(17, '-') << "┤   " << endl;
+
+            int start = trang * ITEM_PER_PAGE;
+            int end = min(start + ITEM_PER_PAGE, n);
+
+            for (int i = 0; i < ITEM_PER_PAGE; i++) {
+                if (start + i < end) {
+                    int idx = start + i;
+                    if (idx == luaChon) { setColor(47); cout << ">> "; } 
+                    else { cout << "   "; }
+
+                    string tenSach = displayArr[idx]->tenSach;
+                    if (tenSach.length() > 30) tenSach = tenSach.substr(0, 27) + "...";
+                    string tacGia = displayArr[idx]->tacGia;
+                    if (tacGia.length() > 20) tacGia = tacGia.substr(0, 17) + "...";
+
+                    cout << "│ " << left << setw(15) << displayArr[idx]->ISBN << " │ " << left << setw(30) << tenSach << " │ " << left << setw(20) << tacGia << " │ " << left << setw(15) << displayArr[idx]->theLoai << " │   ";
+                    
+                    if (idx == luaChon) resetColor();
+                    cout << endl;
+                } else {
+                    cout << "   │ " << string(15, ' ') << " │ " << string(30, ' ') << " │ " << string(20, ' ') << " │ " << string(15, ' ') << " │   \n";
+                }
+            }
+            cout << "   └" << string(17, '-') << "┴" << string(32, '-') << "┴" << string(22, '-') << "┴" << string(17, '-') << "┘   " << endl;
+        }
+        
+        setColor(36);
+        cout << "   (Mui ten: Len/Xuong, PgUp/PgDn, Enter: Chon, F: Tim, ESC: Thoat)" << string(10, ' ') << "\n";
+        resetColor();
+
+        for(int i=0; i<3; ++i) cout << string(80, ' ') << "\n";
 
         int key = _getch();
-        if (key == 224) {
-            key = _getch();
-            if (key == 72) luaChon = max(0, luaChon - 1);
-            else if (key == 80) luaChon = min(ds.n - 1, luaChon + 1);
-            else if (key == 73) luaChon = max(0, luaChon - ITEM_PER_PAGE);
-            else if (key == 81) luaChon = min(ds.n - 1, luaChon + ITEM_PER_PAGE);
-            trang = luaChon / ITEM_PER_PAGE;
-        } else if (key == 13) {
-            return ds.nodes[luaChon];
-        } else if (key == 27) {
-            return nullptr;
+        if (isTypingSearch) {
+            if (key == 27) { 
+                isTypingSearch = false;
+            } else if (key == 13) { 
+                isTypingSearch = false;
+            } else if (key == 8) { 
+                if (vtSearch > 0) {
+                    vtSearch--; searchKeyword[vtSearch] = '\0'; searchMode = (vtSearch > 0); luaChon = 0;
+                } else { searchMode = false; }
+            } else if (key == 224 || key == 0) { 
+                key = _getch();
+                if (key == 72) luaChon = max(0, luaChon - 1);
+                else if (key == 80) luaChon = min(n - 1, luaChon + 1);
+                else if (key == 73) luaChon = max(0, luaChon - ITEM_PER_PAGE);
+                else if (key == 81) luaChon = min(n - 1, luaChon + ITEM_PER_PAGE);
+            } else if (isprint(key) && vtSearch < 99) {
+                searchKeyword[vtSearch++] = (char)key; searchKeyword[vtSearch] = '\0'; searchMode = true; luaChon = 0;
+            }
+        } else {
+            if (key == 'f' || key == 'F') {
+                isTypingSearch = true;
+                searchMode = true;
+            } else if (key == 224 || key == 0) {
+                key = _getch();
+                if (key == 72) luaChon = max(0, luaChon - 1);
+                else if (key == 80) luaChon = min(n - 1, luaChon + 1);
+                else if (key == 73) luaChon = max(0, luaChon - ITEM_PER_PAGE);
+                else if (key == 81) luaChon = min(n - 1, luaChon + ITEM_PER_PAGE);
+            } else if (key == 13) {
+                if (n > 0) {
+                    DauSach* selected = displayArr[luaChon];
+                    delete[] displayArr;
+                    return selected;
+                }
+            } else if (key == 27) {
+                delete[] displayArr;
+                return nullptr;
+            }
         }
+        delete[] displayArr;
     }
 }
 
@@ -294,34 +417,44 @@ Sach* chonCuonSachTuDauSach(DauSach* dauSach, DocGia* dg = nullptr, ListDauSach*
     int luaChon = 0;
     const int ITEM_PER_PAGE = 10;
     
+    system("cls");
+
     while (true) {
-        system("cls");
+        gotoxy(0, 0);
         if (dg != nullptr && ds != nullptr) {
-            setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
+            setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===" << string(30, ' ') << "\n"; resetColor();
             xemSachDangMuon(dg, *ds);
-            cout << "------------------------------------------\n";
+            cout << "------------------------------------------" << string(30, ' ') << "\n";
         }
         int tongTrang = (n > 0) ? ((n - 1) / ITEM_PER_PAGE + 1) : 1;
         int trang = luaChon / ITEM_PER_PAGE;
 
-        cout << "--- CHON CUON SACH DE MUON (Trang " << trang + 1 << "/" << tongTrang << ") ---\n";
-        cout << "Dau sach: " << dauSach->tenSach << "\n\n";
-        cout << "   ┌" << string(26, '-') << "┬" << string(22, '-') << "┐" << endl;
-        cout << "   │ " << left << setw(24) << "Ma Sach" << " │ " << left << setw(20) << "Vi Tri" << " │" << endl;
-        cout << "   ├" << string(26, '-') << "┼" << string(22, '-') << "┤" << endl;
+        cout << "--- CHON CUON SACH DE MUON (Trang " << trang + 1 << "/" << tongTrang << ") ---" << string(30, ' ') << "\n";
+        cout << "Dau sach: " << dauSach->tenSach << string(40, ' ') << "\n\n";
+        cout << "   ┌" << string(26, '-') << "┬" << string(22, '-') << "┐   " << endl;
+        cout << "   │ " << left << setw(24) << "Ma Sach" << " │ " << left << setw(20) << "Vi Tri" << " │   " << endl;
+        cout << "   ├" << string(26, '-') << "┼" << string(22, '-') << "┤   " << endl;
 
         int start = trang * ITEM_PER_PAGE;
         int end = min(start + ITEM_PER_PAGE, n);
 
-        for (int i = start; i < end; i++) {
-            if (i == luaChon) { setColor(47); cout << ">> "; } 
-            else { cout << "   "; }
-            cout << "│ " << left << setw(24) << availableBooks[i]->maSach << " │ " << left << setw(20) << availableBooks[i]->viTri << " │";
-            if (i == luaChon) resetColor();
-            cout << endl;
+        for (int i = 0; i < ITEM_PER_PAGE; i++) {
+            if (start + i < end) {
+                int idx = start + i;
+                if (idx == luaChon) { setColor(47); cout << ">> "; } 
+                else { cout << "   "; }
+                cout << "│ " << left << setw(24) << availableBooks[idx]->maSach << " │ " << left << setw(20) << availableBooks[idx]->viTri << " │   ";
+                if (idx == luaChon) resetColor();
+                cout << endl;
+            } else {
+                cout << "   │ " << string(24, ' ') << " │ " << string(20, ' ') << " │   \n";
+            }
         }
-        cout << "   └" << string(26, '-') << "┴" << string(22, '-') << "┘" << endl;
-        cout << "   (Mui ten: Chon, Enter: Xac nhan, ESC: Huy)\n";
+        cout << "   └" << string(26, '-') << "┴" << string(22, '-') << "┘   " << endl;
+        
+        setColor(36);
+        cout << "   (Mui ten: Chon, Enter: Xac nhan, ESC: Huy)" << string(30, ' ') << "\n";
+        resetColor();
 
         int key = _getch();
         if (key == 224) {
@@ -370,40 +503,50 @@ const char* chonSachDangMuonUI(DocGia* docGia, ListDauSach& ds) {
     int luaChon = 0;
     const int ITEM_PER_PAGE = 10;
     
+    system("cls");
+
     while (true) {
-        system("cls");
+        gotoxy(0, 0);
         int tongTrang = (n > 0) ? ((n - 1) / ITEM_PER_PAGE + 1) : 1;
         int trang = luaChon / ITEM_PER_PAGE;
 
-        setColor(33); cout << "=== DOC GIA: " << docGia->ho << " " << docGia->ten << " ===\n"; resetColor();
+        setColor(33); cout << "=== DOC GIA: " << docGia->ho << " " << docGia->ten << " ===" << string(30, ' ') << "\n"; resetColor();
         xemSachDangMuon(docGia, ds);
-        cout << "------------------------------------------\n";
-        cout << "--- CHON SACH DE TRA/BAO MAT (Trang " << trang + 1 << "/" << tongTrang << ") ---\n";
-        cout << "   ┌" << string(26, '-') << "┬" << string(40, '-') << "┬" << string(15, '-') << "┐" << endl;
-        cout << "   │ " << left << setw(24) << "Ma Sach" << " │ " << left << setw(38) << "Ten Sach" << " │ " << left << setw(13) << "Ngay Muon" << " │" << endl;
-        cout << "   ├" << string(26, '-') << "┼" << string(40, '-') << "┼" << string(15, '-') << "┤" << endl;
+        cout << "------------------------------------------" << string(30, ' ') << "\n";
+        cout << "--- CHON SACH DE TRA/BAO MAT (Trang " << trang + 1 << "/" << tongTrang << ") ---" << string(30, ' ') << "\n";
+        cout << "   ┌" << string(26, '-') << "┬" << string(40, '-') << "┬" << string(15, '-') << "┐   " << endl;
+        cout << "   │ " << left << setw(24) << "Ma Sach" << " │ " << left << setw(38) << "Ten Sach" << " │ " << left << setw(13) << "Ngay Muon" << " │   " << endl;
+        cout << "   ├" << string(26, '-') << "┼" << string(40, '-') << "┼" << string(15, '-') << "┤   " << endl;
 
         int start = trang * ITEM_PER_PAGE;
         int end = min(start + ITEM_PER_PAGE, n);
 
-        for (int i = start; i < end; i++) {
-            if (i == luaChon) { setColor(47); cout << ">> "; } 
-            else { cout << "   "; }
+        for (int i = 0; i < ITEM_PER_PAGE; i++) {
+            if (start + i < end) {
+                int idx = start + i;
+                if (idx == luaChon) { setColor(47); cout << ">> "; } 
+                else { cout << "   "; }
 
-            DauSach* dauSach = nullptr;
-            timSachTheoMa(ds, borrowedItems[i]->maSach, dauSach);
-            string tenSach = (dauSach != nullptr) ? dauSach->tenSach : "N/A";
-            if (tenSach.length() > 38) tenSach = tenSach.substr(0, 35) + "...";
-            
-            char ngayMuonStr[12];
-            snprintf(ngayMuonStr, sizeof(ngayMuonStr), "%02d/%02d/%d", borrowedItems[i]->ngayMuon.ngay, borrowedItems[i]->ngayMuon.thang, borrowedItems[i]->ngayMuon.nam);
+                DauSach* dauSach = nullptr;
+                timSachTheoMa(ds, borrowedItems[idx]->maSach, dauSach);
+                string tenSach = (dauSach != nullptr) ? dauSach->tenSach : "N/A";
+                if (tenSach.length() > 38) tenSach = tenSach.substr(0, 35) + "...";
+                
+                char ngayMuonStr[12];
+                snprintf(ngayMuonStr, sizeof(ngayMuonStr), "%02d/%02d/%d", borrowedItems[idx]->ngayMuon.ngay, borrowedItems[idx]->ngayMuon.thang, borrowedItems[idx]->ngayMuon.nam);
 
-            cout << "│ " << left << setw(24) << borrowedItems[i]->maSach << " │ " << left << setw(38) << tenSach << " │ " << left << setw(13) << ngayMuonStr << " │";
-            if (i == luaChon) resetColor();
-            cout << endl;
+                cout << "│ " << left << setw(24) << borrowedItems[idx]->maSach << " │ " << left << setw(38) << tenSach << " │ " << left << setw(13) << ngayMuonStr << " │   ";
+                if (idx == luaChon) resetColor();
+                cout << endl;
+            } else {
+                cout << "   │ " << string(24, ' ') << " │ " << string(38, ' ') << " │ " << string(13, ' ') << " │   \n";
+            }
         }
-        cout << "   └" << string(26, '-') << "┴" << string(40, '-') << "┴" << string(15, '-') << "┘" << endl;
-        cout << "   (Mui ten: Chon, Enter: Xac nhan, ESC: Huy)\n";
+        cout << "   └" << string(26, '-') << "┴" << string(40, '-') << "┴" << string(15, '-') << "┘   " << endl;
+        
+        setColor(36);
+        cout << "   (Mui ten: Chon, Enter: Xac nhan, ESC: Huy)" << string(30, ' ') << "\n";
+        resetColor();
 
         int key = _getch();
         if (key == 224) {
@@ -455,7 +598,7 @@ void formNhapDauSach(ListDauSach& ds, DauSach* dsPtr, bool isThemMoi) {
         gotoxy(winX + 17, winY + 7); cout << string(35, ' '); gotoxy(winX + 17, winY + 7); cout << soTrang;
         gotoxy(winX + 17, winY + 8); cout << string(35, ' '); gotoxy(winX + 17, winY + 8); cout << namXB;
 
-        int status = INPUT_CANCEL;
+        int status;
         switch (currentField) {
             case 0: status = isThemMoi ? nhapChuoiForm(winX + 17, winY + 3, isbn, 20) : INPUT_DOWN; break;
             case 1: status = nhapChuoiForm(winX + 17, winY + 4, tenSach, 100, false, true); break;
@@ -566,7 +709,7 @@ void formNhapDocGia(QuanLyDocGia& ql, DocGia* dg, bool isThemMoi) {
             cout << "  (<- / -> NAM <-> NU)";
             resetColor();
         }
-        int status = INPUT_CANCEL;
+        int status;
         switch (currentField) {
             case 0:
                 status = nhapChuoiForm(winX + 13, winY + 3, ho, 50, false, true);
@@ -603,10 +746,10 @@ void formNhapDocGia(QuanLyDocGia& ql, DocGia* dg, bool isThemMoi) {
             return;
         } else if (status == INPUT_OK) {
             currentField = (currentField + 1);
-            if (currentField >= 3) {
+            if (currentField >= 3) { // Reached end of form, process save
                 if (strlen(ho) == 0 || strlen(ten) == 0) {
                     gotoxy(winX + 2, winY + 7); setColor(31); cout << "Ho va Ten khong duoc de trong!"; resetColor();
-                    currentField = (strlen(ho) == 0) ? 0 : 1;
+                    currentField = (strlen(ho) == 0) ? 0 : 1; // Focus on the empty field
                     _getch();
                     gotoxy(winX + 2, winY + 7); cout << string(winW - 4, ' ');
                     continue;
@@ -614,10 +757,6 @@ void formNhapDocGia(QuanLyDocGia& ql, DocGia* dg, bool isThemMoi) {
 
                 if (isThemMoi) {
                     int maThe = taoMaTheMoi(ql.root);
-                    if (maThe == -1) {
-                        gotoxy(winX + 2, winY + 7); setColor(31); cout << "Loi: Het ma the kha dung!"; resetColor();
-                        _getch(); return;
-                    }
                     DocGia* newDg = taoDocGia(maThe);
                     strcpy_s(newDg->ho, ho);
                     strcpy_s(newDg->ten, ten);
@@ -645,7 +784,11 @@ void quanLySachUI(ListDauSach& ds) {
     int luaChon = 0;
     const int ITEM_PER_PAGE = 15;
     char searchKeyword[100] = "";
+    int vtSearch = 0;
     bool searchMode = false;
+    bool isTypingSearch = false;
+
+    system("cls");
 
     while (true) {
         DauSach** displayArr = new DauSach*[ds.n];
@@ -670,97 +813,192 @@ void quanLySachUI(ListDauSach& ds) {
             }
         }
 
+        gotoxy(0, 0); // Ve de len ma khong dung cls chong giat
+
         if (n == 0) {
-            system("cls"); showCursor(false);
-            setColor(33); cout << "--- QUAN LY DAU SACH ---\n\n"; resetColor();
-            if (searchMode) cout << "Khong tim thay dau sach nao khop voi '" << searchKeyword << "'!\n\n";
-            else cout << "Danh sach dau sach rong!\n\n";
-            setColor(36); cout << "   (T)hem | (F)im | ESC: Quay lai\n"; resetColor();
+            setColor(33); cout << "--- QUAN LY DAU SACH ---" << string(50, ' ') << "\n\n"; resetColor();
+            if (isTypingSearch || searchMode) {
+                cout << "Tim kiem: " << searchKeyword << (isTypingSearch ? "_" : "") << string(40, ' ') << "\n";
+            } else {
+                cout << string(80, ' ') << "\n";
+            }
+            cout << "Khong tim thay dau sach nao khop voi '" << searchKeyword << "'!" << string(30, ' ') << "\n";
+            for(int i=0; i<18; ++i) cout << string(80, ' ') << "\n"; 
+        } else {
+            if (luaChon >= n) luaChon = max(0, n - 1);
+            int tongTrang = (n > 0) ? ((n - 1) / ITEM_PER_PAGE + 1) : 1;
+            int trang = luaChon / ITEM_PER_PAGE;
+
+            setColor(33); 
+            if(searchMode) cout << "--- TIM KIEM: '" << searchKeyword << "' (" << n << " ket qua) - Trang " << trang + 1 << "/" << tongTrang << " ---" << string(15, ' ') << "\n\n";
+            else cout << "--- QUAN LY DAU SACH (Trang " << trang + 1 << "/" << tongTrang << ") ---" << string(30, ' ') << "\n\n";
+            resetColor();
+
+            if (isTypingSearch || searchMode) {
+                cout << "Tim kiem: " << searchKeyword << (isTypingSearch ? "_" : "") << string(40, ' ') << "\n";
+            } else {
+                cout << string(80, ' ') << "\n";
+            }
             
-            int key = _getch();
-            if (key == 't' || key == 'T') {
-                formNhapDauSach(ds, nullptr, true);
-                showCursor(false);
-                cout << "\nNhan phim bat ky de tiep tuc..."; _getch();
-            } else if (key == 'f' || key == 'F') {
-                system("cls"); showCursor(true);
-                if (nhapChuoiTuDo("Tim kiem (ISBN/Ten/Tac gia): ", searchKeyword, 100)) {
-                    searchMode = (strlen(searchKeyword) > 0);
-                    luaChon = 0;
+            cout << "   ┌" << string(17, '-') << "┬" << string(32, '-') << "┬" << string(22, '-') << "┬" << string(17, '-') << "┐   " << endl;
+            cout << "   │ " << left << setw(15) << "ISBN" << " │ " << left << setw(30) << "Ten Sach" << " │ " << left << setw(20) << "Tac Gia" << " │ " << left << setw(15) << "The Loai" << " │   " << endl;
+            cout << "   ├" << string(17, '-') << "┼" << string(32, '-') << "┼" << string(22, '-') << "┼" << string(17, '-') << "┤   " << endl;
+
+            int start = trang * ITEM_PER_PAGE;
+            int end = min(start + ITEM_PER_PAGE, n);
+
+            for (int i = 0; i < ITEM_PER_PAGE; i++) {
+                if (start + i < end) {
+                    int idx = start + i;
+                    if (idx == luaChon) { setColor(47); cout << ">> "; } 
+                    else { cout << "   "; }
+
+                    string tenSach = displayArr[idx]->tenSach; if (tenSach.length() > 30) tenSach = tenSach.substr(0, 27) + "...";
+                    string tacGia = displayArr[idx]->tacGia; if (tacGia.length() > 20) tacGia = tacGia.substr(0, 17) + "...";
+
+                    cout << "│ " << left << setw(15) << displayArr[idx]->ISBN << " │ " << left << setw(30) << tenSach << " │ " << left << setw(20) << tacGia << " │ " << left << setw(15) << displayArr[idx]->theLoai << " │   ";
+                    
+                    if (idx == luaChon) resetColor();
+                    cout << endl;
+                } else {
+                    cout << "   │ " << string(15, ' ') << " │ " << string(30, ' ') << " │ " << string(20, ' ') << " │ " << string(15, ' ') << " │   \n";
                 }
-            } else if (key == 27) { delete[] displayArr; return; }
-            delete[] displayArr;
-            continue;
+            }
+            cout << "   └" << string(17, '-') << "┴" << string(32, '-') << "┴" << string(22, '-') << "┴" << string(17, '-') << "┘   " << endl;
         }
         
-        if (luaChon >= n) luaChon = max(0, n - 1);
-        int tongTrang = (n > 0) ? ((n - 1) / ITEM_PER_PAGE + 1) : 1;
-        int trang = luaChon / ITEM_PER_PAGE;
-
-        system("cls"); showCursor(false);
-        setColor(33); 
-        if(searchMode) cout << "--- TIM KIEM: '" << searchKeyword << "' (" << n << " ket qua) - Trang " << trang + 1 << "/" << tongTrang << " ---\n\n";
-        else cout << "--- QUAN LY DAU SACH (Trang " << trang + 1 << "/" << tongTrang << ") ---\n\n";
-        resetColor();
-        cout << "   ┌" << string(17, '-') << "┬" << string(32, '-') << "┬" << string(22, '-') << "┬" << string(17, '-') << "┐" << endl;
-        cout << "   │ " << left << setw(15) << "ISBN" << " │ " << left << setw(30) << "Ten Sach" << " │ " << left << setw(20) << "Tac Gia" << " │ " << left << setw(15) << "The Loai" << " │" << endl;
-        cout << "   ├" << string(17, '-') << "┼" << string(32, '-') << "┼" << string(22, '-') << "┼" << string(17, '-') << "┤" << endl;
-
-        int start = trang * ITEM_PER_PAGE;
-        int end = min(start + ITEM_PER_PAGE, n);
-
-        for (int i = start; i < end; i++) {
-            if (i == luaChon) { setColor(47); cout << ">> "; } 
-            else { cout << "   "; }
-
-            string tenSach = displayArr[i]->tenSach; if (tenSach.length() > 30) tenSach = tenSach.substr(0, 27) + "...";
-            string tacGia = displayArr[i]->tacGia; if (tacGia.length() > 20) tacGia = tacGia.substr(0, 17) + "...";
-
-            cout << "│ " << left << setw(15) << displayArr[i]->ISBN << " │ " << left << setw(30) << tenSach << " │ " << left << setw(20) << tacGia << " │ " << left << setw(15) << displayArr[i]->theLoai << " │";
-            
-            if (i == luaChon) resetColor();
-            cout << endl;
-        }
-        cout << "   └" << string(17, '-') << "┴" << string(32, '-') << "┴" << string(22, '-') << "┴" << string(17, '-') << "┘" << endl;
         setColor(36);
-        cout << "\n   (T)hem | (S)ua | (X)oa | (C)uon sach | (F)im | (I)n DS | Mui ten, PgUp/Dn | ESC: Quay lai\n";
+        cout << "\n   (T) Them | (S) Sua | (X) Xoa | (C) Cuon sach | (F) Tim | (I) In DS | Mui ten, PgUp/Dn | ESC: Quay lai\n";
         resetColor();
+        
+        for(int i=0; i<3; ++i) cout << string(80, ' ') << "\n";
 
         int key = _getch();
         bool actionTaken = false;
 
-        if (key == 0 || key == 224) {
-            key = _getch();
-            if (key == 72) luaChon = max(0, luaChon - 1);
-            else if (key == 80) luaChon = min(n - 1, luaChon + 1);
-            else if (key == 73) luaChon = max(0, luaChon - ITEM_PER_PAGE);
-            else if (key == 81) luaChon = min(n - 1, luaChon + ITEM_PER_PAGE);
-            else if (key == 83) { // DELETE key
-                system("cls"); showCursor(true);
-                cout << "Ban co chac chan muon xoa dau sach ISBN: " << displayArr[luaChon]->ISBN << " khong? (Y/N): ";
-                char confirm = _getch(); cout << endl;
-                if (toupper(confirm) == 'Y') xoaDauSach(ds, displayArr[luaChon]->ISBN); else cout << "Da huy thao tac xoa.\n";
+        if (isTypingSearch) {
+            if (key == 27) { 
+                isTypingSearch = false;
+            } else if (key == 13) { 
+                isTypingSearch = false;
+            } else if (key == 8) { 
+                if (vtSearch > 0) {
+                    vtSearch--; searchKeyword[vtSearch] = '\0'; searchMode = (vtSearch > 0); luaChon = 0;
+                } else { searchMode = false; }
+            } else if (key == 224 || key == 0) { 
+                key = _getch();
+                if (key == 72) luaChon = max(0, luaChon - 1);
+                else if (key == 80) luaChon = min(n - 1, luaChon + 1);
+                else if (key == 73) luaChon = max(0, luaChon - ITEM_PER_PAGE);
+                else if (key == 81) luaChon = min(n - 1, luaChon + ITEM_PER_PAGE);
+            } else if (isprint(key) && vtSearch < 99) {
+                searchKeyword[vtSearch++] = (char)key; searchKeyword[vtSearch] = '\0'; searchMode = true; luaChon = 0;
+            }
+        } else {
+            if (key == 0 || key == 224) {
+                key = _getch();
+                if (key == 72) luaChon = max(0, luaChon - 1);
+                else if (key == 80) luaChon = min(n - 1, luaChon + 1);
+                else if (key == 73) luaChon = max(0, luaChon - ITEM_PER_PAGE);
+                else if (key == 81) luaChon = min(n - 1, luaChon + ITEM_PER_PAGE);
+                else if (key == 83) { // DELETE key
+                    int px = 15, py = 10, pw = 55, ph = 5;
+                    xoaVung(px, py, pw, ph);
+                    setColor(33);
+                    for(int i=0; i<pw; i++) { gotoxy(px+i, py); cout << "─"; gotoxy(px+i, py+ph-1); cout << "─"; }
+                    for(int i=0; i<ph; i++) { gotoxy(px, py+i); cout << "│"; gotoxy(px+pw-1, py+i); cout << "│"; }
+                    gotoxy(px, py); cout << "┌"; gotoxy(px+pw-1, py); cout << "┐"; gotoxy(px, py+ph-1); cout << "└"; gotoxy(px+pw-1, py+ph-1); cout << "┘";
+                    gotoxy(px + 2, py + 2);
+                    cout << "Xoa dau sach ISBN: " << displayArr[luaChon]->ISBN << "? (Y/N): ";
+                    char confirm = _getch();
+                    if (toupper(confirm) == 'Y') {
+                        gotoxy(px + 2, py + 2); cout << string(pw - 4, ' ');
+                        gotoxy(0, 24); 
+                        if (xoaDauSach(ds, displayArr[luaChon]->ISBN)) {
+                            gotoxy(px + 2, py + 2); setColor(32); cout << "Xoa thanh cong!"; resetColor();
+                        } else {
+                            gotoxy(px + 2, py + 2); setColor(31); cout << "Xoa that bai (sach dang muon)!"; resetColor();
+                        }
+                    } else {
+                        gotoxy(px + 2, py + 2); cout << string(pw - 4, ' ');
+                        gotoxy(px + 2, py + 2); cout << "Da huy thao tac xoa.";
+                    }
+                    Sleep(1000);
+                }
+            } 
+            else if (key == 27) { delete[] displayArr; return; }
+            else if (key == 't' || key == 'T') { formNhapDauSach(ds, nullptr, true); actionTaken = true; }
+            else if (key == 's' || key == 'S') { formNhapDauSach(ds, displayArr[luaChon], false); actionTaken = true; }
+            else if (key == 'x' || key == 'X') { 
+                ungetch(83); 
+                ungetch(224); 
+            }
+            else if (key == 'c' || key == 'C') {
+                while (true) {
+                    system("cls");
+                    inDanhSachCuonSach(displayArr[luaChon]); 
+                    setColor(36);
+                    cout << "\n\n   (T) Them cuon sach | (X) Thanh ly | ESC: Quay lai\n";
+                    resetColor();
+                    int k = _getch();
+                    if (k == 't' || k == 'T') { system("cls"); themCuonSach(displayArr[luaChon]); }
+                    else if (k == 'x' || k == 'X') {
+                        char suffix[10];
+                        cout << "\nNhap Ma Sach can thanh ly: " << displayArr[luaChon]->ISBN << "_";
+                        showCursor(true);
+                        if (nhapChuoiTuDo("", suffix, 10)) {
+                            showCursor(false);
+                            char maSach[30];
+                            bool isNumber = true;
+                            for (int i = 0; suffix[i] != '\0'; i++) if (!isdigit(suffix[i])) isNumber = false;
+                            if (isNumber && strlen(suffix) > 0) {
+                                snprintf(maSach, sizeof(maSach), "%s_%04d", displayArr[luaChon]->ISBN, atoi(suffix));
+                            } else {
+                                snprintf(maSach, sizeof(maSach), "%s_%s", displayArr[luaChon]->ISBN, suffix);
+                            }
+                            Sach* current = displayArr[luaChon]->dsSach.pHead;
+                            bool found = false;
+                            while (current != nullptr) {
+                                if (strcmp(current->maSach, maSach) == 0) {
+                                    found = true;
+                                    if (current->trangThai == 1) {
+                                        setColor(31); cout << "Khong the thanh ly. Sach dang duoc muon!\n"; resetColor();
+                                    } else if (current->trangThai == 2) {
+                                        setColor(33); cout << "Sach nay da thanh ly roi!\n"; resetColor();
+                                    } else {
+                                        current->trangThai = 2; // Cap nhat thanh ly
+                                        setColor(32); cout << "Da thanh ly sach thanh cong!\n"; resetColor();
+                                    }
+                                    break;
+                                }
+                                current = current->pNext;
+                            }
+                            if (!found) { setColor(31); cout << "Khong tim thay Ma Sach: " << maSach << "\n"; resetColor(); }
+                            cout << "Nhan phim bat ky de tiep tuc...";
+                            _getch();
+                        } else {
+                            showCursor(false);
+                        }
+                    }
+                    else if (k == 27) { break; }
+                }
                 actionTaken = true;
             }
-        } 
-        else if (key == 27) { delete[] displayArr; return; }
-        else if (key == 't' || key == 'T') { formNhapDauSach(ds, nullptr, true); actionTaken = true; }
-        else if (key == 's' || key == 'S') { formNhapDauSach(ds, displayArr[luaChon], false); actionTaken = true; }
-        else if (key == 'x' || key == 'X') { system("cls"); showCursor(true); cout << "Ban co chac chan muon xoa dau sach ISBN: " << displayArr[luaChon]->ISBN << " khong? (Y/N): "; char confirm = _getch(); cout << endl; if (toupper(confirm) == 'Y') xoaDauSach(ds, displayArr[luaChon]->ISBN); else cout << "Da huy thao tac xoa.\n"; actionTaken = true; }
-        else if (key == 'c' || key == 'C') {
-            system("cls");
-            inDanhSachCuonSach(displayArr[luaChon]); 
-            cout << "\n\n(T)-Thêm cuốn sách | ESC: Quay lai\n";
-            int k = _getch();
-            if (k == 't' || k == 'T') { system("cls"); themCuonSach(displayArr[luaChon]); }
-            actionTaken = true;
-        }
-        else if (key == 'f' || key == 'F') { system("cls"); showCursor(true); if (nhapChuoiTuDo("Tim kiem (ISBN/Ten/Tac gia): ", searchKeyword, 100)) { searchMode = (strlen(searchKeyword) > 0); luaChon = 0; } }
-        else if (key == 'i' || key == 'I') {
-            system("cls"); showCursor(true); inTheoTheLoai_TrongDoTenTangDan(ds); actionTaken = true;
+            else if (key == 'f' || key == 'F') { 
+                isTypingSearch = true; 
+                searchMode = true; 
+            }
+            else if (key == 'i' || key == 'I') {
+                system("cls"); showCursor(true); inTheoTheLoai_TrongDoTenTangDan(ds); actionTaken = true;
+            }
         }
         
-        if (actionTaken) { cout << "\nNhan phim bat ky de tiep tuc..."; _getch(); }
+        if (actionTaken) { 
+            cout << "\nNhan phim bat ky de tiep tuc..."; 
+            int k = _getch(); 
+            if (k == 0 || k == 224) _getch(); // Xoá sạch byte rác trong bộ nhớ đệm nếu người dùng lỡ bấm mũi tên
+            system("cls");
+        }
         
         delete[] displayArr;
     }
@@ -771,10 +1009,13 @@ void quanLyDocGiaUI(QuanLyDocGia& ql) {
     int luaChon = 0;
     const int ITEM_PER_PAGE = 15;
     char searchKeyword[100] = "";
+    int vtSearch = 0;
     bool searchMode = false;
+    bool isTypingSearch = false;
+
+    system("cls");
 
     while (true) {
-        // 1. Chuan bi du lieu de hien thi
         DocGia** displayArr = new DocGia*[ql.soLuongDocGia];
         int n = 0;
 
@@ -802,118 +1043,165 @@ void quanLyDocGiaUI(QuanLyDocGia& ql) {
             BSTtoArray(ql.root, displayArr, n);
         }
 
-        // 2. Hien thi khi danh sach rong
+        gotoxy(0, 0); // Ve de ma khong xoa manh chong giat
+
         if (n == 0) {
-            system("cls");
-            showCursor(false);
-            setColor(33); cout << "--- QUAN LY DOC GIA ---\n\n";
-            resetColor();
-            if (searchMode) cout << "Khong tim thay doc gia nao khop voi '" << searchKeyword << "'!\n\n";
-            else cout << "Danh sach doc gia rong!\n\n";
-            setColor(36);
-            cout << "   (T)-Thêm | (F)-Tìm | ESC: Quay lai\n";
-            resetColor();
-            
-            int key = _getch();
-            if (key == 't' || key == 'T') {
-                formNhapDocGia(ql, nullptr, true);
-                showCursor(false);
-                cout << "\nNhan phim bat ky de tiep tuc..."; _getch();
-            } else if (key == 'f' || key == 'F') {
-                system("cls"); showCursor(true);
-                if (nhapChuoiTuDo("Tim kiem (theo Ten/Ma The, de trong de xem tat ca): ", searchKeyword, 100)) {
-                    searchMode = (strlen(searchKeyword) > 0);
-                    luaChon = 0;
-                }
-            } else if (key == 27) {
-                delete[] displayArr;
-                return; // Thoat khoi giao dien quan ly
+            setColor(33); cout << "--- QUAN LY DOC GIA ---" << string(50, ' ') << "\n\n"; resetColor();
+            if (isTypingSearch || searchMode) {
+                cout << "Tim kiem: " << searchKeyword << (isTypingSearch ? "_" : "") << string(40, ' ') << "\n";
+            } else {
+                cout << string(80, ' ') << "\n";
             }
-            delete[] displayArr;
-            continue;
+            cout << "Khong tim thay doc gia nao khop voi '" << searchKeyword << "'!" << string(30, ' ') << "\n";
+            for(int i=0; i<18; ++i) cout << string(80, ' ') << "\n"; 
+        } else {
+            if (luaChon >= n) luaChon = max(0, n - 1);
+            int tongTrang = (n > 0) ? ((n - 1) / ITEM_PER_PAGE + 1) : 1;
+            int trang = luaChon / ITEM_PER_PAGE;
+
+            setColor(33); 
+            if(searchMode) cout << "--- TIM KIEM: '" << searchKeyword << "' (" << n << " ket qua) - Trang " << trang + 1 << "/" << tongTrang << " ---" << string(15, ' ') << "\n\n";
+            else cout << "--- QUAN LY DOC GIA (Trang " << trang + 1 << "/" << tongTrang << ") ---" << string(30, ' ') << "\n\n";
+            resetColor();
+
+            if (isTypingSearch || searchMode) {
+                cout << "Tim kiem: " << searchKeyword << (isTypingSearch ? "_" : "") << string(40, ' ') << "\n";
+            } else {
+                cout << string(80, ' ') << "\n";
+            }
+            
+            cout << "   ┌" << string(8, '-') << "┬" << string(22, '-') << "┬" << string(12, '-') << "┬" << string(12, '-') << "┬" << string(17, '-') << "┐   " << endl;
+            cout << "   │ " << left << setw(6) << "Ma The" << " │ " << left << setw(20) << "Ho" << " │ " << left << setw(10) << "Ten" << " │ " << left << setw(10) << "Gioi Tinh" << " │ " << left << setw(15) << "Trang Thai" << " │   " << endl;
+            cout << "   ├" << string(8, '-') << "┼" << string(22, '-') << "┼" << string(12, '-') << "┼" << string(12, '-') << "┼" << string(17, '-') << "┤   " << endl;
+
+            int start = trang * ITEM_PER_PAGE;
+            int end = min(start + ITEM_PER_PAGE, n);
+
+            for (int i = 0; i < ITEM_PER_PAGE; i++) {
+                if (start + i < end) {
+                    int idx = start + i;
+                    if (idx == luaChon) { setColor(47); cout << ">> "; } 
+                    else { cout << "   "; }
+
+                    string ho = displayArr[idx]->ho;
+                    if (ho.length() > 20) ho = ho.substr(0, 17) + "...";
+
+                    cout << "│ " << left << setw(6) << displayArr[idx]->maThe << " │ " << left << setw(20) << ho << " │ " << left << setw(10) << displayArr[idx]->ten << " │ " << left << setw(10) << displayArr[idx]->giotinh << " │ " << left << setw(15) << (displayArr[idx]->trangThaiThe == 1 ? "Hoat dong" : "Khoa") << " │   ";
+                    
+                    if (idx == luaChon) resetColor();
+                    cout << endl;
+                } else {
+                    cout << "   │ " << string(6, ' ') << " │ " << string(20, ' ') << " │ " << string(10, ' ') << " │ " << string(10, ' ') << " │ " << string(15, ' ') << " │   \n";
+                }
+            }
+
+            cout << "   └" << string(8, '-') << "┴" << string(22, '-') << "┴" << string(12, '-') << "┴" << string(12, '-') << "┴" << string(17, '-') << "┘   " << endl;
         }
         
-        // 3. Hien thi danh sach
-        if (luaChon >= n) {
-            luaChon = max(0, n - 1);
-        }
-
-        int tongTrang = (n > 0) ? ((n - 1) / ITEM_PER_PAGE + 1) : 1;
-        int trang = luaChon / ITEM_PER_PAGE;
-
-        system("cls");
-        showCursor(false); 
-        setColor(33); 
-        if(searchMode) cout << "--- TIM KIEM: '" << searchKeyword << "' (" << n << " ket qua) - Trang " << trang + 1 << "/" << tongTrang << " ---\n\n";
-        else cout << "--- QUAN LY DOC GIA (Trang " << trang + 1 << "/" << tongTrang << ") ---\n\n";
-        resetColor();
-        cout << "   ┌" << string(8, '-') << "┬" << string(22, '-') << "┬" << string(12, '-') << "┬" << string(12, '-') << "┬" << string(17, '-') << "┐" << endl;
-        cout << "   │ " << left << setw(6) << "Ma The" << " │ " << left << setw(20) << "Ho" << " │ " << left << setw(10) << "Ten" << " │ " << left << setw(10) << "Gioi Tinh" << " │ " << left << setw(15) << "Trang Thai" << " │" << endl;
-        cout << "   ├" << string(8, '-') << "┼" << string(22, '-') << "┼" << string(12, '-') << "┼" << string(12, '-') << "┼" << string(17, '-') << "┤" << endl;
-
-        int start = trang * ITEM_PER_PAGE;
-        int end = min(start + ITEM_PER_PAGE, n);
-
-        for (int i = start; i < end; i++) {
-            if (i == luaChon) { setColor(47); cout << ">> "; } 
-            else { cout << "   "; }
-
-            string ho = displayArr[i]->ho;
-            if (ho.length() > 20) ho = ho.substr(0, 17) + "...";
-
-            cout << "│ " << left << setw(6) << displayArr[i]->maThe << " │ " << left << setw(20) << ho << " │ " << left << setw(10) << displayArr[i]->ten << " │ " << left << setw(10) << displayArr[i]->giotinh << " │ " << left << setw(15) << (displayArr[i]->trangThaiThe == 1 ? "Hoat dong" : "Khoa") << " │";
-            
-            if (i == luaChon) resetColor();
-            cout << endl;
-        }
-
-        cout << "   └" << string(8, '-') << "┴" << string(22, '-') << "┴" << string(12, '-') << "┴" << string(12, '-') << "┴" << string(17, '-') << "┘" << endl;
         setColor(36);
-        cout << "\n   (T)hem | (S)ua | (X)oa | (K)hoa/Mo | (F)im | (I)n DS | Mui ten, PgUp/Dn | ESC: Quay lai\n";
+        cout << "\n   (T) Them | (S) Sua | (X) Xoa | (K) Khoa/Mo | (F) Tim | (I) In DS | Mui ten, PgUp/Dn | ESC: Quay lai\n";
         resetColor();
+        
+        for(int i=0; i<3; ++i) cout << string(80, ' ') << "\n";
 
-        // 4. Xu ly phim bam
         int key = _getch();
         bool actionTaken = false;
 
-        if (key == 0 || key == 224) {
-            key = _getch();
-            if (key == 72) luaChon = max(0, luaChon - 1);
-            else if (key == 80) luaChon = min(n - 1, luaChon + 1);
-            else if (key == 73) luaChon = max(0, luaChon - ITEM_PER_PAGE);
-            else if (key == 81) luaChon = min(n - 1, luaChon + ITEM_PER_PAGE);
-            else if (key == 83) { // DELETE key
-                system("cls"); showCursor(true);
-                cout << "Ban co chac chan muon xoa doc gia co ma the " << displayArr[luaChon]->maThe << " khong? (Y/N): ";
-                char confirm = _getch(); cout << endl;
-                if (toupper(confirm) == 'Y') xoaDocGia(ql, displayArr[luaChon]->maThe); else cout << "Da huy thao tac xoa.\n";
+        if (isTypingSearch) {
+            if (key == 27) { 
+                isTypingSearch = false;
+            } else if (key == 13) { 
+                isTypingSearch = false;
+            } else if (key == 8) { 
+                if (vtSearch > 0) {
+                    vtSearch--; searchKeyword[vtSearch] = '\0'; searchMode = (vtSearch > 0); luaChon = 0;
+                } else { searchMode = false; }
+            } else if (key == 224 || key == 0) { 
+                key = _getch();
+                if (key == 72) luaChon = max(0, luaChon - 1);
+                else if (key == 80) luaChon = min(n - 1, luaChon + 1);
+                else if (key == 73) luaChon = max(0, luaChon - ITEM_PER_PAGE);
+                else if (key == 81) luaChon = min(n - 1, luaChon + ITEM_PER_PAGE);
+            } else if (isprint(key) && vtSearch < 99) { // isprint la ham check xem co phai la ky tu in duoc khong, tranh truong hop nguoi dung bam cac phim dieu khien hoac phim khong hop le
+                searchKeyword[vtSearch++] = (char)key; searchKeyword[vtSearch] = '\0'; searchMode = true; luaChon = 0;
+            }
+        } else {
+            if (key == 0 || key == 224) { 
+                key = _getch();
+                if (key == 72) luaChon = max(0, luaChon - 1);
+                else if (key == 80) luaChon = min(n - 1, luaChon + 1);
+                else if (key == 73) luaChon = max(0, luaChon - ITEM_PER_PAGE);
+                else if (key == 81) luaChon = min(n - 1, luaChon + ITEM_PER_PAGE);
+                else if (key == 83) { // DELETE key
+                    int px = 20, py = 10, pw = 45, ph = 5;
+                    xoaVung(px, py, pw, ph);
+                    setColor(33);
+                    for(int i=0; i<pw; i++) { gotoxy(px+i, py); cout << "─"; gotoxy(px+i, py+ph-1); cout << "─"; }
+                    for(int i=0; i<ph; i++) { gotoxy(px, py+i); cout << "│"; gotoxy(px+pw-1, py+i); cout << "│"; }
+                    gotoxy(px, py); cout << "┌"; gotoxy(px+pw-1, py); cout << "┐"; gotoxy(px, py+ph-1); cout << "└"; gotoxy(px+pw-1, py+ph-1); cout << "┘";
+                    gotoxy(px + 2, py + 2);
+                    cout << "Xoa doc gia " << displayArr[luaChon]->maThe << "? (Y/N): ";
+                    char confirm = _getch();
+                    if (toupper(confirm) == 'Y') {
+                        gotoxy(px + 2, py + 2); cout << string(pw - 4, ' ');
+                        gotoxy(0, 24);
+                        if (xoaDocGia(ql, displayArr[luaChon]->maThe)) {
+                            gotoxy(px + 2, py + 2); setColor(32); cout << "Xoa thanh cong!"; resetColor();
+                        } else {
+                            gotoxy(px + 2, py + 2); setColor(31); cout << "Xoa that bai!"; resetColor();
+                        }
+                    } else {
+                        gotoxy(px + 2, py + 2); cout << string(pw - 4, ' ');
+                        gotoxy(px + 2, py + 2); cout << "Da huy thao tac xoa.";
+                    }
+                    Sleep(1000);
+                }
+            } 
+            else if (key == 27) { delete[] displayArr; return; }
+            else if (key == 't' || key == 'T') { 
+                formNhapDocGia(ql, nullptr, true);
                 actionTaken = true;
             }
-        } 
-        else if (key == 27) { delete[] displayArr; return; }
-        else if (key == 't' || key == 'T') { 
-            formNhapDocGia(ql, nullptr, true);
-            actionTaken = true;
-        }
-        else if (key == 's' || key == 'S') { 
-            formNhapDocGia(ql, displayArr[luaChon], false);
-            actionTaken = true; 
-        }
-        else if (key == 'x' || key == 'X') { system("cls"); showCursor(true); cout << "Ban co chac chan muon xoa doc gia co ma the " << displayArr[luaChon]->maThe << " khong? (Y/N): "; char confirm = _getch(); cout << endl; if (toupper(confirm) == 'Y') xoaDocGia(ql, displayArr[luaChon]->maThe); else cout << "Da huy thao tac xoa.\n"; actionTaken = true; }
-        else if (key == 'k' || key == 'K') { system("cls"); showCursor(true); khoaMoThe(ql.root, displayArr[luaChon]->maThe); actionTaken = true; }
-        else if (key == 'f' || key == 'F') { 
-            system("cls"); showCursor(true);
-            if (nhapChuoiTuDo("Tim kiem (theo Ten/Ma The, de trong de xem tat ca): ", searchKeyword, 100)) {
-                searchMode = (strlen(searchKeyword) > 0);
-                luaChon = 0; // Reset lua chon ve dau danh sach khi tim kiem moi
+            else if (key == 's' || key == 'S') { 
+                formNhapDocGia(ql, displayArr[luaChon], false);
+                actionTaken = true; 
             }
-            // Neu huy (nhan ESC), khong lam gi ca, tu khoa tim kiem van giu nguyen
+            else if (key == 'x' || key == 'X') { 
+                ungetch(83); ungetch(224); // Đẩy phím giả lập DELETE
+            }
+            else if (key == 'k' || key == 'K') { 
+                int ma = displayArr[luaChon]->maThe;
+                DocGia* dg = timDocGia(ql.root, ma);
+                if (dg) {
+                    dg->trangThaiThe = (dg->trangThaiThe == 1) ? 0 : 1;
+                    
+                    int px = 25, py = 10, pw = 36, ph = 5;
+                    xoaVung(px, py, pw, ph);
+                    setColor(33);
+                    for(int i=0; i<pw; i++) { gotoxy(px+i, py); cout << "─"; gotoxy(px+i, py+ph-1); cout << "─"; }
+                    for(int i=0; i<ph; i++) { gotoxy(px, py+i); cout << "│"; gotoxy(px+pw-1, py+i); cout << "│"; }
+                    gotoxy(px, py); cout << "┌"; gotoxy(px+pw-1, py); cout << "┐"; gotoxy(px, py+ph-1); cout << "└"; gotoxy(px+pw-1, py+ph-1); cout << "┘";
+                    
+                    gotoxy(px + 2, py + 2);
+                    setColor(32);
+                    cout << "Trang thai the: " << (dg->trangThaiThe == 1 ? "Hoat dong" : "Khoa ");
+                    resetColor();
+                    Sleep(800); // Dừng màn hình 0.8 giây rồi tự động update lại thay vì phải bấm nút
+                }
+            }
+            else if (key == 'f' || key == 'F') { 
+                isTypingSearch = true; 
+                searchMode = true; 
+            }
+            else if (key == 'i' || key == 'I') { const char* subInDocGia[] = { "In theo Ma The (tang dan)", "In theo Ten (A-Z)", "<- Quay lai" }; int indexIn = 0; system("cls"); gotoxy(10, 4); setColor(33); cout << "--- CHON KIEU IN ---"; int chonIn = chonMenu(subInDocGia, 3, 10, 7, indexIn); if (chonIn != 2 && chonIn != -1) { system("cls"); showCursor(true); if (chonIn == 0) inDanhSachDocGia(ql.root); else if (chonIn == 1) inTheoTen(ql); actionTaken = true; } }
         }
-        else if (key == 'i' || key == 'I') { const char* subInDocGia[] = { "In theo Ma The (tang dan)", "In theo Ten (A-Z)", "<- Quay lai" }; int indexIn = 0; system("cls"); gotoxy(10, 4); setColor(33); cout << "--- CHON KIEU IN ---"; int chonIn = chonMenu(subInDocGia, 3, 10, 7, indexIn); if (chonIn != 2 && chonIn != -1) { system("cls"); showCursor(true); if (chonIn == 0) inDanhSachDocGia(ql.root); else if (chonIn == 1) inTheoTen(ql); actionTaken = true; } }
         
         if (actionTaken) { 
             showCursor(false);
-            cout << "\nNhan phim bat ky de tiep tuc..."; _getch(); 
+            cout << "\nNhan phim bat ky de tiep tuc..."; 
+            int k = _getch(); 
+            if (k == 0 || k == 224) _getch(); // Dọn bộ nhớ đệm
+            system("cls");
         }
         
         delete[] displayArr;
@@ -921,6 +1209,11 @@ void quanLyDocGiaUI(QuanLyDocGia& ql) {
 }
 
 // --- CHUC NANG GIAO DICH (MUON/TRA/MAT) ---
+// ESC tai moi buoc chi lui ve buoc truoc do (khong nhay thang ra menu Giao dich):
+//   chon cuon sach  --ESC--> chon dau sach
+//   chon dau sach   --ESC--> chon doc gia
+//   chon sach tra/mat --ESC--> chon doc gia
+//   chon doc gia    --ESC--> menu Giao dich
 void giaoDichUI(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
     const char* subGiaoDich[] = { "Muon sach", "Tra sach", "Bao mat sach", "Xem sach dang muon", "<- Quay lai" };
     int indexPhai = 0;
@@ -934,15 +1227,23 @@ void giaoDichUI(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
         int chonPhai = chonMenu(subGiaoDich, 5, 35, 7, indexPhai);
         if (chonPhai == 4 || chonPhai == -1) return;
 
-        system("cls");
-        int ma = chonTuBangDocGia(qlDocGia);
-        if (ma == -1) continue;
+        // Vong lap chon doc gia: ESC tai day moi quay ve menu Giao dich
+        while (true) {
+            system("cls");
+            int ma = chonTuBangDocGia(qlDocGia);
+            if (ma == -1) break; // ESC -> ve menu Giao dich
 
-        DocGia* dg = timDocGia(qlDocGia.root, ma);
-        if (dg) {
-            showCursor(true);
+            DocGia* dg = timDocGia(qlDocGia.root, ma);
+            if (dg == nullptr) {
+                cout << "Loi: Khong tim thay doc gia!\n";
+                cout << "\n\nNhan phim bat ky de quay lai...";
+                _getch();
+                continue; // quay lai chon doc gia
+            }
 
-            if (chonPhai == 3) {
+            showCursor(false);
+
+            if (chonPhai == 3) { // Xem sach dang muon
                 system("cls");
                 setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
                 xemSachDangMuon(dg, ds);
@@ -959,66 +1260,103 @@ void giaoDichUI(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
                     xemSachDangMuon(dg, ds);
                     cout << "------------------------------------------\n";
                     cout << "The dang bi KHOA!\n";
+                    cout << "\n\nNhan phim bat ky de tiep tuc...";
+                    _getch();
+                    continue;
                 }
-                else if (dg->soSachDangMuon >= 3) {
+                if (dg->soSachDangMuon >= 3) {
                     system("cls");
                     setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
                     xemSachDangMuon(dg, ds);
                     cout << "------------------------------------------\n";
                     cout << "Da muon toi da 3 cuon!\n";
+                    cout << "\n\nNhan phim bat ky de tiep tuc...";
+                    _getch();
+                    continue;
                 }
-                else {
+
+                if (coSachQuaHan(dg)) {
+                    system("cls");
+                    setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
+                    xemSachDangMuon(dg, ds);
+                    cout << "------------------------------------------\n";
+                    setColor(31); cout << "Doc gia dang co sach muon QUA HAN! Khong the muon them.\n"; resetColor();
+                    cout << "\n\nNhan phim bat ky de tiep tuc...";
+                    _getch();
+                    continue;
+                }
+
+                // Vong lap chon dau sach: ESC tai day quay ve chon doc gia
+                bool xongMuon = false;
+                while (!xongMuon) {
                     DauSach* dauSachChon = chonTuBangDauSach(ds, dg);
-                    if (dauSachChon != nullptr) {
+                    if (dauSachChon == nullptr) break; // ESC -> ve chon doc gia
+
+                    // Vong lap chon cuon sach: ESC tai day quay ve chon dau sach
+                    while (true) {
                         Sach* cuonSachChon = chonCuonSachTuDauSach(dauSachChon, dg, &ds);
-                        if (cuonSachChon != nullptr) {
-                            system("cls");
-                            setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
-                            muonSach(dg, ds, cuonSachChon->maSach);
-                        } else {
-                            cout << "\nDa huy chon cuon sach.\n";
-                        }
-                    } else {
-                        cout << "\nDa huy chon dau sach.\n";
+                        if (cuonSachChon == nullptr) break; // ESC -> ve chon dau sach
+
+                        system("cls");
+                        setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
+                        muonSach(dg, ds, cuonSachChon->maSach);
+                        cout << "\n\nNhan phim bat ky de tiep tuc...";
+                        _getch();
+                        xongMuon = true; // thanh cong -> thoat ca 2 vong, ve chon doc gia
+                        break;
                     }
                 }
-            } else if (chonPhai == 1) { // Tra sach
-                if (dg->soSachDangMuon == 0) { 
+                continue;
+            }
+
+            if (chonPhai == 1) { // Tra sach
+                if (dg->soSachDangMuon == 0) {
                     system("cls");
                     setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
                     cout << "Doc gia nay khong muon sach nao de tra.\n";
-                } else {
-                    const char* maSachTra = chonSachDangMuonUI(dg, ds);
-                    if (maSachTra != nullptr) {
-                        system("cls");
-                        setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
-                        traSach(dg, ds, maSachTra, layNgayHienTai());
-                    } else {
-                        cout << "\nDa huy tra sach.\n";
-                    }
+                    cout << "\n\nNhan phim bat ky de tiep tuc...";
+                    _getch();
+                    continue;
                 }
-            } else if (chonPhai == 2) { // Bao mat
-                if (dg->soSachDangMuon == 0) { 
+
+                // Vong lap chon sach can tra: ESC tai day quay ve chon doc gia
+                while (true) {
+                    const char* maSachTra = chonSachDangMuonUI(dg, ds);
+                    if (maSachTra == nullptr) break; // ESC -> ve chon doc gia
+
+                    system("cls");
+                    setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
+                    traSach(dg, ds, maSachTra, layNgayHienTai());
+                    cout << "\n\nNhan phim bat ky de tiep tuc...";
+                    _getch();
+                    break; // thanh cong -> ve chon doc gia
+                }
+                continue;
+            }
+
+            if (chonPhai == 2) { // Bao mat sach
+                if (dg->soSachDangMuon == 0) {
                     system("cls");
                     setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
                     cout << "Doc gia nay khong muon sach nao de bao mat.\n";
-                } else {
-                    const char* maSachMat = chonSachDangMuonUI(dg, ds);
-                    if (maSachMat != nullptr) {
-                        system("cls");
-                        setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
-                        baoMatSach(dg, ds, maSachMat);
-                    } else {
-                        cout << "\nDa huy bao mat.\n";
-                    }
+                    cout << "\n\nNhan phim bat ky de tiep tuc...";
+                    _getch();
+                    continue;
                 }
+
+                while (true) {
+                    const char* maSachMat = chonSachDangMuonUI(dg, ds);
+                    if (maSachMat == nullptr) break; // ESC -> ve chon doc gia
+
+                    system("cls");
+                    setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
+                    baoMatSach(dg, ds, maSachMat);
+                    cout << "\n\nNhan phim bat ky de tiep tuc...";
+                    _getch();
+                    break;
+                }
+                continue;
             }
-            cout << "\n\nNhan phim bat ky de quay lai...";
-            _getch();
-        } else {
-            cout << "Loi: Khong tim thay doc gia!\n";
-            cout << "\n\nNhan phim bat ky de quay lai...";
-            _getch();
         }
     }
 }
@@ -1079,7 +1417,7 @@ void runMenu() {
     
     loadDauSach("Input_file/DauSach.txt", ds);
     loadDocGia("Input_file/DocGia.txt", qlDocGia);
-    khoiTaoKhoMaThe(qlDocGia.root);
+    khoiTaoKhoMaThe();
 
     int indexTrai = 0;
     while (true) {
@@ -1098,9 +1436,7 @@ void runMenu() {
             saveDauSach("Input_file/DauSach.txt", ds);
             luuKhoMaThe();
             cout << "Da luu du lieu. Tam biet!\n";
-
-            giaiPhongDanhSachDauSach(ds);
-            giaiPhongCay(qlDocGia.root);
+            
             break;
         }
 
