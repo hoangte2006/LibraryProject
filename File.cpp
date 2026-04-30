@@ -241,6 +241,7 @@ bool loadDocGia(const char* filename, QuanLyDocGia& ql)
     }
 
     file.close();
+    rebuildCayCanBang(ql);
     cout << "Load DocGia thanh cong. Tong so: " << ql.soLuongDocGia << "\n";
     return true;
 }
