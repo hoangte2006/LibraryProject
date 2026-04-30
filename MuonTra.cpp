@@ -153,8 +153,8 @@ bool baoMatSach(DocGia* docGia, ListDauSach &ds, const char* maSach) {
             
             muonTra->trangThai = 2;
             docGia->trangThaiThe = 0; // Khoa the
-            dauSach->soLuotMuon--; // Sach mat cung la giam so luong dang muon
-            docGia->soSachDangMuon--; 
+            if (dauSach != nullptr) dauSach->soLuotMuon--; // Sach mat cung la giam so luong dang muon
+            docGia->soSachDangMuon--;
             
             cout << "Da ghi nhan sach bi mat! The da bi khoa.\n";
             return true;
