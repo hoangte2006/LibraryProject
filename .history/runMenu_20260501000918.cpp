@@ -28,7 +28,6 @@ void gotoxy(int x, int y) {
 }
 
 void setColor(int ansiCode) {
-    cout.flush();
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
     WORD color;
     switch (ansiCode) {
@@ -38,15 +37,13 @@ void setColor(int ansiCode) {
         case 34: color = FOREGROUND_BLUE | FOREGROUND_INTENSITY; break;
         case 35: color = FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY; break;
         case 36: color = FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; break;
-        case 47: color = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE; break;
         default: color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; break;
     }
     SetConsoleTextAttribute(h, color);
 }
 void resetColor() {
-    cout.flush();
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
-        FOREGROUND_RED | FOREGROUND_INTENSITY);
+        FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }
 void showCursor(bool show) {
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -207,16 +204,8 @@ int chonTuBangDocGia(QuanLyDocGia& ql) {
                     string hoTen = string(displayArr[idx]->ho) + " " + string(displayArr[idx]->ten);
                     if (hoTen.length() > 25) hoTen = hoTen.substr(0, 22) + "...";
 
-                    bool isKhoa = (displayArr[idx]->trangThaiThe != 1);
-                    cout << "│ " << left << setw(10) << displayArr[idx]->maThe
-                         << " │ " << left << setw(25) << hoTen
-                         << " │ " << left << setw(10) << displayArr[idx]->giotinh
-                         << " │ ";
-                    if (idx != luaChon) { if (isKhoa) setColor(33); else setColor(32); }
-                    cout << left << setw(15) << (isKhoa ? "Khoa" : "Hoat dong");
-                    if (idx != luaChon) resetColor();
-                    cout << " │   ";
-
+                    cout << "│ " << left << setw(10) << displayArr[idx]->maThe << " │ " << left << setw(25) << hoTen << " │ " << left << setw(10) << displayArr[idx]->giotinh << " │ " << left << setw(15) << (displayArr[idx]->trangThaiThe == 1 ? "Hoat dong" : "Khoa") << " │   ";
+                    
                     if (idx == luaChon) resetColor();
                     cout << endl;
                 } else {

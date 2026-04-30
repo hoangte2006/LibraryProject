@@ -241,6 +241,7 @@ bool loadDocGia(const char* filename, QuanLyDocGia& ql)
     }
 
     file.close();
+    rebuildCayCanBang(ql); // can thiet de migrate file cu (inorder -> preorder)
     cout << "Load DocGia thanh cong. Tong so: " << ql.soLuongDocGia << "\n";
     return true;
 }

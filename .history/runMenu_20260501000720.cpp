@@ -5,6 +5,9 @@
 #include <cstdio>
 #include <iomanip>
 #include <windows.h>
+#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
+#define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
+#endif
 #include <algorithm>
 #include "Structs.h"
 #include "Docgia.h"
@@ -27,27 +30,8 @@ void gotoxy(int x, int y) {
     SetConsoleCursorPosition(hConsoleOutput, Cursor_an_Pos);
 }
 
-void setColor(int ansiCode) {
-    cout.flush();
-    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-    WORD color;
-    switch (ansiCode) {
-        case 31: color = FOREGROUND_RED | FOREGROUND_INTENSITY; break;
-        case 32: color = FOREGROUND_GREEN | FOREGROUND_INTENSITY; break;
-        case 33: color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY; break;
-        case 34: color = FOREGROUND_BLUE | FOREGROUND_INTENSITY; break;
-        case 35: color = FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY; break;
-        case 36: color = FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; break;
-        case 47: color = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE; break;
-        default: color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; break;
-    }
-    SetConsoleTextAttribute(h, color);
-}
-void resetColor() {
-    cout.flush();
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
-        FOREGROUND_RED | FOREGROUND_INTENSITY);
-}
+void setColor(int color) { cout << "\033[1;" << color << "m"; }
+void resetColor() { cout << "\033[0m"; }
 void showCursor(bool show) {
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO cursorInfo;
@@ -60,6 +44,10 @@ void setupConsole() {
     SetConsoleOutputCP(65001);
     SetConsoleCP(65001);
     showCursor(false);
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD dwMode = 0;
+    GetConsoleMode(hOut, &dwMode);
+    SetConsoleMode(hOut, dwMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 }
 
 void xoaVung(int x, int y, int width, int height) {
@@ -207,16 +195,8 @@ int chonTuBangDocGia(QuanLyDocGia& ql) {
                     string hoTen = string(displayArr[idx]->ho) + " " + string(displayArr[idx]->ten);
                     if (hoTen.length() > 25) hoTen = hoTen.substr(0, 22) + "...";
 
-                    bool isKhoa = (displayArr[idx]->trangThaiThe != 1);
-                    cout << "│ " << left << setw(10) << displayArr[idx]->maThe
-                         << " │ " << left << setw(25) << hoTen
-                         << " │ " << left << setw(10) << displayArr[idx]->giotinh
-                         << " │ ";
-                    if (idx != luaChon) { if (isKhoa) setColor(33); else setColor(32); }
-                    cout << left << setw(15) << (isKhoa ? "Khoa" : "Hoat dong");
-                    if (idx != luaChon) resetColor();
-                    cout << " │   ";
-
+                    cout << "│ " << left << setw(10) << displayArr[idx]->maThe << " │ " << left << setw(25) << hoTen << " │ " << left << setw(10) << displayArr[idx]->giotinh << " │ " << left << setw(15) << (displayArr[idx]->trangThaiThe == 1 ? "Hoat dong" : "Khoa") << " │   ";
+                    
                     if (idx == luaChon) resetColor();
                     cout << endl;
                 } else {

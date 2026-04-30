@@ -383,6 +383,23 @@ void insertionSortDocGia(DocGia* arr[], int n) {
     }
 }
 
+static TREE_DocGia buildBalanced(DocGia* arr[], int left, int right) {
+    if (left > right) return nullptr;
+    int mid = (left + right) / 2;
+    DocGia* node = arr[mid];
+    node->pLeft  = buildBalanced(arr, left,    mid - 1);
+    node->pRight = buildBalanced(arr, mid + 1, right);
+    return node;
+}
+
+void rebuildCayCanBang(QuanLyDocGia &ql) {
+    if (ql.soLuongDocGia == 0) return;
+    DocGia** arr = new DocGia*[ql.soLuongDocGia];
+    int n = 0;
+    BSTtoArray(ql.root, arr, n);
+    ql.root = buildBalanced(arr, 0, n - 1);
+    delete[] arr;
+}
 
 void quickSortDocGia(DocGia* arr[], int left, int right) {
     if (left >= right) return;
