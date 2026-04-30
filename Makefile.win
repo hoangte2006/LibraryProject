@@ -1,0 +1,52 @@
+# Project: LibraryProject
+# Makefile created by Dev-C++ 5.11
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+OBJ      = main.o runMenu.o DocGia.o File.o InputUtils.o MuonTra.o Sach.o Thongke.o Test.o
+LINKOBJ  = main.o runMenu.o DocGia.o File.o InputUtils.o MuonTra.o Sach.o Thongke.o Test.o
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
+BIN      = LibraryProject.exe
+CXXFLAGS = $(CXXINCS) -std=c++11
+CFLAGS   = $(INCS) 
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+main.o: main.cpp
+	$(CPP) -c main.cpp -o main.o $(CXXFLAGS)
+
+runMenu.o: runMenu.cpp
+	$(CPP) -c runMenu.cpp -o runMenu.o $(CXXFLAGS)
+
+DocGia.o: DocGia.cpp
+	$(CPP) -c DocGia.cpp -o DocGia.o $(CXXFLAGS)
+
+File.o: File.cpp
+	$(CPP) -c File.cpp -o File.o $(CXXFLAGS)
+
+InputUtils.o: InputUtils.cpp
+	$(CPP) -c InputUtils.cpp -o InputUtils.o $(CXXFLAGS)
+
+MuonTra.o: MuonTra.cpp
+	$(CPP) -c MuonTra.cpp -o MuonTra.o $(CXXFLAGS)
+
+Sach.o: Sach.cpp
+	$(CPP) -c Sach.cpp -o Sach.o $(CXXFLAGS)
+
+Thongke.o: Thongke.cpp
+	$(CPP) -c Thongke.cpp -o Thongke.o $(CXXFLAGS)
+
+Test.o: Test.cpp
+	$(CPP) -c Test.cpp -o Test.o $(CXXFLAGS)

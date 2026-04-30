@@ -778,7 +778,7 @@ void formNhapDocGia(QuanLyDocGia& ql, DocGia* dg, bool isThemMoi) {
                     strcpy(dg->ho, ho);
                     strcpy(dg->ten, ten);
                     strcpy(dg->giotinh, (gioiTinh == 1 ? "NAM" : "NU"));
-                    gotoxy(winX + 2, winY + 7); setColor(32); cout << "Hieu chinh thanh cong!";
+                        gotoxy(winX + 2, winY + 7); setColor(32); cout << "Hieu chinh thanh cong!";
                 }
                 resetColor();
                 return;
