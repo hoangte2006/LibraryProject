@@ -421,12 +421,12 @@ void inTheoTen(QuanLyDocGia &ql)
         quickSortDocGia(arr, 0, n - 1);
 
     cout << "\n--- DANH SACH DOC GIA SAP XEP THEO TEN ---\n";
-    cout << " ┌" << string(12, '-') << "┬" << string(32, '-') << "┬" << string(17, '-') << "┬" << string(7, '-') << "┐" << endl;
+    cout << " ┌" << string(12, '-') << "┬" << string(17, '-') << "┬" << string(32, '-') << "┬" << string(7, '-') << "┐" << endl;
     cout << " │ " << left << setw(10) << "Ma The"
-         << " │ " << left << setw(30) << "Ho"
          << " │ " << left << setw(15) << "Ten"
+         << " │ " << left << setw(30) << "Ho"
          << " │ " << left << setw(5)  << "GT" << " │" << endl;
-    cout << " ├" << string(12, '-') << "┼" << string(32, '-') << "┼" << string(17, '-') << "┼" << string(7, '-') << "┤" << endl;
+    cout << " ├" << string(12, '-') << "┼" << string(17, '-') << "┼" << string(32, '-') << "┼" << string(7, '-') << "┤" << endl;
 
     for (int i = 0; i < n; i++) {
         string ten = arr[i]->ten;
@@ -434,12 +434,12 @@ void inTheoTen(QuanLyDocGia &ql)
         if (ho.length()  > 30) ho  = ho.substr(0, 27)  + "...";
         if (ten.length() > 15) ten = ten.substr(0, 12) + "...";
         cout << " │ " << left << setw(10) << arr[i]->maThe
-             << " │ " << left << setw(30) << ho
              << " │ " << left << setw(15) << ten
+             << " │ " << left << setw(30) << ho
              << " │ " << left << setw(5)  << arr[i]->giotinh << " │" << endl;
     }
 
-    cout << " └" << string(12, '-') << "┴" << string(32, '-') << "┴" << string(17, '-') << "┴" << string(7, '-') << "┘" << endl;
+    cout << " └" << string(12, '-') << "┴" << string(17, '-') << "┴" << string(32, '-') << "┴" << string(7, '-') << "┘" << endl;
 
     delete[] arr; 
 }

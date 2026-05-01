@@ -16,13 +16,13 @@
 #include "InputUtils.h"
 #include "Test.h"
 
-#define ENABLE_SEED_DATA 0 // Doi thanh 0 truoc khi nop bai de xoa chuc nang phim G
+#define ENABLE_SEED_DATA 1 // Doi thanh 0 truoc khi nop bai de xoa chuc nang phim G
 
 using namespace std;
 
 const char* menuTrai[] = { "Tong quan", "Quan ly doc gia", "Quan ly sach", "Giao dich", "Thong ke", "Thoat" };
 
-// --- CAC HAM DO HOA (Giu nguyen de dam bao giao dien) ---
+// --- CAC HAM DO HOA (Giu nguyen de dam bao giao dienNeu) ---
 void gotoxy(int x, int y) {
     HANDLE hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD Cursor_an_Pos = { (short)x, (short)y };
@@ -121,6 +121,7 @@ int chonMenu(const char* options[], int n, int x, int y, int &currentSelection) 
     while (true) {
         veMenuList(options, n, currentSelection, x, y, true);
         int key = _getch();
+        if (key == 'g' || key == 'G') return -2; // Phim tat sinh doc gia
 #if ENABLE_SEED_DATA
         if (key == 'g' || key == 'G') return -2; // Phim tat sinh du lieu gia
 #endif
@@ -635,7 +636,7 @@ void formNhapDauSach(ListDauSach& ds, DauSach* dsPtr, bool isThemMoi) {
         int status;
         switch (currentField) {
             case 0: status = isThemMoi ? nhapChuoiForm(winX + 17, winY + 3, isbn, 20) : INPUT_DOWN; break;
-            case 1: status = nhapChuoiForm(winX + 17, winY + 4, tenSach, 55, false, false); break;
+            case 1: status = nhapChuoiForm(winX + 17, winY + 4, tenSach, 55, false, true); break;
             case 2: status = nhapChuoiForm(winX + 17, winY + 5, tacGia, 50, false, true); break;
             case 3: status = nhapChuoiForm(winX + 17, winY + 6, theLoai, 30, false, true); break;
             case 4: status = nhapSoForm(winX + 17, winY + 7, soTrang); break;
@@ -646,14 +647,6 @@ void formNhapDauSach(ListDauSach& ds, DauSach* dsPtr, bool isThemMoi) {
         else if (status == INPUT_DOWN) currentField = (currentField + 1) % 6;
         else if (status == INPUT_CANCEL) { gotoxy(winX + 2, winY + 10); cout << "Da huy thao tac."; return; }
         else if (status == INPUT_OK) {
-            // Kiem tra ISBN trung ngay khi roi field ISBN
-            if (isThemMoi && currentField == 0) {
-                chuanHoaISBN(isbn);
-                if (timTheoISBN(ds, isbn) != nullptr) {
-                    gotoxy(winX + 2, winY + 10); setColor(31); cout << "Loi: ISBN da ton tai!"; resetColor(); _getch();
-                    gotoxy(winX + 2, winY + 10); cout << string(winW - 4, ' '); continue;
-                }
-            }
             currentField = (currentField + 1);
             if (currentField >= 6) {
                 if (strlen(isbn) == 0 || strlen(tenSach) == 0 || strlen(tacGia) == 0 || strlen(theLoai) == 0 || soTrang <= 0 || namXB <= 0) {
@@ -663,6 +656,10 @@ void formNhapDauSach(ListDauSach& ds, DauSach* dsPtr, bool isThemMoi) {
                 chuanHoaISBN(isbn);
 
                 if (isThemMoi) {
+                    if (timTheoISBN(ds, isbn) != nullptr) {
+                        gotoxy(winX + 2, winY + 10); setColor(31); cout << "Loi: ISBN da ton tai!"; resetColor(); _getch();
+                        gotoxy(winX + 2, winY + 10); cout << string(winW - 4, ' '); currentField = 0; continue;
+                    }
                     DauSach* p = new DauSach;
                     strcpy(p->ISBN, isbn); strcpy(p->tenSach, tenSach); strcpy(p->tacGia, tacGia); strcpy(p->theLoai, theLoai);
                     p->soTrang = soTrang; p->namXuatBan = namXB; p->soLuotMuon = 0;
@@ -972,34 +969,9 @@ void quanLySachUI(ListDauSach& ds) {
             else if (key == 27) { delete[] displayArr; return; }
             else if (key == 't' || key == 'T') { formNhapDauSach(ds, nullptr, true); actionTaken = true; }
             else if (key == 's' || key == 'S') { formNhapDauSach(ds, displayArr[luaChon], false); actionTaken = true; }
-            else if (key == 'x' || key == 'X') {
-                int px = 15, py = 10, pw = 55, ph = 5;
-                xoaVung(px, py, pw, ph);
-                setColor(33);
-                for(int i=0; i<pw; i++) { gotoxy(px+i, py); cout << "─"; gotoxy(px+i, py+ph-1); cout << "─"; }
-                for(int i=0; i<ph; i++) { gotoxy(px, py+i); cout << "│"; gotoxy(px+pw-1, py+i); cout << "│"; }
-                gotoxy(px, py); cout << "┌"; gotoxy(px+pw-1, py); cout << "┐"; gotoxy(px, py+ph-1); cout << "└"; gotoxy(px+pw-1, py+ph-1); cout << "┘";
-                // Kiem tra truoc khi hoi
-                bool coSachMuon = false;
-                Sach* ck = displayArr[luaChon]->dsSach.pHead;
-                while (ck != nullptr) { if (ck->trangThai == 1) { coSachMuon = true; break; } ck = ck->pNext; }
-
-                gotoxy(px + 2, py + 2);
-                if (coSachMuon) {
-                    setColor(31); cout << "Khong the xoa: con sach dang duoc muon!"; resetColor();
-                } else {
-                    cout << "Xoa dau sach ISBN: " << displayArr[luaChon]->ISBN << "? (Y/N): ";
-                    char confirm = _getch();
-                    gotoxy(px + 2, py + 2); cout << string(pw - 4, ' ');
-                    if (toupper(confirm) == 'Y') {
-                        gotoxy(0, 24);
-                        xoaDauSach(ds, displayArr[luaChon]->ISBN);
-                        gotoxy(px + 2, py + 2); setColor(32); cout << "Xoa thanh cong!"; resetColor();
-                    } else {
-                        gotoxy(px + 2, py + 2); cout << "Da huy thao tac xoa.";
-                    }
-                }
-                Sleep(1000);
+            else if (key == 'x' || key == 'X') { 
+                ungetch(83); 
+                ungetch(224); 
             }
             else if (key == 'c' || key == 'C') {
                 while (true) {
@@ -1081,72 +1053,8 @@ void quanLySachUI(ListDauSach& ds) {
     }
 }
 
-// --- UI CHON SACH BI MAT (DE HOAN TRA) ---
-const char* chonSachBiMatUI(DocGia* docGia, ListDauSach& ds) {
-    // Thu thap sach bi mat (trangThai == 2)
-    MuonTra* sachBiMat[MAX_SACH_MUON * 10];
-    int n = 0;
-    MuonTra* cur = docGia->dsMuonTra.pHead;
-    while (cur != nullptr) {
-        if (cur->trangThai == 2) sachBiMat[n++] = cur;
-        cur = cur->pNext;
-    }
-
-    if (n == 0) {
-        cout << "Khong co sach bi mat nao can xu ly.\n";
-        _getch();
-        return nullptr;
-    }
-
-    int luaChon = 0;
-    system("cls");
-
-    while (true) {
-        gotoxy(0, 0);
-        setColor(33); cout << "=== DOC GIA: " << docGia->ho << " " << docGia->ten << " ===" << string(30, ' ') << "\n"; resetColor();
-        setColor(31); cout << "[ THE BI KHOA - Chon sach de hoan tra lai ]" << string(20, ' ') << "\n"; resetColor();
-        cout << "   ┌" << string(26, '-') << "┬" << string(40, '-') << "┬" << string(15, '-') << "┐   \n";
-        cout << "   │ " << left << setw(24) << "Ma Sach" << " │ " << left << setw(38) << "Ten Sach" << " │ " << left << setw(13) << "Ngay Mat" << " │   \n";
-        cout << "   ├" << string(26, '-') << "┼" << string(40, '-') << "┼" << string(15, '-') << "┤   \n";
-
-        for (int i = 0; i < n; i++) {
-            if (i == luaChon) { setColor(47); cout << ">> "; }
-            else { cout << "   "; }
-
-            DauSach* dauSach = nullptr;
-            timSachTheoMa(ds, sachBiMat[i]->maSach, dauSach);
-            string tenSach = (dauSach != nullptr) ? dauSach->tenSach : "N/A";
-            if (tenSach.length() > 38) tenSach = tenSach.substr(0, 35) + "...";
-
-            char ngayStr[12];
-            snprintf(ngayStr, sizeof(ngayStr), "%02d/%02d/%d", sachBiMat[i]->ngayMuon.ngay, sachBiMat[i]->ngayMuon.thang, sachBiMat[i]->ngayMuon.nam);
-
-            setColor(31);
-            cout << "│ " << left << setw(24) << sachBiMat[i]->maSach
-                 << " │ " << left << setw(38) << tenSach
-                 << " │ " << left << setw(13) << ngayStr << " │   \n";
-            resetColor();
-        }
-
-        cout << "   └" << string(26, '-') << "┴" << string(40, '-') << "┴" << string(15, '-') << "┘   \n";
-        cout << "\n[ENTER] Hoan tra sach nay   [ESC] Quay lai\n";
-
-        int key = _getch();
-        if (key == 0 || key == 224) {
-            int arrow = _getch();
-            if (arrow == 72 && luaChon > 0) luaChon--;
-            else if (arrow == 80 && luaChon < n - 1) luaChon++;
-        } else if (key == 13) {
-            return sachBiMat[luaChon]->maSach;
-        } else if (key == 27) {
-            return nullptr;
-        }
-        system("cls");
-    }
-}
-
 // --- CHUC NANG QUAN LY DOC GIA ---
-void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds) {
+void quanLyDocGiaUI(QuanLyDocGia& ql) {
     int luaChon = 0;
     const int ITEM_PER_PAGE = 15;
     char searchKeyword[100] = "";
@@ -1227,17 +1135,8 @@ void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds) {
                     string ho = displayArr[idx]->ho;
                     if (ho.length() > 20) ho = ho.substr(0, 17) + "...";
 
-                    bool isKhoa = (displayArr[idx]->trangThaiThe != 1);
-                    cout << "│ " << left << setw(6) << displayArr[idx]->maThe
-                         << " │ " << left << setw(20) << ho
-                         << " │ " << left << setw(10) << displayArr[idx]->ten
-                         << " │ " << left << setw(10) << displayArr[idx]->giotinh
-                         << " │ ";
-                    if (idx != luaChon) { if (isKhoa) setColor(33); else setColor(32); }
-                    cout << left << setw(15) << (isKhoa ? "Khoa" : "Hoat dong");
-                    if (idx != luaChon) resetColor();
-                    cout << " │   ";
-
+                    cout << "│ " << left << setw(6) << displayArr[idx]->maThe << " │ " << left << setw(20) << ho << " │ " << left << setw(10) << displayArr[idx]->ten << " │ " << left << setw(10) << displayArr[idx]->giotinh << " │ " << left << setw(15) << (displayArr[idx]->trangThaiThe == 1 ? "Hoat dong" : "Khoa") << " │   ";
+                    
                     if (idx == luaChon) resetColor();
                     cout << endl;
                 } else {
@@ -1316,63 +1215,27 @@ void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds) {
                 formNhapDocGia(ql, displayArr[luaChon], false);
                 actionTaken = true; 
             }
-            else if (key == 'x' || key == 'X') {
-                int px = 20, py = 10, pw = 45, ph = 5;
-                xoaVung(px, py, pw, ph);
-                setColor(33);
-                for(int i=0; i<pw; i++) { gotoxy(px+i, py); cout << "─"; gotoxy(px+i, py+ph-1); cout << "─"; }
-                for(int i=0; i<ph; i++) { gotoxy(px, py+i); cout << "│"; gotoxy(px+pw-1, py+i); cout << "│"; }
-                gotoxy(px, py); cout << "┌"; gotoxy(px+pw-1, py); cout << "┐"; gotoxy(px, py+ph-1); cout << "└"; gotoxy(px+pw-1, py+ph-1); cout << "┘";
-                gotoxy(px + 2, py + 2);
-                cout << "Xoa doc gia " << displayArr[luaChon]->maThe << "? (Y/N): ";
-                char confirm = _getch();
-                if (toupper(confirm) == 'Y') {
-                    gotoxy(px + 2, py + 2); cout << string(pw - 4, ' ');
-                    gotoxy(0, 24);
-                    if (xoaDocGia(ql, displayArr[luaChon]->maThe)) {
-                        gotoxy(px + 2, py + 2); setColor(32); cout << "Xoa thanh cong!"; resetColor();
-                    } else {
-                        gotoxy(px + 2, py + 2); setColor(31); cout << "Xoa that bai!"; resetColor();
-                    }
-                } else {
-                    gotoxy(px + 2, py + 2); cout << string(pw - 4, ' ');
-                    gotoxy(px + 2, py + 2); cout << "Da huy thao tac xoa.";
-                }
-                Sleep(1000);
+            else if (key == 'x' || key == 'X') { 
+                ungetch(83); ungetch(224); // Đẩy phím giả lập DELETE
             }
-            else if (key == 'k' || key == 'K') {
+            else if (key == 'k' || key == 'K') { 
                 int ma = displayArr[luaChon]->maThe;
                 DocGia* dg = timDocGia(ql.root, ma);
                 if (dg) {
-                    if (dg->trangThaiThe == 1) {
-                        // The dang hoat dong -> Bao mat sach
-                        if (dg->soSachDangMuon == 0) {
-                            system("cls");
-                            setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
-                            cout << "Doc gia nay khong muon sach nao de bao mat.\n";
-                            cout << "\nNhan phim bat ky de quay lai..."; _getch();
-                        } else {
-                            system("cls");
-                            const char* maSachMat = chonSachDangMuonUI(dg, ds);
-                            if (maSachMat != nullptr) {
-                                system("cls");
-                                setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
-                                baoMatSach(dg, ds, maSachMat);
-                                cout << "\nNhan phim bat ky de tiep tuc..."; _getch();
-                            }
-                        }
-                    } else {
-                        // The bi khoa -> Hoan tra sach bi mat de mo khoa
-                        system("cls");
-                        const char* maSachHoanTra = chonSachBiMatUI(dg, ds);
-                        if (maSachHoanTra != nullptr) {
-                            system("cls");
-                            setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
-                            traSachBiMat(dg, ds, maSachHoanTra);
-                            cout << "\nNhan phim bat ky de tiep tuc..."; _getch();
-                        }
-                    }
-                    actionTaken = true;
+                    dg->trangThaiThe = (dg->trangThaiThe == 1) ? 0 : 1;
+                    
+                    int px = 25, py = 10, pw = 36, ph = 5;
+                    xoaVung(px, py, pw, ph);
+                    setColor(33);
+                    for(int i=0; i<pw; i++) { gotoxy(px+i, py); cout << "─"; gotoxy(px+i, py+ph-1); cout << "─"; }
+                    for(int i=0; i<ph; i++) { gotoxy(px, py+i); cout << "│"; gotoxy(px+pw-1, py+i); cout << "│"; }
+                    gotoxy(px, py); cout << "┌"; gotoxy(px+pw-1, py); cout << "┐"; gotoxy(px, py+ph-1); cout << "└"; gotoxy(px+pw-1, py+ph-1); cout << "┘";
+                    
+                    gotoxy(px + 2, py + 2);
+                    setColor(32);
+                    cout << "Trang thai the: " << (dg->trangThaiThe == 1 ? "Hoat dong" : "Khoa ");
+                    resetColor();
+                    Sleep(800); // Dừng màn hình 0.8 giây rồi tự động update lại thay vì phải bấm nút
                 }
             }
             else if (key == 'f' || key == 'F') { 
@@ -1496,55 +1359,26 @@ void giaoDichUI(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
             }
 
             if (chonPhai == 1) { // Tra sach
-                int soSachBiMat = 0;
-                for (MuonTra* mt = dg->dsMuonTra.pHead; mt != nullptr; mt = mt->pNext)
-                    if (mt->trangThai == 2) soSachBiMat++;
-
-                bool coThuong = (dg->soSachDangMuon > 0);
-                bool coBiMat  = (soSachBiMat > 0);
-
-                if (!coThuong && !coBiMat) {
+                if (dg->soSachDangMuon == 0) {
                     system("cls");
                     setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
-                    cout << "Doc gia nay khong co sach nao de tra.\n";
+                    cout << "Doc gia nay khong muon sach nao de tra.\n";
                     cout << "\n\nNhan phim bat ky de tiep tuc...";
                     _getch();
                     continue;
                 }
 
-                int chonLoai = 0; // 0: tra thuong, 1: hoan tra sach bi mat
-                if (coThuong && coBiMat) {
-                    const char* subTra[] = { "Tra sach dang muon", "Hoan tra sach bi mat", "<- Quay lai" };
-                    int idx = 0;
-                    system("cls");
-                    int c = chonMenu(subTra, 3, 20, 5, idx);
-                    if (c == 2 || c == -1) continue;
-                    chonLoai = c;
-                } else {
-                    chonLoai = coThuong ? 0 : 1;
-                }
+                // Vong lap chon sach can tra: ESC tai day quay ve chon doc gia
+                while (true) {
+                    const char* maSachTra = chonSachDangMuonUI(dg, ds);
+                    if (maSachTra == nullptr) break; // ESC -> ve chon doc gia
 
-                if (chonLoai == 0) {
-                    while (true) {
-                        const char* maSachTra = chonSachDangMuonUI(dg, ds);
-                        if (maSachTra == nullptr) break;
-                        system("cls");
-                        setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
-                        traSach(dg, ds, maSachTra, layNgayHienTai());
-                        cout << "\n\nNhan phim bat ky de tiep tuc...";
-                        _getch();
-                        break;
-                    }
-                } else {
                     system("cls");
-                    const char* maSachHoanTra = chonSachBiMatUI(dg, ds);
-                    if (maSachHoanTra != nullptr) {
-                        system("cls");
-                        setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
-                        traSachBiMat(dg, ds, maSachHoanTra);
-                        cout << "\n\nNhan phim bat ky de tiep tuc...";
-                        _getch();
-                    }
+                    setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
+                    traSach(dg, ds, maSachTra, layNgayHienTai());
+                    cout << "\n\nNhan phim bat ky de tiep tuc...";
+                    _getch();
+                    break; // thanh cong -> ve chon doc gia
                 }
                 continue;
             }
@@ -1675,7 +1509,7 @@ void runMenu() {
 #endif
         switch (chonChinh) {
             case 0: continue; // Tong quan
-            case 1: quanLyDocGiaUI(qlDocGia, ds); indexTrai = 0; break;
+            case 1: quanLyDocGiaUI(qlDocGia); indexTrai = 0; break;
             case 2: quanLySachUI(ds); indexTrai = 0; break;
             case 3: giaoDichUI(qlDocGia, ds); indexTrai = 0; break;
             case 4: thongKeUI(qlDocGia, ds); indexTrai = 0; break;

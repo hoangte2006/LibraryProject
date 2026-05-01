@@ -12,6 +12,7 @@ using namespace std;
 #include "Sach.h"
 #include "Docgia.h"
 #include "Giaodich.h"
+#include "MuonTra.h"
 
 // Ham copy chuoi an toan, dam bao khong bi tran bo nho khi copy tu string sang char array, va dam bao chuoi duoc copy vao char array luon co ky tu ket thuc null ('\0')
 static void copyCStringSafe(char* dest, size_t destSize, const string& src) {
@@ -278,7 +279,42 @@ void capNhatTrangThaiSachDangMuon(TREE_DocGia root, ListDauSach& ds)
     capNhatTrangThaiSachDangMuon(root->pRight, ds); 
 }
 
-// - --------------------------------------------------------- Save 
+static void fixDocGia(TREE_DocGia root) {
+    if (root == nullptr) return;
+    fixDocGia(root->pLeft);
+
+    if (root->trangThaiThe == 0) {
+        bool coMatSach = false;
+        MuonTra* mt = root->dsMuonTra.pHead;
+        while (mt != nullptr) {
+            if (mt->trangThai == 2) { coMatSach = true; break; }
+            mt = mt->pNext;
+        }
+        if (!coMatSach) root->trangThaiThe = 1;
+    }
+
+    fixDocGia(root->pRight);
+}
+
+static void fixSoLuotMuon(ListDauSach& ds) {
+    for (int i = 0; i < ds.n; i++) {
+        int count = 0;
+        Sach* s = ds.nodes[i]->dsSach.pHead;
+        while (s != nullptr) {
+            if (s->trangThai == 1) count++;
+            s = s->pNext;
+        }
+        ds.nodes[i]->soLuotMuon = count;
+    }
+}
+
+void suaChuaDuLieu(QuanLyDocGia& ql, ListDauSach& ds) {
+    capNhatTrangThaiSachDangMuon(ql.root, ds);
+    fixSoLuotMuon(ds);
+    fixDocGia(ql.root);
+}
+
+// - --------------------------------------------------------- Save
 
 void ghiDanhSachMuonTra(ofstream &file, MuonTra* head)
 {

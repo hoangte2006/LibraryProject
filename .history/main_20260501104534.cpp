@@ -22,7 +22,7 @@ using namespace std;
 int main()
 {
     
-#if TEST_MODE 
+#if TEST_MODE // 
     // BẮT BUỘC: Thiết lập Terminal Ubuntu sang chế độ đọc phím thô 
     //setupConsole(); 
     

@@ -77,14 +77,16 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
             strcpy(dg->ten, tenNuArr[rand() % soTenNu]);
         }
 
-        // Mac dinh the hoat dong, chi khoa khi co vi pham (qua han hoac mat sach)
-        dg->trangThaiThe = 1;
+        // Random trang thai the (80% hoat dong, 20% khoa)
+        dg->trangThaiThe = (rand() % 5 != 0) ? 1 : 0;
+        // Mac dinh moi doc gia sinh ra deu hoat dong binh thuong
+        dg->trangThaiThe = 1; 
 
         themDocGia(ql, dg);
 
         // Random so sach muon (0-3)
         int soSachMuon = rand() % 4;
-
+        
         // Sinh mang offset ngay lui lai va sap xep giam dan
         // de dam bao ngay muon cac sach khong bi lon xon
         int offsets[3] = {0, 0, 0};
@@ -102,7 +104,7 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
             }
         }
 
-        bool coMatSach = false;
+        bool coQuaHan = false;
 
         for (int j = 0; j < soSachMuon; j++) {
             if (sachSanCo.empty()) break;
@@ -128,32 +130,34 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
 
             if (daMuonDauSachNay) continue; // Bo qua neu da muon dau sach nay
 
-            // Tinh toan thoi gian mượn thẳng hàng
+            // Giả lập ngày mượn (có thể quá hạn)
+            Ngay ngayMuon = layNgayHienTai();
+            bool isQuaHan = (rand() % 4 == 0); // 25% ty le qua han
+            if (isQuaHan) {
+                time_t now = time(nullptr);
+                now -= (rand() % 20 + 8) * 24 * 60 * 60; // Lui lai 8-27 ngay
+                struct tm* tmQuaHan = localtime(&now);
+                ngayMuon = {tmQuaHan->tm_mday, tmQuaHan->tm_mon + 1, tmQuaHan->tm_year + 1900};
+            }
+            // Tinh toan thoi gian
             time_t now = time(nullptr);
             now -= (time_t)offsets[j] * 24 * 60 * 60;
             struct tm* tmMuon = localtime(&now);
             Ngay ngayMuon = {tmMuon->tm_mday, tmMuon->tm_mon + 1, tmMuon->tm_year + 1900};
             
+            if (offsets[j] > HAN_MUON) coQuaHan = true;
+            
             muonSach(dg, ds, sachChon->maSach); // Muon sach that
             dg->dsMuonTra.pTail->ngayMuon = ngayMuon; // Ghi de lai ngay muon gia
-
-            // Gia lap 10% doc gia lam mat sach
-            if (rand() % 10 == 0) {
-                baoMatSach(dg, ds, sachChon->maSach);
-                dg->dsMuonTra.pTail->ngayMuon = ngayMuon; // Khoi phuc lai ngay muon gia lap 
-                coMatSach = true;
-            }
 
             // Loai sach da muon khoi danh sach san co
             sachSanCo.erase(sachSanCo.begin() + sachIdx);
         }
-
-        // In ly do khoa the ra man hinh de test de dang hon
-        if (coMatSach) {
-            dg->trangThaiThe = 0;
-            setColor(31); cout << "   -> [KHOA THE] " << dg->maThe << " - " << dg->ho << " " << dg->ten << " (Ly do: Lam MAT SACH)\n"; resetColor();
-        }
         
+        // Logic: Ai mượn sách quá hạn thì bị khóa thẻ
+        if (coQuaHan) {
+            dg->trangThaiThe = 0;
+        }
         count++;
     }
     cout << "\nDa tao thanh cong " << count << " doc gia gia.\n";

@@ -311,6 +311,7 @@ int nhapChuoiForm(int x, int y, char* result, int maxLen, bool chiNhanSo, bool c
                 result[len] = '\0';
             }
         } else if (c == 13) { // ENTER
+            while (len > 0 && result[len - 1] == ' ') { len--; result[len] = '\0'; }
             if (len > 0) { showCursor(false); return INPUT_OK; }
             else cout << "\a";
         } else if (c == 27) { // ESC

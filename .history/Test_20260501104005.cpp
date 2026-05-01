@@ -102,6 +102,7 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
             }
         }
 
+        bool coQuaHan = false;
         bool coMatSach = false;
 
         for (int j = 0; j < soSachMuon; j++) {
@@ -142,6 +143,8 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
                 baoMatSach(dg, ds, sachChon->maSach);
                 dg->dsMuonTra.pTail->ngayMuon = ngayMuon; // Khoi phuc lai ngay muon gia lap 
                 coMatSach = true;
+            } else {
+                if (offsets[j] > HAN_MUON) coQuaHan = true;
             }
 
             // Loai sach da muon khoi danh sach san co
@@ -152,6 +155,9 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
         if (coMatSach) {
             dg->trangThaiThe = 0;
             setColor(31); cout << "   -> [KHOA THE] " << dg->maThe << " - " << dg->ho << " " << dg->ten << " (Ly do: Lam MAT SACH)\n"; resetColor();
+        } else if (coQuaHan) {
+            dg->trangThaiThe = 0;
+            setColor(33); cout << "   -> [KHOA THE] " << dg->maThe << " - " << dg->ho << " " << dg->ten << " (Ly do: Sach QUA HAN)\n"; resetColor();
         }
         
         count++;

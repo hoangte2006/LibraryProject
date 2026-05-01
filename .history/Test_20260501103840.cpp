@@ -77,6 +77,8 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
             strcpy(dg->ten, tenNuArr[rand() % soTenNu]);
         }
 
+        // Random trang thai the (80% hoat dong, 20% khoa)
+        dg->trangThaiThe = (rand() % 5 != 0) ? 1 : 0;
         // Mac dinh the hoat dong, chi khoa khi co vi pham (qua han hoac mat sach)
         dg->trangThaiThe = 1;
 
@@ -102,6 +104,7 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
             }
         }
 
+        bool coQuaHan = false;
         bool coMatSach = false;
 
         for (int j = 0; j < soSachMuon; j++) {
@@ -128,6 +131,15 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
 
             if (daMuonDauSachNay) continue; // Bo qua neu da muon dau sach nay
 
+            // Giả lập ngày mượn (có thể quá hạn)
+            Ngay ngayMuon = layNgayHienTai();
+            bool isQuaHan = (rand() % 4 == 0); // 25% ty le qua han
+            if (isQuaHan) {
+                time_t now = time(nullptr);
+                now -= (rand() % 20 + 8) * 24 * 60 * 60; // Lui lai 8-27 ngay
+                struct tm* tmQuaHan = localtime(&now);
+                ngayMuon = {tmQuaHan->tm_mday, tmQuaHan->tm_mon + 1, tmQuaHan->tm_year + 1900};
+            }
             // Tinh toan thoi gian mượn thẳng hàng
             time_t now = time(nullptr);
             now -= (time_t)offsets[j] * 24 * 60 * 60;
@@ -142,6 +154,8 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
                 baoMatSach(dg, ds, sachChon->maSach);
                 dg->dsMuonTra.pTail->ngayMuon = ngayMuon; // Khoi phuc lai ngay muon gia lap 
                 coMatSach = true;
+            } else {
+                if (offsets[j] > HAN_MUON) coQuaHan = true;
             }
 
             // Loai sach da muon khoi danh sach san co
@@ -152,6 +166,9 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
         if (coMatSach) {
             dg->trangThaiThe = 0;
             setColor(31); cout << "   -> [KHOA THE] " << dg->maThe << " - " << dg->ho << " " << dg->ten << " (Ly do: Lam MAT SACH)\n"; resetColor();
+        } else if (coQuaHan) {
+            dg->trangThaiThe = 0;
+            setColor(33); cout << "   -> [KHOA THE] " << dg->maThe << " - " << dg->ho << " " << dg->ten << " (Ly do: Sach QUA HAN)\n"; resetColor();
         }
         
         count++;

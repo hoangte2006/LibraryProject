@@ -12,3 +12,4 @@ bool saveDocGia(const char* filename, TREE_DocGia root);
 
 // Dong bo trang thai
 void capNhatTrangThaiSachDangMuon(TREE_DocGia root, ListDauSach& ds);
+void suaChuaDuLieu(QuanLyDocGia& ql, ListDauSach& ds);

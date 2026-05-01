@@ -138,17 +138,10 @@ bool xoaDocGiaHelper(TREE_DocGia &root, int maThe) {
     else {
         // DA TIM THAY NODE CAN XOA
 
-        // Kiem tra dieu kien xoa
-        if (root->soSachDangMuon > 0) {
-            cout << "Loi: Khong the xoa! Doc gia dang muon " << root->soSachDangMuon << " cuon sach.\n";
-            return false;
-        }
-        // Neu da tra het sach, van kiem tra lich su cu de bao toan du lieu thong ke
+        // Kiem tra dieu kien: Da co lich su giao dich thi khong cho xoa
+        // (Chuyen cai nay tu timDocGia vao luon day de khoi mat cong tim 2 lan)
         if (root->dsMuonTra.pHead != nullptr) {
-            cout << "Loi: Khong the xoa! Doc gia da co lich su muon tra trong qua khu.\n";
-            setColor(36);
-            cout << "(De bao toan toan ven du lieu thong ke, he thong khong cho phep xoa doc gia nay).\n";
-            resetColor();
+            cout << "Loi: Khong the xoa! Doc gia nay da co lich su giao dich.\n";
             return false;
         }
 
@@ -421,25 +414,18 @@ void inTheoTen(QuanLyDocGia &ql)
         quickSortDocGia(arr, 0, n - 1);
 
     cout << "\n--- DANH SACH DOC GIA SAP XEP THEO TEN ---\n";
-    cout << " ┌" << string(12, '-') << "┬" << string(32, '-') << "┬" << string(17, '-') << "┬" << string(7, '-') << "┐" << endl;
-    cout << " │ " << left << setw(10) << "Ma The"
-         << " │ " << left << setw(30) << "Ho"
-         << " │ " << left << setw(15) << "Ten"
-         << " │ " << left << setw(5)  << "GT" << " │" << endl;
-    cout << " ├" << string(12, '-') << "┼" << string(32, '-') << "┼" << string(17, '-') << "┼" << string(7, '-') << "┤" << endl;
+    cout << " ┌" << string(12, '-') << "┬" << string(40, '-') << "┐" << endl;
+    cout << " │ " << left << setw(10) << "Ma The" << " │ " << left << setw(38) << "Ho Ten" << " │" << endl;
+    cout << " ├" << string(12, '-') << "┼" << string(40, '-') << "┤" << endl;
 
     for (int i = 0; i < n; i++) {
-        string ten = arr[i]->ten;
-        string ho  = arr[i]->ho;
-        if (ho.length()  > 30) ho  = ho.substr(0, 27)  + "...";
-        if (ten.length() > 15) ten = ten.substr(0, 12) + "...";
-        cout << " │ " << left << setw(10) << arr[i]->maThe
-             << " │ " << left << setw(30) << ho
-             << " │ " << left << setw(15) << ten
-             << " │ " << left << setw(5)  << arr[i]->giotinh << " │" << endl;
+        string hoTen = string(arr[i]->ho) + " " + string(arr[i]->ten);
+        if (hoTen.length() > 38) hoTen = hoTen.substr(0, 35) + "...";
+        cout << " │ " << left << setw(10) << arr[i]->maThe 
+             << " │ " << left << setw(38) << hoTen << " │" << endl;
     }
 
-    cout << " └" << string(12, '-') << "┴" << string(32, '-') << "┴" << string(17, '-') << "┴" << string(7, '-') << "┘" << endl;
+    cout << " └" << string(12, '-') << "┴" << string(40, '-') << "┘" << endl;
 
     delete[] arr; 
 }

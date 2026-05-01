@@ -77,21 +77,27 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
             strcpy(dg->ten, tenNuArr[rand() % soTenNu]);
         }
 
-        // Mac dinh the hoat dong, chi khoa khi co vi pham (qua han hoac mat sach)
-        dg->trangThaiThe = 1;
+        // Random trang thai the (80% hoat dong, 20% khoa)
+        dg->trangThaiThe = (rand() % 5 != 0) ? 1 : 0;
 
         themDocGia(ql, dg);
 
         // Random so sach muon (0-3)
         int soSachMuon = rand() % 4;
-
-        // Sinh mang offset ngay lui lai va sap xep giam dan
-        // de dam bao ngay muon cac sach khong bi lon xon
+        
+        // Sinh mang thoi gian lui lai (offset) va sap xep giam dan
+        // de cac sach muon truoc (offset lon hon) duoc them vao danh sach truoc,
+        // giup ngay muon tang dan (hop ly ve mat thoi gian)
         int offsets[3] = {0, 0, 0};
         for (int j = 0; j < soSachMuon; j++) {
             bool isQuaHan = (rand() % 4 == 0); // 25% ty le qua han
-            offsets[j] = isQuaHan ? (rand() % 20 + 8) : (rand() % 8);
+            if (isQuaHan) {
+                offsets[j] = rand() % 20 + 8; // 8 - 27 ngay truoc
+            } else {
+                offsets[j] = rand() % 8; // 0 - 7 ngay truoc (trong han)
+            }
         }
+        // Sap xep giam dan (Bubble Sort co ban vi mang chi toi da 3 phan tu)
         for (int j = 0; j < soSachMuon - 1 && soSachMuon > 1; j++) {
             for (int k = j + 1; k < soSachMuon; k++) {
                 if (offsets[j] < offsets[k]) {
@@ -101,8 +107,6 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
                 }
             }
         }
-
-        bool coMatSach = false;
 
         for (int j = 0; j < soSachMuon; j++) {
             if (sachSanCo.empty()) break;
@@ -128,7 +132,16 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
 
             if (daMuonDauSachNay) continue; // Bo qua neu da muon dau sach nay
 
-            // Tinh toan thoi gian mượn thẳng hàng
+            // Giả lập ngày mượn (có thể quá hạn)
+            Ngay ngayMuon = layNgayHienTai();
+            bool isQuaHan = (rand() % 4 == 0); // 25% ty le qua han
+            if (isQuaHan) {
+                time_t now = time(nullptr);
+                now -= (rand() % 20 + 8) * 24 * 60 * 60; // Lui lai 8-27 ngay
+                struct tm* tmQuaHan = localtime(&now);
+                ngayMuon = {tmQuaHan->tm_mday, tmQuaHan->tm_mon + 1, tmQuaHan->tm_year + 1900};
+            }
+            // Tinh ngay muon tu mang offsets da sap xep de thoi gian mượn luon hop ly
             time_t now = time(nullptr);
             now -= (time_t)offsets[j] * 24 * 60 * 60;
             struct tm* tmMuon = localtime(&now);
@@ -137,23 +150,9 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
             muonSach(dg, ds, sachChon->maSach); // Muon sach that
             dg->dsMuonTra.pTail->ngayMuon = ngayMuon; // Ghi de lai ngay muon gia
 
-            // Gia lap 10% doc gia lam mat sach
-            if (rand() % 10 == 0) {
-                baoMatSach(dg, ds, sachChon->maSach);
-                dg->dsMuonTra.pTail->ngayMuon = ngayMuon; // Khoi phuc lai ngay muon gia lap 
-                coMatSach = true;
-            }
-
             // Loai sach da muon khoi danh sach san co
             sachSanCo.erase(sachSanCo.begin() + sachIdx);
         }
-
-        // In ly do khoa the ra man hinh de test de dang hon
-        if (coMatSach) {
-            dg->trangThaiThe = 0;
-            setColor(31); cout << "   -> [KHOA THE] " << dg->maThe << " - " << dg->ho << " " << dg->ten << " (Ly do: Lam MAT SACH)\n"; resetColor();
-        }
-        
         count++;
     }
     cout << "\nDa tao thanh cong " << count << " doc gia gia.\n";
