@@ -155,6 +155,7 @@ int chonTuBangDocGia(QuanLyDocGia& ql, int* pLuaChon = nullptr) {
     system("cls");
 
     while (true) {
+        showCursor(false);
         DocGia** displayArr = new DocGia*[full_n];
         int n = 0;
         if (searchMode && strlen(searchKeyword) > 0) {
@@ -302,16 +303,17 @@ DauSach* chonTuBangDauSach(ListDauSach& ds, DocGia* dg = nullptr, int* pLuaChon 
     bool searchMode = false;
     bool isTypingSearch = false;
 
-    system("cls"); 
+    system("cls");
 
     while (true) {
+        showCursor(false);
         DauSach** displayArr = new DauSach*[ds.n];
         int n = 0;
 
         if (searchMode && strlen(searchKeyword) > 0) {
             string keywordLower = searchKeyword;
             transform(keywordLower.begin(), keywordLower.end(), keywordLower.begin(), [](unsigned char c){ return tolower(c); });
-            
+
             string keywordUpper = searchKeyword;
             transform(keywordUpper.begin(), keywordUpper.end(), keywordUpper.begin(), [](unsigned char c){ return toupper(c); });
             for (int i = 0; i < ds.n; i++) {
@@ -468,6 +470,7 @@ Sach* chonCuonSachTuDauSach(DauSach* dauSach, DocGia* dg = nullptr, ListDauSach*
     system("cls");
 
     while (true) {
+        showCursor(false);
         gotoxy(0, 0);
         if (dg != nullptr && ds != nullptr) {
             setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===" << string(30, ' ') << "\n"; resetColor();
@@ -556,6 +559,7 @@ const char* chonSachDangMuonUI(DocGia* docGia, ListDauSach& ds, int* pLuaChon = 
     system("cls");
 
     while (true) {
+        showCursor(false);
         gotoxy(0, 0);
         int tongTrang = (n > 0) ? ((n - 1) / ITEM_PER_PAGE + 1) : 1;
         int trang = luaChon / ITEM_PER_PAGE;
@@ -847,13 +851,14 @@ void quanLySachUI(ListDauSach& ds) {
     system("cls");
 
     while (true) {
+        showCursor(false);
         DauSach** displayArr = new DauSach*[ds.n];
         int n = 0;
 
         if (searchMode && strlen(searchKeyword) > 0) {
             string keywordLower = searchKeyword;
             transform(keywordLower.begin(), keywordLower.end(), keywordLower.begin(), [](unsigned char c){ return tolower(c); });
-            
+
             string keywordUpper = searchKeyword;
             transform(keywordUpper.begin(), keywordUpper.end(), keywordUpper.begin(), [](unsigned char c){ return toupper(c); });
             for (int i = 0; i < ds.n; i++) {
@@ -1121,6 +1126,7 @@ const char* chonSachBiMatUI(DocGia* docGia, ListDauSach& ds, int* pLuaChon = nul
     system("cls");
 
     while (true) {
+        showCursor(false);
         gotoxy(0, 0);
         setColor(33); cout << "=== DOC GIA: " << docGia->ho << " " << docGia->ten << " ===" << string(30, ' ') << "\n"; resetColor();
         setColor(31); cout << "[ THE BI KHOA - Chon sach de hoan tra lai ]" << string(20, ' ') << "\n"; resetColor();
@@ -1178,6 +1184,7 @@ void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds) {
     system("cls");
 
     while (true) {
+        showCursor(false);
         DocGia** displayArr = new DocGia*[ql.soLuongDocGia];
         int n = 0;
 
