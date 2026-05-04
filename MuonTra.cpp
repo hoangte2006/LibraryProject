@@ -88,6 +88,7 @@ bool muonSach(DocGia* docGia, ListDauSach &ds, const char* maSach) {
     strncpy(muonTra->maSach, maSach, sizeof(muonTra->maSach)-1);
     muonTra->maSach[sizeof(muonTra->maSach)-1] = '\0'; 
     muonTra->ngayMuon = ngayDungLucMuon;
+    muonTra->ngayTra = {0, 0, 0}; // FIX: Khoi tao mac dinh de tranh rac bo nho ghi vao file
     muonTra->trangThai = 0; 
     muonTra->pNext = nullptr; 
 

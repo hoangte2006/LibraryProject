@@ -38,7 +38,8 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
     int soTenNam = sizeof(tenNamArr) / sizeof(tenNamArr[0]);
     int soTenNu = sizeof(tenNuArr) / sizeof(tenNuArr[0]);
 
-    uint32_t seed = (uint32_t)time(nullptr);
+    // Cung cap seed de ham rand() tao ra du lieu khac nhau o moi lan chay
+    srand((unsigned int)time(nullptr));
 
     // 1. Thu thap tat ca sach co the muon
     vector<Sach*> sachSanCo;
@@ -128,19 +129,19 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
 
             if (daMuonDauSachNay) continue; // Bo qua neu da muon dau sach nay
 
-            // Tinh toan thoi gian mượn thẳng hàng
-            time_t now = time(nullptr);
-            now -= (time_t)offsets[j] * 24 * 60 * 60;
-            struct tm* tmMuon = localtime(&now);
-            Ngay ngayMuon = {tmMuon->tm_mday, tmMuon->tm_mon + 1, tmMuon->tm_year + 1900};
+            // Tinh toan thoi gian mượn tuyet doi an toan
+            time_t nowTime = time(nullptr);
+            nowTime -= (time_t)offsets[j] * 24 * 60 * 60;
+            struct tm* tmMuon = localtime(&nowTime);
+            Ngay ngayMuonGia = {tmMuon->tm_mday, tmMuon->tm_mon + 1, tmMuon->tm_year + 1900};
             
             muonSach(dg, ds, sachChon->maSach); // Muon sach that
-            dg->dsMuonTra.pTail->ngayMuon = ngayMuon; // Ghi de lai ngay muon gia
+            dg->dsMuonTra.pTail->ngayMuon = ngayMuonGia; // Ghi de lai ngay muon gia
 
             // Gia lap 10% doc gia lam mat sach
             if (rand() % 10 == 0) {
                 baoMatSach(dg, ds, sachChon->maSach);
-                dg->dsMuonTra.pTail->ngayMuon = ngayMuon; // Khoi phuc lai ngay muon gia lap 
+                dg->dsMuonTra.pTail->ngayMuon = ngayMuonGia; // Khoi phuc lai ngay muon gia lap
                 coMatSach = true;
             }
 

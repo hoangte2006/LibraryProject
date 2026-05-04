@@ -9,75 +9,48 @@
 #include <iomanip>
 #include <string>
 #include <fstream>
-#include <stdint.h>
-
 using namespace std;
 
-//  KHO CHUA MA THE (ID POOL + XORSHIFT32 PRNG) 
+//  KHO CHUA MA THE (ID POOL + CHIA DE TRI)
 
 static int khoMa[SO_LUONG_MA];
 static int nextIdx = 0;
-static uint32_t currentSeed = 1; // Trang thai cua Xorshift32 (khong duoc bang 0)
 
-// Thuat toan Xorshift32: Sieu nhanh, sieu nhe, chu ky 4 ty
-static uint32_t xorshift32(uint32_t& state) {
-    uint32_t x = state;
-    x ^= x << 13;
-    x ^= x >> 17;
-    x ^= x << 5;
-    state = x;
-    return x;
+// Do sau de quy chi la log2(SO_LUONG_MA) ~ 10, khong bi Stack Overflow
+static void sinhMaChiaDeTri(int arr[], int& idx, int left, int right) {
+    if (left > right) return;                           
+    int mid = (left + right) / 2;                       
+    arr[idx++] = mid;                                   
+    sinhMaChiaDeTri(arr, idx, left, mid - 1);           
+    sinhMaChiaDeTri(arr, idx, mid + 1, right);         
 }
 
-// Sinh so ngau nhien trong [0, range-1] khong co modulo bias (rejection sampling)
-// Ly do can: xorshift32 % range phan bo khong deu neu 2^32 khong chia het cho range
-static uint32_t xorshift32Range(uint32_t& state, uint32_t range) {
-    // threshold = 2^32 % range: loai bo phan du thua gay lech
-    // threshold gioi han lai, phan bo deu trong [0, range-1]
-    uint32_t threshold = (uint32_t)(-range) % range;
-    uint32_t r;
-    do { r = xorshift32(state); } while (r < threshold);
-    return r % range;
-}
-
-void khoiTaoKhoMaThe() { 
+void khoiTaoKhoMaThe() {
     ifstream fileConfig("Input_file/config_ma.txt");
     if (fileConfig.is_open()) {
-        fileConfig >> currentSeed >> nextIdx; // Chi doc 2 con so - seed goc va vi tri dang boc
+        fileConfig >> nextIdx;
         fileConfig.close();
     } else {
-        currentSeed = (uint32_t)time(nullptr);
-        if (currentSeed == 0) currentSeed = 1; // Xorshift se chet neu seed = 0 vi no se tao ra chuoi 0 vo han, dam bao seed khong bao gio bang 0
         nextIdx = 0;
     }
 
-    // 1. Tao mang tuan tu
-    for (int i = 0; i < SO_LUONG_MA; i++) {
-        khoMa[i] = MIN_MA_THE + i;
-    }
-
-    // 2. Xao tron Fisher-Yates bang Xorshift32
-    // Dung 1 ban sao cua seed de xao tron, de giu nguyen currentSeed luu vao file
-    uint32_t tempSeed = currentSeed; 
-    for (int i = SO_LUONG_MA - 1; i > 0; i--) {
-        int j = (int)xorshift32Range(tempSeed, (uint32_t)(i + 1));
-        int temp = khoMa[i]; khoMa[i] = khoMa[j]; khoMa[j] = temp;
-    }
+    int fillIdx = 0;
+    sinhMaChiaDeTri(khoMa, fillIdx, MIN_MA_THE, MIN_MA_THE + SO_LUONG_MA - 1);
 }
 
-// Ham nay de goi khi tat phan mem (luu lai state kho ma)
+// Luu vi tri dang boc (nextIdx) de lan sau chay tiep
 void luuKhoMaThe() {
     ofstream fileConfig("Input_file/config_ma.txt");
     if (fileConfig.is_open()) {
-        fileConfig << currentSeed << " " << nextIdx;
+        fileConfig << nextIdx;
         fileConfig.close();
     }
 }
 
-// Tao ma the moi bang cach boc the tu Pool, toc do O(1) tuyet doi
+// Tao ma the moi bang cach boc the tu Pool, toc do O(1) 
 int taoMaTheMoi() {
     if (nextIdx < SO_LUONG_MA) return khoMa[nextIdx++];
-    return -1; // Kho ma da can kiet
+    return -1; // Kho ma da het
 }
 
 // Ham tao mot doc gia moi voi ma the duoc truyen vao

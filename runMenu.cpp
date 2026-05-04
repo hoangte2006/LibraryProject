@@ -134,7 +134,7 @@ int chonMenu(const char* options[], int n, int x, int y, int &currentSelection) 
     }
 }
 
-int chonTuBangDocGia(QuanLyDocGia& ql) {
+int chonTuBangDocGia(QuanLyDocGia& ql, int* pLuaChon = nullptr) {
     if (ql.soLuongDocGia == 0) {
         cout << "Danh sach doc gia rong!\nNhan phim bat ky de thoat.";
         _getch();
@@ -149,7 +149,7 @@ int chonTuBangDocGia(QuanLyDocGia& ql) {
     int vtSearch = 0;
     bool searchMode = false; 
     bool isTypingSearch = false;
-    int luaChon = 0;
+    int luaChon = pLuaChon ? *pLuaChon : 0;
     const int ITEM_PER_PAGE = 10;
 
     system("cls");
@@ -262,6 +262,11 @@ int chonTuBangDocGia(QuanLyDocGia& ql) {
             if (key == 'f' || key == 'F') {
                 isTypingSearch = true;
                 searchMode = true;
+            } else if (key == 8 && searchMode) {
+                isTypingSearch = true;
+                if (vtSearch > 0) {
+                    vtSearch--; searchKeyword[vtSearch] = '\0'; searchMode = (vtSearch > 0); luaChon = 0;
+                } else { searchMode = false; }
             } else if (key == 224 || key == 0) {
                 key = _getch();
                 if (key == 72) luaChon = max(0, luaChon - 1); 
@@ -271,9 +276,11 @@ int chonTuBangDocGia(QuanLyDocGia& ql) {
             } else if (key == 13) {
                 if (n > 0) {
                     int maThe = displayArr[luaChon]->maThe;
+                    if (pLuaChon) *pLuaChon = luaChon;
                     delete[] displayArr; delete[] fullArr; return maThe;
                 }
             } else if (key == 27) {
+                if (pLuaChon) *pLuaChon = luaChon;
                 delete[] displayArr; delete[] fullArr; return -1;
             }
         }
@@ -281,13 +288,13 @@ int chonTuBangDocGia(QuanLyDocGia& ql) {
     }
 }
 
-DauSach* chonTuBangDauSach(ListDauSach& ds, DocGia* dg = nullptr) {
+DauSach* chonTuBangDauSach(ListDauSach& ds, DocGia* dg = nullptr, int* pLuaChon = nullptr) {
     if (ds.n == 0) {
         cout << "Danh sach dau sach rong!\n";
         return nullptr;
     }
 
-    int luaChon = 0;
+    int luaChon = pLuaChon ? *pLuaChon : 0;
     int trang = 0;
     const int ITEM_PER_PAGE = 10;
     char searchKeyword[100] = "";
@@ -406,6 +413,11 @@ DauSach* chonTuBangDauSach(ListDauSach& ds, DocGia* dg = nullptr) {
             if (key == 'f' || key == 'F') {
                 isTypingSearch = true;
                 searchMode = true;
+            } else if (key == 8 && searchMode) {
+                isTypingSearch = true;
+                if (vtSearch > 0) {
+                    vtSearch--; searchKeyword[vtSearch] = '\0'; searchMode = (vtSearch > 0); luaChon = 0;
+                } else { searchMode = false; }
             } else if (key == 224 || key == 0) {
                 key = _getch();
                 if (key == 72) luaChon = max(0, luaChon - 1);
@@ -415,10 +427,12 @@ DauSach* chonTuBangDauSach(ListDauSach& ds, DocGia* dg = nullptr) {
             } else if (key == 13) {
                 if (n > 0) {
                     DauSach* selected = displayArr[luaChon];
+                    if (pLuaChon) *pLuaChon = luaChon;
                     delete[] displayArr;
                     return selected;
                 }
             } else if (key == 27) {
+                if (pLuaChon) *pLuaChon = luaChon;
                 delete[] displayArr;
                 return nullptr;
             }
@@ -427,7 +441,7 @@ DauSach* chonTuBangDauSach(ListDauSach& ds, DocGia* dg = nullptr) {
     }
 }
 
-Sach* chonCuonSachTuDauSach(DauSach* dauSach, DocGia* dg = nullptr, ListDauSach* ds = nullptr) {
+Sach* chonCuonSachTuDauSach(DauSach* dauSach, DocGia* dg = nullptr, ListDauSach* ds = nullptr, int* pLuaChon = nullptr) {
     if (dauSach == nullptr) return nullptr;
 
     // 1. Filter available books into an array
@@ -448,7 +462,7 @@ Sach* chonCuonSachTuDauSach(DauSach* dauSach, DocGia* dg = nullptr, ListDauSach*
         return nullptr;
     }
 
-    int luaChon = 0;
+    int luaChon = pLuaChon ? *pLuaChon : 0;
     const int ITEM_PER_PAGE = 10;
     
     system("cls");
@@ -499,9 +513,11 @@ Sach* chonCuonSachTuDauSach(DauSach* dauSach, DocGia* dg = nullptr, ListDauSach*
             else if (key == 81) luaChon = min(n - 1, luaChon + ITEM_PER_PAGE);
         } else if (key == 13) {
             Sach* selected = availableBooks[luaChon];
+            if (pLuaChon) *pLuaChon = luaChon;
             delete[] availableBooks;
             return selected;
         } else if (key == 27) {
+            if (pLuaChon) *pLuaChon = luaChon;
             delete[] availableBooks;
             return nullptr;
         }
@@ -509,7 +525,7 @@ Sach* chonCuonSachTuDauSach(DauSach* dauSach, DocGia* dg = nullptr, ListDauSach*
 }
 
 // --- UI CHON SACH DANG MUON (DE TRA HOAC BAO MAT) ---
-const char* chonSachDangMuonUI(DocGia* docGia, ListDauSach& ds) {
+const char* chonSachDangMuonUI(DocGia* docGia, ListDauSach& ds, int* pLuaChon = nullptr) {
     if (docGia == nullptr || docGia->soSachDangMuon == 0) {
         cout << "Doc gia nay khong muon cuon sach nao.\n";
         _getch();
@@ -534,7 +550,7 @@ const char* chonSachDangMuonUI(DocGia* docGia, ListDauSach& ds) {
         return nullptr;
     }
 
-    int luaChon = 0;
+    int luaChon = pLuaChon ? *pLuaChon : 0;
     const int ITEM_PER_PAGE = 10;
     
     system("cls");
@@ -588,9 +604,13 @@ const char* chonSachDangMuonUI(DocGia* docGia, ListDauSach& ds) {
             if (key == 72) luaChon = max(0, luaChon - 1); else if (key == 80) luaChon = min(n - 1, luaChon + 1); else if (key == 73) luaChon = max(0, luaChon - ITEM_PER_PAGE); else if (key == 81) luaChon = min(n - 1, luaChon + ITEM_PER_PAGE);
         } else if (key == 13) {
             const char* selectedMaSach = borrowedItems[luaChon]->maSach;
+            if (pLuaChon) *pLuaChon = luaChon;
             delete[] borrowedItems;
             return selectedMaSach;
-        } else if (key == 27) { delete[] borrowedItems; return nullptr; }
+        } else if (key == 27) { 
+            if (pLuaChon) *pLuaChon = luaChon;
+            delete[] borrowedItems; return nullptr; 
+        }
     }
 }
 
@@ -660,6 +680,15 @@ void formNhapDauSach(ListDauSach& ds, DauSach* dsPtr, bool isThemMoi) {
                     gotoxy(winX + 2, winY + 10); setColor(31); cout << "Vui long dien day du va hop le thong tin!"; resetColor(); _getch();
                     gotoxy(winX + 2, winY + 10); cout << string(winW - 4, ' '); currentField = 0; continue;
                 }
+                
+                time_t t = time(nullptr);
+                struct tm* now = localtime(&t);
+                int namHienTai = now->tm_year + 1900;
+                
+                if (namXB > namHienTai) {
+                    gotoxy(winX + 2, winY + 10); setColor(31); cout << "Loi: Nam xuat ban khong duoc vuot qua " << namHienTai << "!"; resetColor(); _getch();
+                    gotoxy(winX + 2, winY + 10); cout << string(winW - 4, ' '); currentField = 5; continue;
+                }
                 chuanHoaISBN(isbn);
 
                 if (isThemMoi) {
@@ -673,22 +702,6 @@ void formNhapDauSach(ListDauSach& ds, DauSach* dsPtr, bool isThemMoi) {
                     ds.nodes[pos] = p; ds.n++; insertHashISBN(ds, p);
                     gotoxy(winX + 2, winY + 10); setColor(32); cout << "Them dau sach thanh cong!";
                 } else {
-                    bool sachDangMuon = false;
-                    Sach* temp = dsPtr->dsSach.pHead;
-                    while (temp != nullptr) {
-                        if (temp->trangThai == 1) { // 1 = Da muon
-                            sachDangMuon = true;
-                            break;
-                        }
-                        temp = temp->pNext;
-                    }
-                    if (sachDangMuon) {
-                        gotoxy(winX + 2, winY + 10); setColor(31); cout << "Loi: Khong the sua vi co sach dang duoc muon!"; resetColor();
-                        _getch();
-                        gotoxy(winX + 2, winY + 10); cout << string(winW - 4, ' ');
-                        currentField = 0;
-                        continue;
-                    }
                     int i; for (i = 0; i < ds.n; i++) if (ds.nodes[i] == dsPtr) break;
                     for (int j = i; j < ds.n - 1; j++) ds.nodes[j] = ds.nodes[j + 1];
                     ds.n--;
@@ -824,7 +837,7 @@ void formNhapDocGia(QuanLyDocGia& ql, DocGia* dg, bool isThemMoi) {
 
 // --- CHUC NANG QUAN LY SACH ---
 void quanLySachUI(ListDauSach& ds) {
-    int luaChon = 0;
+    static int luaChon = 0;
     const int ITEM_PER_PAGE = 15;
     char searchKeyword[100] = "";
     int vtSearch = 0;
@@ -1065,6 +1078,12 @@ void quanLySachUI(ListDauSach& ds) {
                 isTypingSearch = true; 
                 searchMode = true; 
             }
+            else if (key == 8 && searchMode) {
+                isTypingSearch = true;
+                if (vtSearch > 0) {
+                    vtSearch--; searchKeyword[vtSearch] = '\0'; searchMode = (vtSearch > 0); luaChon = 0;
+                } else { searchMode = false; }
+            }
             else if (key == 'i' || key == 'I') {
                 system("cls"); showCursor(true); inTheoTheLoai_TrongDoTenTangDan(ds); actionTaken = true;
             }
@@ -1082,7 +1101,7 @@ void quanLySachUI(ListDauSach& ds) {
 }
 
 // --- UI CHON SACH BI MAT (DE HOAN TRA) ---
-const char* chonSachBiMatUI(DocGia* docGia, ListDauSach& ds) {
+const char* chonSachBiMatUI(DocGia* docGia, ListDauSach& ds, int* pLuaChon = nullptr) {
     // Thu thap sach bi mat (trangThai == 2)
     MuonTra* sachBiMat[MAX_SACH_MUON * 10];
     int n = 0;
@@ -1098,7 +1117,7 @@ const char* chonSachBiMatUI(DocGia* docGia, ListDauSach& ds) {
         return nullptr;
     }
 
-    int luaChon = 0;
+    int luaChon = pLuaChon ? *pLuaChon : 0;
     system("cls");
 
     while (true) {
@@ -1106,7 +1125,7 @@ const char* chonSachBiMatUI(DocGia* docGia, ListDauSach& ds) {
         setColor(33); cout << "=== DOC GIA: " << docGia->ho << " " << docGia->ten << " ===" << string(30, ' ') << "\n"; resetColor();
         setColor(31); cout << "[ THE BI KHOA - Chon sach de hoan tra lai ]" << string(20, ' ') << "\n"; resetColor();
         cout << "   ┌" << string(26, '-') << "┬" << string(40, '-') << "┬" << string(15, '-') << "┐   \n";
-        cout << "   │ " << left << setw(24) << "Ma Sach" << " │ " << left << setw(38) << "Ten Sach" << " │ " << left << setw(13) << "Ngay Mat" << " │   \n";
+        cout << "   │ " << left << setw(24) << "Ma Sach" << " │ " << left << setw(38) << "Ten Sach" << " │ " << left << setw(13) << "Ngay Muon" << " │   \n";
         cout << "   ├" << string(26, '-') << "┼" << string(40, '-') << "┼" << string(15, '-') << "┤   \n";
 
         for (int i = 0; i < n; i++) {
@@ -1137,8 +1156,10 @@ const char* chonSachBiMatUI(DocGia* docGia, ListDauSach& ds) {
             if (arrow == 72 && luaChon > 0) luaChon--;
             else if (arrow == 80 && luaChon < n - 1) luaChon++;
         } else if (key == 13) {
+            if (pLuaChon) *pLuaChon = luaChon;
             return sachBiMat[luaChon]->maSach;
         } else if (key == 27) {
+            if (pLuaChon) *pLuaChon = luaChon;
             return nullptr;
         }
         system("cls");
@@ -1147,7 +1168,7 @@ const char* chonSachBiMatUI(DocGia* docGia, ListDauSach& ds) {
 
 // --- CHUC NANG QUAN LY DOC GIA ---
 void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds) {
-    int luaChon = 0;
+    static int luaChon = 0;
     const int ITEM_PER_PAGE = 15;
     char searchKeyword[100] = "";
     int vtSearch = 0;
@@ -1290,19 +1311,25 @@ void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds) {
                     for(int i=0; i<ph; i++) { gotoxy(px, py+i); cout << "│"; gotoxy(px+pw-1, py+i); cout << "│"; }
                     gotoxy(px, py); cout << "┌"; gotoxy(px+pw-1, py); cout << "┐"; gotoxy(px, py+ph-1); cout << "└"; gotoxy(px+pw-1, py+ph-1); cout << "┘";
                     gotoxy(px + 2, py + 2);
-                    cout << "Xoa doc gia " << displayArr[luaChon]->maThe << "? (Y/N): ";
-                    char confirm = _getch();
-                    if (toupper(confirm) == 'Y') {
-                        gotoxy(px + 2, py + 2); cout << string(pw - 4, ' ');
-                        gotoxy(0, 24);
-                        if (xoaDocGia(ql, displayArr[luaChon]->maThe)) {
-                            gotoxy(px + 2, py + 2); setColor(32); cout << "Xoa thanh cong!"; resetColor();
-                        } else {
-                            gotoxy(px + 2, py + 2); setColor(31); cout << "Xoa that bai!"; resetColor();
-                        }
+                    DocGia* dgXoa = displayArr[luaChon];
+                    if (dgXoa->soSachDangMuon > 0) {
+                        setColor(31); cout << "Khong the xoa! Dang muon " << dgXoa->soSachDangMuon << " cuon."; resetColor();
+                    } else if (dgXoa->dsMuonTra.pHead != nullptr) {
+                        setColor(31); cout << "Khong the xoa! Da co lich su muon tra."; resetColor();
                     } else {
+                        cout << "Xoa doc gia " << dgXoa->maThe << "? (Y/N): ";
+                        char confirm = _getch();
                         gotoxy(px + 2, py + 2); cout << string(pw - 4, ' ');
-                        gotoxy(px + 2, py + 2); cout << "Da huy thao tac xoa.";
+                        if (toupper(confirm) == 'Y') {
+                            gotoxy(0, 24);
+                            if (xoaDocGia(ql, dgXoa->maThe)) {
+                                gotoxy(px + 2, py + 2); setColor(32); cout << "Xoa thanh cong!"; resetColor();
+                            } else {
+                                gotoxy(px + 2, py + 2); setColor(31); cout << "Xoa that bai!"; resetColor();
+                            }
+                        } else {
+                            gotoxy(px + 2, py + 2); cout << "Da huy thao tac xoa.";
+                        }
                     }
                     Sleep(1000);
                 }
@@ -1324,19 +1351,25 @@ void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds) {
                 for(int i=0; i<ph; i++) { gotoxy(px, py+i); cout << "│"; gotoxy(px+pw-1, py+i); cout << "│"; }
                 gotoxy(px, py); cout << "┌"; gotoxy(px+pw-1, py); cout << "┐"; gotoxy(px, py+ph-1); cout << "└"; gotoxy(px+pw-1, py+ph-1); cout << "┘";
                 gotoxy(px + 2, py + 2);
-                cout << "Xoa doc gia " << displayArr[luaChon]->maThe << "? (Y/N): ";
-                char confirm = _getch();
-                if (toupper(confirm) == 'Y') {
-                    gotoxy(px + 2, py + 2); cout << string(pw - 4, ' ');
-                    gotoxy(0, 24);
-                    if (xoaDocGia(ql, displayArr[luaChon]->maThe)) {
-                        gotoxy(px + 2, py + 2); setColor(32); cout << "Xoa thanh cong!"; resetColor();
-                    } else {
-                        gotoxy(px + 2, py + 2); setColor(31); cout << "Xoa that bai!"; resetColor();
-                    }
+                DocGia* dgXoa = displayArr[luaChon];
+                if (dgXoa->soSachDangMuon > 0) {
+                    setColor(31); cout << "Khong the xoa! Dang muon " << dgXoa->soSachDangMuon << " cuon."; resetColor();
+                } else if (dgXoa->dsMuonTra.pHead != nullptr) {
+                    setColor(31); cout << "Khong the xoa! Da co lich su muon tra."; resetColor();
                 } else {
+                    cout << "Xoa doc gia " << dgXoa->maThe << "? (Y/N): ";
+                    char confirm = _getch();
                     gotoxy(px + 2, py + 2); cout << string(pw - 4, ' ');
-                    gotoxy(px + 2, py + 2); cout << "Da huy thao tac xoa.";
+                    if (toupper(confirm) == 'Y') {
+                        gotoxy(0, 24);
+                        if (xoaDocGia(ql, dgXoa->maThe)) {
+                            gotoxy(px + 2, py + 2); setColor(32); cout << "Xoa thanh cong!"; resetColor();
+                        } else {
+                            gotoxy(px + 2, py + 2); setColor(31); cout << "Xoa that bai!"; resetColor();
+                        }
+                    } else {
+                        gotoxy(px + 2, py + 2); cout << "Da huy thao tac xoa.";
+                    }
                 }
                 Sleep(1000);
             }
@@ -1379,6 +1412,12 @@ void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds) {
                 isTypingSearch = true; 
                 searchMode = true; 
             }
+            else if (key == 8 && searchMode) {
+                isTypingSearch = true;
+                if (vtSearch > 0) {
+                    vtSearch--; searchKeyword[vtSearch] = '\0'; searchMode = (vtSearch > 0); luaChon = 0;
+                } else { searchMode = false; }
+            }
             else if (key == 'i' || key == 'I') { const char* subInDocGia[] = { "In theo Ma The (tang dan)", "In theo Ten (A-Z)", "<- Quay lai" }; int indexIn = 0; system("cls"); gotoxy(10, 4); setColor(33); cout << "--- CHON KIEU IN ---"; int chonIn = chonMenu(subInDocGia, 3, 10, 7, indexIn); if (chonIn != 2 && chonIn != -1) { system("cls"); showCursor(true); if (chonIn == 0) inDanhSachDocGia(ql.root); else if (chonIn == 1) inTheoTen(ql); actionTaken = true; } }
         }
         
@@ -1404,6 +1443,8 @@ void giaoDichUI(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
     const char* subGiaoDich[] = { "Muon sach", "Tra sach", "Bao mat sach", "Xem sach dang muon", "<- Quay lai" };
     int indexPhai = 0;
 
+    int luaChonDocGia = 0;
+
     while (true) {
         veKhungGiaoDien();
         veMenuList(menuTrai, 6, 3, 2, 6, false);
@@ -1416,7 +1457,7 @@ void giaoDichUI(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
         // Vong lap chon doc gia: ESC tai day moi quay ve menu Giao dich
         while (true) {
             system("cls");
-            int ma = chonTuBangDocGia(qlDocGia);
+            int ma = chonTuBangDocGia(qlDocGia, &luaChonDocGia);
             if (ma == -1) break; // ESC -> ve menu Giao dich
 
             DocGia* dg = timDocGia(qlDocGia.root, ma);
@@ -1474,13 +1515,15 @@ void giaoDichUI(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
 
                 // Vong lap chon dau sach: ESC tai day quay ve chon doc gia
                 bool xongMuon = false;
+                int luaChonDauSach = 0;
                 while (!xongMuon) {
-                    DauSach* dauSachChon = chonTuBangDauSach(ds, dg);
+                    DauSach* dauSachChon = chonTuBangDauSach(ds, dg, &luaChonDauSach);
                     if (dauSachChon == nullptr) break; // ESC -> ve chon doc gia
 
+                    int luaChonCuonSach = 0;
                     // Vong lap chon cuon sach: ESC tai day quay ve chon dau sach
                     while (true) {
-                        Sach* cuonSachChon = chonCuonSachTuDauSach(dauSachChon, dg, &ds);
+                        Sach* cuonSachChon = chonCuonSachTuDauSach(dauSachChon, dg, &ds, &luaChonCuonSach);
                         if (cuonSachChon == nullptr) break; // ESC -> ve chon dau sach
 
                         system("cls");
@@ -1496,14 +1539,11 @@ void giaoDichUI(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
             }
 
             if (chonPhai == 1) { // Tra sach
-                int soSachBiMat = 0;
+                int soSachBiMatTruoc = 0;
                 for (MuonTra* mt = dg->dsMuonTra.pHead; mt != nullptr; mt = mt->pNext)
-                    if (mt->trangThai == 2) soSachBiMat++;
+                    if (mt->trangThai == 2) soSachBiMatTruoc++;
 
-                bool coThuong = (dg->soSachDangMuon > 0);
-                bool coBiMat  = (soSachBiMat > 0);
-
-                if (!coThuong && !coBiMat) {
+                if (dg->soSachDangMuon == 0 && soSachBiMatTruoc == 0) {
                     system("cls");
                     setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
                     cout << "Doc gia nay khong co sach nao de tra.\n";
@@ -1512,38 +1552,56 @@ void giaoDichUI(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
                     continue;
                 }
 
-                int chonLoai = 0; // 0: tra thuong, 1: hoan tra sach bi mat
-                if (coThuong && coBiMat) {
-                    const char* subTra[] = { "Tra sach dang muon", "Hoan tra sach bi mat", "<- Quay lai" };
-                    int idx = 0;
-                    system("cls");
-                    int c = chonMenu(subTra, 3, 20, 5, idx);
-                    if (c == 2 || c == -1) continue;
-                    chonLoai = c;
-                } else {
-                    chonLoai = coThuong ? 0 : 1;
-                }
+                int luaChonSachTra = 0;
+                int luaChonSachBiMat = 0;
+                while (true) {
+                    int soSachBiMat = 0;
+                    for (MuonTra* mt = dg->dsMuonTra.pHead; mt != nullptr; mt = mt->pNext)
+                        if (mt->trangThai == 2) soSachBiMat++;
 
-                if (chonLoai == 0) {
-                    while (true) {
-                        const char* maSachTra = chonSachDangMuonUI(dg, ds);
-                        if (maSachTra == nullptr) break;
+                    bool coThuong = (dg->soSachDangMuon > 0);
+                    bool coBiMat  = (soSachBiMat > 0);
+
+                    if (!coThuong && !coBiMat) {
+                        break;
+                    }
+
+                    int chonLoai = 0; // 0: tra thuong, 1: hoan tra sach bi mat
+                    if (coThuong && coBiMat) {
+                        const char* subTra[] = { "Tra sach dang muon", "Hoan tra sach bi mat", "<- Quay lai" };
+                        int idx = 0;
+                        system("cls");
+                        int c = chonMenu(subTra, 3, 20, 5, idx);
+                        if (c == 2 || c == -1) break;
+                        chonLoai = c;
+                    } else {
+                        chonLoai = coThuong ? 0 : 1;
+                    }
+
+                    if (chonLoai == 0) {
+                        const char* maSachTra = chonSachDangMuonUI(dg, ds, &luaChonSachTra);
+                        if (maSachTra == nullptr) {
+                            if (coThuong && coBiMat) continue;
+                            else break;
+                        }
                         system("cls");
                         setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
                         traSach(dg, ds, maSachTra, layNgayHienTai());
                         cout << "\n\nNhan phim bat ky de tiep tuc...";
                         _getch();
-                        break;
-                    }
-                } else {
-                    system("cls");
-                    const char* maSachHoanTra = chonSachBiMatUI(dg, ds);
-                    if (maSachHoanTra != nullptr) {
+                    } else {
                         system("cls");
-                        setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
-                        traSachBiMat(dg, ds, maSachHoanTra);
-                        cout << "\n\nNhan phim bat ky de tiep tuc...";
-                        _getch();
+                        const char* maSachHoanTra = chonSachBiMatUI(dg, ds, &luaChonSachBiMat);
+                        if (maSachHoanTra != nullptr) {
+                            system("cls");
+                            setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
+                            traSachBiMat(dg, ds, maSachHoanTra);
+                            cout << "\n\nNhan phim bat ky de tiep tuc...";
+                            _getch();
+                        } else {
+                            if (coThuong && coBiMat) continue;
+                            else break;
+                        }
                     }
                 }
                 continue;
@@ -1559,8 +1617,9 @@ void giaoDichUI(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
                     continue;
                 }
 
+                int luaChonBaoMat = 0;
                 while (true) {
-                    const char* maSachMat = chonSachDangMuonUI(dg, ds);
+                    const char* maSachMat = chonSachDangMuonUI(dg, ds, &luaChonBaoMat);
                     if (maSachMat == nullptr) break; // ESC -> ve chon doc gia
 
                     system("cls");
@@ -1633,6 +1692,7 @@ void runMenu() {
     loadDauSach("Input_file/DauSach.txt", ds);
     loadDocGia("Input_file/DocGia.txt", qlDocGia);
     khoiTaoKhoMaThe();
+    // suaChuaDuLieu(qlDocGia, ds); // (Doc nguyen trang thai tu file txt)
 
     int indexTrai = 0;
     while (true) {
