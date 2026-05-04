@@ -60,7 +60,7 @@ void taoDuLieuGia(QuanLyDocGia& ql, ListDauSach& ds, int soLuong) {
 
     int count = 0;
     for (int i = 0; i < soLuong; i++) {
-        int maThe = taoMaTheMoi();
+        int maThe = taoMaTheMoi(ql);
         if (maThe == -1) {
             cout << "Kho ma the da can kiet!\n";
             break;

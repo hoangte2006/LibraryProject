@@ -20,8 +20,6 @@
 
 using namespace std;
 
-const char* menuTrai[] = { "Tong quan", "Quan ly doc gia", "Quan ly sach", "Giao dich", "Thong ke", "Thoat" };
-
 // --- CAC HAM DO HOA (Giu nguyen de dam bao giao dien) ---
 void gotoxy(int x, int y) {
     HANDLE hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -811,7 +809,7 @@ void formNhapDocGia(QuanLyDocGia& ql, DocGia* dg, bool isThemMoi) {
                 }
 
                 if (isThemMoi) {
-                    int maThe = taoMaTheMoi();
+                    int maThe = taoMaTheMoi(ql);
                     if (maThe == -1) {
                         gotoxy(winX + 2, winY + 7); setColor(31); cout << "Loi: Kho ma the da can kiet!";
                         resetColor();
@@ -842,6 +840,7 @@ void formNhapDocGia(QuanLyDocGia& ql, DocGia* dg, bool isThemMoi) {
 // --- CHUC NANG QUAN LY SACH ---
 void quanLySachUI(ListDauSach& ds) {
     static int luaChon = 0;
+    int luaChon = 0;
     const int ITEM_PER_PAGE = 15;
     char searchKeyword[100] = "";
     int vtSearch = 0;
@@ -1175,6 +1174,7 @@ const char* chonSachBiMatUI(DocGia* docGia, ListDauSach& ds, int* pLuaChon = nul
 // --- CHUC NANG QUAN LY DOC GIA ---
 void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds) {
     static int luaChon = 0;
+    int luaChon = 0;
     const int ITEM_PER_PAGE = 15;
     char searchKeyword[100] = "";
     int vtSearch = 0;
@@ -1447,6 +1447,7 @@ void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds) {
 //   chon sach tra/mat --ESC--> chon doc gia
 //   chon doc gia    --ESC--> menu Giao dich
 void giaoDichUI(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
+    const char* menuTrai[] = { "Tong quan", "Quan ly doc gia", "Quan ly sach", "Giao dich", "Thong ke", "Thoat" };
     const char* subGiaoDich[] = { "Muon sach", "Tra sach", "Bao mat sach", "Xem sach dang muon", "<- Quay lai" };
     int indexPhai = 0;
 
@@ -1691,14 +1692,13 @@ void thongKeUI(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
 }
 
 // --- CHUONG TRINH CHINH ---
-void runMenu() {
+void runMenu(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
     setupConsole();
-    QuanLyDocGia qlDocGia;
-    ListDauSach ds; ds.n = 0;
-    
+    const char* menuTrai[] = { "Tong quan", "Quan ly doc gia", "Quan ly sach", "Giao dich", "Thong ke", "Thoat" };
+
     loadDauSach("Input_file/DauSach.txt", ds);
     loadDocGia("Input_file/DocGia.txt", qlDocGia);
-    khoiTaoKhoMaThe();
+    khoiTaoKhoMaThe(qlDocGia);
     // suaChuaDuLieu(qlDocGia, ds); // (Doc nguyen trang thai tu file txt)
 
     int indexTrai = 0;
@@ -1725,7 +1725,7 @@ void runMenu() {
             system("cls");
             saveDocGia("Input_file/DocGia.txt", qlDocGia.root);
             saveDauSach("Input_file/DauSach.txt", ds);
-            luuKhoMaThe();
+            luuKhoMaThe(qlDocGia);
             cout << "Da luu du lieu. Tam biet!\n";
             
             break;

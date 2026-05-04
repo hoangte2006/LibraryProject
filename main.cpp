@@ -36,7 +36,9 @@ int main()
     cout << endl; // tránh bị dính prompt sau khi test xong trên Ubuntu, vì khi khôi phục console thì con trỏ sẽ ở cuối dòng hiện tại, nếu không in endl thì prompt sẽ dính ngay sau kết quả test mà không xuống dòng mới.
 #else
 
-    runMenu();  
+    QuanLyDocGia qlDocGia;
+    ListDauSach ds;
+    runMenu(qlDocGia, ds);
 
 #endif
 

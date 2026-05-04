@@ -48,6 +48,8 @@ typedef DocGia* TREE_DocGia;
 struct QuanLyDocGia {
     TREE_DocGia root = nullptr;
     int soLuongDocGia = 0; // toi uu thanh O(1), khong dung countDocGia
+    int khoMa[SO_LUONG_MA];
+    int nextIdx = 0;
 };
 
 struct DocGiaQuaHan {
@@ -83,7 +85,7 @@ struct DauSach {
     ListSach dsSach;     
 };
 
-const int HASH_SIZE = 2003; 
+#define HASH_SIZE 2003
 
 struct HashEntry {
     char isbn[20];

@@ -13,9 +13,6 @@ using namespace std;
 
 //  KHO CHUA MA THE (ID POOL + CHIA DE TRI)
 
-static int khoMa[SO_LUONG_MA];
-static int nextIdx = 0;
-
 // Do sau de quy chi la log2(SO_LUONG_MA) ~ 10, khong bi Stack Overflow
 static void sinhMaChiaDeTri(int arr[], int& idx, int left, int right) {
     if (left > right) return;                           
@@ -25,31 +22,31 @@ static void sinhMaChiaDeTri(int arr[], int& idx, int left, int right) {
     sinhMaChiaDeTri(arr, idx, mid + 1, right);         
 }
 
-void khoiTaoKhoMaThe() {
+void khoiTaoKhoMaThe(QuanLyDocGia& ql) {
     ifstream fileConfig("Input_file/config_ma.txt");
     if (fileConfig.is_open()) {
-        fileConfig >> nextIdx;
+        fileConfig >> ql.nextIdx;
         fileConfig.close();
     } else {
-        nextIdx = 0;
+        ql.nextIdx = 0;
     }
 
     int fillIdx = 0;
-    sinhMaChiaDeTri(khoMa, fillIdx, MIN_MA_THE, MIN_MA_THE + SO_LUONG_MA - 1);
+    sinhMaChiaDeTri(ql.khoMa, fillIdx, MIN_MA_THE, MIN_MA_THE + SO_LUONG_MA - 1);
 }
 
 // Luu vi tri dang boc (nextIdx) de lan sau chay tiep
-void luuKhoMaThe() {
+void luuKhoMaThe(QuanLyDocGia& ql) {
     ofstream fileConfig("Input_file/config_ma.txt");
     if (fileConfig.is_open()) {
-        fileConfig << nextIdx;
+        fileConfig << ql.nextIdx;
         fileConfig.close();
     }
 }
 
-// Tao ma the moi bang cach boc the tu Pool, toc do O(1) 
-int taoMaTheMoi() {
-    if (nextIdx < SO_LUONG_MA) return khoMa[nextIdx++];
+// Tao ma the moi bang cach boc the tu Pool, toc do O(1)
+int taoMaTheMoi(QuanLyDocGia& ql) {
+    if (ql.nextIdx < SO_LUONG_MA) return ql.khoMa[ql.nextIdx++];
     return -1; // Kho ma da het
 }
 

@@ -1,4 +1,4 @@
 #pragma once
 #include "Structs.h"
 
-void runMenu();
+void runMenu(QuanLyDocGia& qlDocGia, ListDauSach& ds);

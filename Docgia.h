@@ -2,9 +2,9 @@
 #include "Structs.h"
 
 // Khoi tao va luu tru ma the
-void khoiTaoKhoMaThe();
-void luuKhoMaThe();
-int taoMaTheMoi();
+void khoiTaoKhoMaThe(QuanLyDocGia& ql);
+void luuKhoMaThe(QuanLyDocGia& ql);
+int taoMaTheMoi(QuanLyDocGia& ql);
 
 // Quan ly Doc gia (Su dung struct QuanLyDocGia moi)
 DocGia* taoDocGia(int maThe);
