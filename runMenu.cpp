@@ -839,7 +839,6 @@ void formNhapDocGia(QuanLyDocGia& ql, DocGia* dg, bool isThemMoi) {
 
 // --- CHUC NANG QUAN LY SACH ---
 void quanLySachUI(ListDauSach& ds) {
-    static int luaChon = 0;
     int luaChon = 0;
     const int ITEM_PER_PAGE = 15;
     char searchKeyword[100] = "";
@@ -1173,7 +1172,6 @@ const char* chonSachBiMatUI(DocGia* docGia, ListDauSach& ds, int* pLuaChon = nul
 
 // --- CHUC NANG QUAN LY DOC GIA ---
 void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds) {
-    static int luaChon = 0;
     int luaChon = 0;
     const int ITEM_PER_PAGE = 15;
     char searchKeyword[100] = "";
