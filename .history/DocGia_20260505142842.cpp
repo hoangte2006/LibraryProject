@@ -14,34 +14,21 @@ using namespace std;
 //  KHO CHUA MA THE 
 
 // BFS level-order: cap ID tu giua ra tung tang, dam bao BST can bang
+// du it hay nhieu doc gia. Queue tu cai dat bang 2 mang left/right.
 static void sinhMaChiaDeTri(int arr[], int& idx, int left, int right) {
     int total = right - left + 1;
     int* qL = new int[total];
     int* qR = new int[total];
     int head = 0, tail = 0;
 
-    qL[tail] = left; 
-    qR[tail] = right; 
-    tail++;
+    qL[tail] = left; qR[tail] = right; tail++;
 
     while (head < tail) {
         int l = qL[head], r = qR[head]; head++;
         int mid = (l + r) / 2;
         arr[idx++] = mid;
-        
-        if (l <= mid - 1) 
-            { 
-                qL[tail] = l;       
-                qR[tail] = mid - 1; 
-                tail++; 
-            }
-
-        if (mid + 1 <= r) 
-            { 
-                qL[tail] = mid + 1; 
-                qR[tail] = r;       
-                tail++; 
-            }
+        if (l       <= mid - 1) { qL[tail] = l;       qR[tail] = mid - 1; tail++; }
+        if (mid + 1 <= r      ) { qL[tail] = mid + 1; qR[tail] = r;       tail++; }
     }
 
     delete[] qL;

@@ -28,19 +28,16 @@ static void sinhMaChiaDeTri(int arr[], int& idx, int left, int right) {
         int l = qL[head], r = qR[head]; head++;
         int mid = (l + r) / 2;
         arr[idx++] = mid;
-        
         if (l <= mid - 1) 
-            { 
-                qL[tail] = l;       
-                qR[tail] = mid - 1; 
-                tail++; 
+            { qL[tail] = l;       
+            qR[tail] = mid - 1; 
+            tail++; 
             }
-
         if (mid + 1 <= r) 
             { 
-                qL[tail] = mid + 1; 
-                qR[tail] = r;       
-                tail++; 
+            qL[tail] = mid + 1; 
+            qR[tail] = r;       
+            tail++; 
             }
     }
 
