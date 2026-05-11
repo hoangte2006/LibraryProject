@@ -25,10 +25,10 @@ static void sinhMaChiaDeTri(int arr[], int& idx, int left, int right) {
     tail++;
 
     while (head < tail) {
-        int l = qL[head], r = qR[head]; head++;
+        int l = qL[head], r = qR[head]; head++; 
         int mid = (l + r) / 2;
         arr[idx++] = mid;
-        
+
         if (l <= mid - 1) 
             { 
                 qL[tail] = l;       
