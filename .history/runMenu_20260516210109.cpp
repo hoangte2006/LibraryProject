@@ -165,7 +165,6 @@ void veKhungGiaoDien() {
     gotoxy(0, 2); cout << "==================================================================================";
     for (int i = 3; i <= 22; i++) { gotoxy(25, i); cout << "||"; }
     gotoxy(0, 23); cout << "==================================================================================";
-    gotoxy(2, 25); cout << "(Mui ten Len/Xuong: Di chuyen | Enter: Chon/Xac nhan)";
     resetColor();
 }
 

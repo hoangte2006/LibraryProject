@@ -165,7 +165,6 @@ void veKhungGiaoDien() {
     gotoxy(0, 2); cout << "==================================================================================";
     for (int i = 3; i <= 22; i++) { gotoxy(25, i); cout << "||"; }
     gotoxy(0, 23); cout << "==================================================================================";
-    gotoxy(2, 25); cout << "(Mui ten Len/Xuong: Di chuyen | Enter: Chon/Xac nhan)";
     resetColor();
 }
 
@@ -1138,6 +1137,7 @@ void quanLySachUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
                         cout << "Dau sach: " << displayArr[luaChon]->tenSach << "\n";
                         themCuonSach(displayArr[luaChon]);
                         showCursor(false);
+                        actionTaken = true;
                     }
                     else if (k == 'x' || k == 'X') {
                         char suffix[10];
@@ -1181,6 +1181,7 @@ void quanLySachUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
                     }
                     else if (k == 27) { break; }
                 }
+                actionTaken = true;
             }
             else if (key == 'f' || key == 'F') { 
                 isTypingSearch = true; 
@@ -1510,6 +1511,7 @@ void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
                             system("cls");
                             setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
                             cout << "Doc gia nay khong muon sach nao de bao mat.\n";
+                            cout << "\nNhan phim bat ky de quay lai..."; _getch();
                             actionTaken = true;
                         } else {
                             system("cls");
@@ -1518,6 +1520,7 @@ void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
                                 system("cls");
                                 setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
                                 baoMatSach(dg, ds, maSachMat);
+                                cout << "\nNhan phim bat ky de tiep tuc..."; _getch();
                                 actionTaken = true;
                             }
                         }
@@ -1529,9 +1532,11 @@ void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
                             system("cls");
                             setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
                             traSachBiMat(dg, ds, maSachHoanTra);
+                            cout << "\nNhan phim bat ky de tiep tuc..."; _getch();
                             actionTaken = true;
                         }
                     }
+                    actionTaken = true;
                 }
             }
             else if (key == 'f' || key == 'F') { 
