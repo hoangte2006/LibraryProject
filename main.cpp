@@ -39,6 +39,7 @@ int main()
     QuanLyDocGia qlDocGia;
     ListDauSach ds;
     runMenu(qlDocGia, ds);
+    delete[] qlDocGia.khoMa;
 
 #endif
 

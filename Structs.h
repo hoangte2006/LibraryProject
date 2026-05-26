@@ -48,7 +48,7 @@ typedef DocGia* TREE_DocGia;
 struct QuanLyDocGia {
     TREE_DocGia root = nullptr;
     int soLuongDocGia = 0; // toi uu thanh O(1), khong dung countDocGia
-    int khoMa[SO_LUONG_MA];
+    int* khoMa = nullptr;
     int nextIdx = 0;
 };
 
