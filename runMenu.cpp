@@ -1067,7 +1067,7 @@ void quanLySachUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
                 else if (key == 80) luaChon = min(n - 1, luaChon + 1);
                 else if (key == 73) luaChon = max(0, luaChon - ITEM_PER_PAGE);
                 else if (key == 81) luaChon = min(n - 1, luaChon + ITEM_PER_PAGE);
-                else if (key == 83) { // DELETE key
+                else if (key == 83 && n > 0) { // DELETE key
                     int px = 15, py = 10, pw = 55, ph = 5;
                     xoaVung(px, py, pw, ph);
                     setColor(33);
@@ -1094,8 +1094,8 @@ void quanLySachUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
             } 
             else if (key == 27) { delete[] displayArr; return; }
             else if (key == 't' || key == 'T') { formNhapDauSach(ds, nullptr, true, myUndo); actionTaken = true; }
-            else if (key == 's' || key == 'S') { formNhapDauSach(ds, displayArr[luaChon], false, myUndo); actionTaken = true; }
-            else if (key == 'x' || key == 'X') {
+            else if ((key == 's' || key == 'S') && n > 0) { formNhapDauSach(ds, displayArr[luaChon], false, myUndo); actionTaken = true; }
+            else if ((key == 'x' || key == 'X') && n > 0) {
                 int px = 15, py = 10, pw = 55, ph = 5;
                 xoaVung(px, py, pw, ph);
                 setColor(33);
@@ -1124,7 +1124,7 @@ void quanLySachUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
                 }
                 Sleep(1000);
             }
-            else if (key == 'c' || key == 'C') {
+            else if ((key == 'c' || key == 'C') && n > 0) {
                 while (true) {
                     system("cls");
                     inDanhSachCuonSach(displayArr[luaChon]); 
@@ -1430,7 +1430,7 @@ void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
                 else if (key == 80) luaChon = min(n - 1, luaChon + 1);
                 else if (key == 73) luaChon = max(0, luaChon - ITEM_PER_PAGE);
                 else if (key == 81) luaChon = min(n - 1, luaChon + ITEM_PER_PAGE);
-                else if (key == 83) { // DELETE key
+                else if (key == 83 && n > 0) { // DELETE key
                     int px = 20, py = 10, pw = 45, ph = 5;
                     xoaVung(px, py, pw, ph);
                     setColor(33);
@@ -1466,11 +1466,11 @@ void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
                 formNhapDocGia(ql, nullptr, true, myUndo);
                 actionTaken = true;
             }
-            else if (key == 's' || key == 'S') { 
+            else if ((key == 's' || key == 'S') && n > 0) {
                 formNhapDocGia(ql, displayArr[luaChon], false, myUndo);
-                actionTaken = true; 
+                actionTaken = true;
             }
-            else if (key == 'x' || key == 'X') {
+            else if ((key == 'x' || key == 'X') && n > 0) {
                 int px = 20, py = 10, pw = 45, ph = 5;
                 xoaVung(px, py, pw, ph);
                 setColor(33);
@@ -1500,7 +1500,7 @@ void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
                 }
                 Sleep(1000);
             }
-            else if (key == 'k' || key == 'K') {
+            else if ((key == 'k' || key == 'K') && n > 0) {
                 int ma = displayArr[luaChon]->maThe;
                 DocGia* dg = timDocGia(ql.root, ma);
                 if (dg) {
