@@ -1635,12 +1635,12 @@ void giaoDichUI(QuanLyDocGia& qlDocGia, ListDauSach& ds, undoStack& myUndo) {
                     _getch();
                     continue;
                 }
-                if (dg->soSachDangMuon >= MAX_SACH_MUON) {
+                if (dg->soSachDangMuon >= ) {
                     system("cls");
                     setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
                     xemSachDangMuon(dg, ds);
                     cout << "------------------------------------------\n";
-                    cout << "Da muon toi da " << MAX_SACH_MUON << " cuon!\n";
+                    cout << "Da muon toi da 3 cuon!\n";
                     cout << "\n\nNhan phim bat ky de tiep tuc...";
                     _getch();
                     continue;
@@ -1672,14 +1672,14 @@ void giaoDichUI(QuanLyDocGia& qlDocGia, ListDauSach& ds, undoStack& myUndo) {
 
                         system("cls");
                         setColor(33); cout << "=== DOC GIA: " << dg->ho << " " << dg->ten << " ===\n"; resetColor();
-                        if (muonSach(dg, ds, cuonSachChon->maSach)) {
-                            nodeState* nsMuon = new nodeState();
-                            nsMuon->state = UNDO_MUON_SACH;
-                            nsMuon->maThe = dg->maThe;
-                            strcpy(nsMuon->maSach, cuonSachChon->maSach);
-                            snprintf(nsMuon->moTa, 120, "Muon sach: %s - DG %d (%s %s)", cuonSachChon->maSach, dg->maThe, dg->ho, dg->ten);
-                            pushUndo(myUndo, nsMuon);
-                        }
+                        muonSach(dg, ds, cuonSachChon->maSach);
+                        // Luu undo: muon sach
+                        nodeState* nsMuon = new nodeState();
+                        nsMuon->state = UNDO_MUON_SACH;
+                        nsMuon->maThe = dg->maThe;
+                        strcpy(nsMuon->maSach, cuonSachChon->maSach);
+                        snprintf(nsMuon->moTa, 120, "Muon sach: %s - DG %d (%s %s)", cuonSachChon->maSach, dg->maThe, dg->ho, dg->ten);
+                        pushUndo(myUndo, nsMuon);
                         cout << "\n\nNhan phim bat ky de tiep tuc...";
                         _getch();
                         xongMuon = true; // thanh cong -> thoat ca 2 vong, ve chon doc gia

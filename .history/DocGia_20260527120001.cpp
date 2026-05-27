@@ -89,7 +89,7 @@ DocGia* taoDocGia(int maThe) {
     
     newDocGia->pRight = nullptr; 
     newDocGia->pLeft = nullptr; 
-    
+  lêt thì 
     newDocGia->dsMuonTra.pHead = nullptr; 
     newDocGia->dsMuonTra.pTail = nullptr;
 
@@ -107,15 +107,10 @@ bool themDocGia(QuanLyDocGia &ql, DocGia* newnode) {
     TREE_DocGia parent = nullptr;
     while (current != nullptr) {
         parent = current;
-        
-        if (newnode->maThe == current->maThe) {
-            delete newnode; // Giai phong bo nho khi phat hien trung ma
-            return false;   // Bao loi khong cho them
-        } else if (newnode->maThe < current->maThe) {
+        if (newnode->maThe < current->maThe)
             current = current->pLeft;
-        } else {
+        else
             current = current->pRight;
-        }
     }
 
     if (newnode->maThe < parent->maThe)

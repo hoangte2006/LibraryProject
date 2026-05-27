@@ -64,6 +64,7 @@ bool muonSach(DocGia* docGia, ListDauSach &ds, const char* maSach) {
         return false;
     }
 
+    // Kiem tra so luong sach toi da (O(1) vi dung bien dem)
     if (docGia->soSachDangMuon >= MAX_SACH_MUON) {
         cout << "Loi: Doc gia da muon toi da " << MAX_SACH_MUON << " cuon sach!\n";
         return false;

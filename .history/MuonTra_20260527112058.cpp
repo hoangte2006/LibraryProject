@@ -64,12 +64,13 @@ bool muonSach(DocGia* docGia, ListDauSach &ds, const char* maSach) {
         return false;
     }
 
+    // Kiem tra muon cung dau sach
+    // --- KIEM TRA NGHEP TRONG 1 VONG LAP (Defensive Programming) ---
     if (docGia->soSachDangMuon >= MAX_SACH_MUON) {
-        cout << "Loi: Doc gia da muon toi da " << MAX_SACH_MUON << " cuon sach!\n";
+        cout << "Doc gia da muon toi da " << MAX_SACH_MUON << " cuon sach!\n";
         return false;
     }
 
-    // Kiem tra muon cung dau sach
     bool daMuonSachNay = false;
     char isbnCanMuon[20];
     tachMaISBN(maSach, isbnCanMuon);
@@ -77,13 +78,13 @@ bool muonSach(DocGia* docGia, ListDauSach &ds, const char* maSach) {
     MuonTra* mt = docGia->dsMuonTra.pHead;
     while (mt != nullptr) {
         if (mt->trangThai == 0) { 
-            // Kiem tra qua han - GOP CHUNG VAO VONG LAP NAY DE TOI UU O(M)
+            // 1. Kiem tra qua han
             if (tinhSoNgay(mt->ngayMuon, ngayDungLucMuon) > HAN_MUON) {
-                cout << "Loi: Doc gia dang co sach muon qua han! Khong the muon them.\n";
+                cout << "Doc gia dang co sach muon qua han! Khong the muon.\n";
                 return false;
             }
-
-            // Kiem tra trung Dau sach
+            
+            // 2. Kiem tra trung dau sach
             char isbnDangMuon[20];
             tachMaISBN(mt->maSach, isbnDangMuon);
             if (strcmp(isbnDangMuon, isbnCanMuon) == 0) daMuonSachNay = true;
