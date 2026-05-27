@@ -29,34 +29,20 @@ static void swapDauSachLoad(DauSach* &a, DauSach* &b) {
     DauSach* temp = a; a = b; b = temp;
 }
 
-static int medianOfThreeLoad(DauSach* arr[], int left, int right) {
-    int mid = left + (right - left) / 2;
-    if (soSanhTenSachLoad(arr[left], arr[mid]) > 0) swapDauSachLoad(arr[left], arr[mid]);
-    if (soSanhTenSachLoad(arr[left], arr[right]) > 0) swapDauSachLoad(arr[left], arr[right]);
-    if (soSanhTenSachLoad(arr[mid], arr[right]) > 0) swapDauSachLoad(arr[mid], arr[right]);
-    return mid;
-}
-
-static int partitionLoad(DauSach* arr[], int left, int right) {
-    int pivotIndex = medianOfThreeLoad(arr, left, right);
-    swapDauSachLoad(arr[pivotIndex], arr[right]);
-    DauSach* pivot = arr[right];
-    int i = left - 1;
-    for (int j = left; j < right; j++) {
-        if (soSanhTenSachLoad(arr[j], pivot) < 0) {
-            i++;
-            swapDauSachLoad(arr[i], arr[j]);
-        }
-    }
-    swapDauSachLoad(arr[i + 1], arr[right]);
-    return i + 1;
-}
-
 static void quickSortDauSachTheoTen(DauSach* arr[], int left, int right) {
     if (left >= right) return;
-    int pivotIndex = partitionLoad(arr, left, right);
-    quickSortDauSachTheoTen(arr, left, pivotIndex - 1);
-    quickSortDauSachTheoTen(arr, pivotIndex + 1, right);
+    DauSach* pivot = arr[left + (right - left) / 2];
+    int i = left, j = right;
+    while (i <= j) {
+        while (soSanhTenSachLoad(arr[i], pivot) < 0) i++;
+        while (soSanhTenSachLoad(arr[j], pivot) > 0) j--;
+        if (i <= j) {
+            swapDauSachLoad(arr[i], arr[j]);
+            i++; j--;
+        }
+    }
+    if (left < j) quickSortDauSachTheoTen(arr, left, j);
+    if (i < right) quickSortDauSachTheoTen(arr, i, right);
 }
 
 //////////////////////////////////////////////////////////
@@ -173,19 +159,9 @@ bool loadDauSach(const char* filename, ListDauSach& ds)
 
     file.close();
 
-    // Kiem tra mang da duoc sap xep chua (O(N)) truoc khi sort de tiet kiem chi phi
+    // Sau khi doc xong tat ca (O(N)), thuc hien sort 1 lan duy nhat O(N log N)
     if (ds.n > 0) {
-        bool isSorted = true;
-        for (int i = 0; i < ds.n - 1; i++) {
-            if (soSanhTenSachLoad(ds.nodes[i], ds.nodes[i + 1]) > 0) {
-                isSorted = false;
-                break;
-            }
-        }
-        // Chi goi Quick Sort khi du lieu bi lech (do ai do sua file thu cong)
-        if (!isSorted) {
-            quickSortDauSachTheoTen(ds.nodes, 0, ds.n - 1);
-        }
+        quickSortDauSachTheoTen(ds.nodes, 0, ds.n - 1);
     }
 
     cout << "Load DauSach thanh cong\n";

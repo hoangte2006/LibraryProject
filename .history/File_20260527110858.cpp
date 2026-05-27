@@ -173,19 +173,9 @@ bool loadDauSach(const char* filename, ListDauSach& ds)
 
     file.close();
 
-    // Kiem tra mang da duoc sap xep chua (O(N)) truoc khi sort de tiet kiem chi phi
+    // Sau khi doc xong tat ca (O(N)), thuc hien sort 1 lan duy nhat O(N log N)
     if (ds.n > 0) {
-        bool isSorted = true;
-        for (int i = 0; i < ds.n - 1; i++) {
-            if (soSanhTenSachLoad(ds.nodes[i], ds.nodes[i + 1]) > 0) {
-                isSorted = false;
-                break;
-            }
-        }
-        // Chi goi Quick Sort khi du lieu bi lech (do ai do sua file thu cong)
-        if (!isSorted) {
-            quickSortDauSachTheoTen(ds.nodes, 0, ds.n - 1);
-        }
+        quickSortDauSachTheoTen(ds.nodes, 0, ds.n - 1);
     }
 
     cout << "Load DauSach thanh cong\n";

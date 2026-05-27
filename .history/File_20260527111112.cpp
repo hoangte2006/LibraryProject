@@ -29,6 +29,14 @@ static void swapDauSachLoad(DauSach* &a, DauSach* &b) {
     DauSach* temp = a; a = b; b = temp;
 }
 
+static void quickSortDauSachTheoTen(DauSach* arr[], int left, int right) {
+    if (left >= right) return;
+    DauSach* pivot = arr[left + (right - left) / 2];
+    int i = left, j = right;
+    while (i <= j) {
+        while (soSanhTenSachLoad(arr[i], pivot) < 0) i++;
+        while (soSanhTenSachLoad(arr[j], pivot) > 0) j--;
+        if (i <= j) {
 static int medianOfThreeLoad(DauSach* arr[], int left, int right) {
     int mid = left + (right - left) / 2;
     if (soSanhTenSachLoad(arr[left], arr[mid]) > 0) swapDauSachLoad(arr[left], arr[mid]);
