@@ -60,6 +60,12 @@ bool doUndo(undoStack& myUndo, QuanLyDocGia& ql, ListDauSach& ds) {
             strcpy(p->theLoai, ns.theLoai);
             p->soTrang = ns.soTrang;
             p->namXuatBan = ns.namXuatBan;
+            capNhatTenSachSearch(p);
+            capNhatTacGiaSearch(p);
+            int pos = timViTriChen(ds, p->tenSach);
+            for (int i = ds.n; i > pos; i--) ds.nodes[i] = ds.nodes[i - 1];
+            ds.nodes[pos] = p;
+            ds.n++;
             capNhatTenSachSearch(p); capNhatTacGiaSearch(p);            
             // Them lai vao danh sach de dam bao dung vi tri sap xep
             addDauSachToList(ds, p);
@@ -774,6 +780,10 @@ void formNhapDauSach(ListDauSach& ds, DauSach* dsPtr, bool isThemMoi, undoStack&
                     strcpy(p->ISBN, isbn); strcpy(p->tenSach, tenSach); strcpy(p->tacGia, tacGia); strcpy(p->theLoai, theLoai);
                     p->soTrang = soTrang; p->namXuatBan = namXB; p->soLuotMuon = 0;
                     p->dsSach.pHead = p->dsSach.pTail = nullptr; p->dsSach.tongSoSach = 0;
+                    capNhatTenSachSearch(p); capNhatTacGiaSearch(p);
+                    int pos = timViTriChen(ds, p->tenSach);
+                    for (int i = ds.n; i > pos; i--) ds.nodes[i] = ds.nodes[i - 1];
+                    ds.nodes[pos] = p; ds.n++; insertHashISBN(ds, p);
                     capNhatTenSachSearch(p); capNhatTacGiaSearch(p);                    
                     addDauSachToList(ds, p);
                     insertHashISBN(ds, p);
@@ -798,6 +808,11 @@ void formNhapDauSach(ListDauSach& ds, DauSach* dsPtr, bool isThemMoi, undoStack&
                     for (int j = i; j < ds.n - 1; j++) ds.nodes[j] = ds.nodes[j + 1];
                     ds.n--;
                     strcpy(dsPtr->tenSach, tenSach); strcpy(dsPtr->tacGia, tacGia); strcpy(dsPtr->theLoai, theLoai);
+                    dsPtr->soTrang = soTrang; dsPtr->namXuatBan = namXB;
+                    capNhatTenSachSearch(dsPtr); capNhatTacGiaSearch(dsPtr);
+                    int pos = timViTriChen(ds, dsPtr->tenSach);
+                    for (int j = ds.n; j > pos; j--) ds.nodes[j] = ds.nodes[j - 1];
+                    ds.nodes[pos] = dsPtr; ds.n++;
                     dsPtr->soTrang = soTrang; dsPtr->namXuatBan = namXB;                    
                     capNhatTenSachSearch(dsPtr); capNhatTacGiaSearch(dsPtr);                    
                     addDauSachToList(ds, dsPtr);
@@ -1391,7 +1406,7 @@ void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
         }
         
         setColor(36);
-        cout << "\n   (T) Them | (S) Sua | (X) Xoa | (K) Khoa/Mo | (B) Can bang | (F) Tim | (I) In DS | (Ctrl+Z) Hoan tac | ESC: Quay lai\n";
+        cout << "\n   (T) Them | (S) Sua | (X) Xoa | (K) Khoa/Mo | (F) Tim | (I) In DS | (Ctrl+Z) Hoan tac | ESC: Quay lai\n";
         resetColor();
         
         for(int i=0; i<3; ++i) cout << string(80, ' ') << "\n";
@@ -1455,25 +1470,6 @@ void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
                     Sleep(1000);
                 }
             } 
-            else if (key == 'b' || key == 'B') {
-                int px = 20, py = 10, pw = 45, ph = 5;
-                xoaVung(px, py, pw, ph);
-                setColor(33);
-                for(int i=0; i<pw; i++) { gotoxy(px+i, py); cout << "─"; gotoxy(px+i, py+ph-1); cout << "─"; }
-                for(int i=0; i<ph; i++) { gotoxy(px, py+i); cout << "│"; gotoxy(px+pw-1, py+i); cout << "│"; }
-                gotoxy(px, py); cout << "┌"; gotoxy(px+pw-1, py); cout << "┐"; gotoxy(px, py+ph-1); cout << "└"; gotoxy(px+pw-1, py+ph-1); cout << "┘";
-                gotoxy(px + 2, py + 2);
-                cout << "Can bang lai cay doc gia? (Y/N): ";
-                char confirm = _getch();
-                gotoxy(px + 2, py + 2); cout << string(pw - 4, ' ');
-                if (toupper(confirm) == 'Y') {
-                    canBangLaiCay(ql);
-                    gotoxy(px + 2, py + 2); setColor(32); cout << "Da can bang lai cay doc gia!"; resetColor();
-                } else {
-                    gotoxy(px + 2, py + 2); cout << "Da huy thao tac.";
-                }
-                Sleep(1000);
-            }
             else if (key == 27) { delete[] displayArr; return; }
             else if (key == 't' || key == 'T') { 
                 formNhapDocGia(ql, nullptr, true, myUndo);

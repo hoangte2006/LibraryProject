@@ -71,7 +71,6 @@ int timViTriChen(const ListDauSach &ds, const char* tenSach) {
 
 // --- QUAN LY MANG DONG DAU SACH ---
 
-// Ham noi bo de noi rong mang dong khi day
 static void resizeListDauSach(ListDauSach& ds) {
     int newCapacity = (ds.capacity == 0) ? 16 : ds.capacity * 2;
     

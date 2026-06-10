@@ -319,7 +319,7 @@ void khoaMoThe(TREE_DocGia root, int maThe)
 
 // Ham de quy xay dung cay can bang tu mang da sap xep
 static DocGia* buildBalancedBST(DocGia* arr[], int start, int end) {
-    if (start > end) {
+    if (start > end) { 
         return nullptr;
     }
 
@@ -335,12 +335,10 @@ static DocGia* buildBalancedBST(DocGia* arr[], int start, int end) {
 void canBangLaiCay(QuanLyDocGia& ql) {
     if (ql.root == nullptr || ql.soLuongDocGia <= 2) return;
 
-    // 1. Duyet cay ra mang da sap xep
     DocGia** arr = new DocGia*[ql.soLuongDocGia];
     int n = 0;
     BSTtoArray(ql.root, arr, n);
 
-    // 2. Xay dung lai cay can bang tu mang
     ql.root = buildBalancedBST(arr, 0, n - 1);
 
     delete[] arr;

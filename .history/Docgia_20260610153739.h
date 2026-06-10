@@ -24,4 +24,6 @@ void giaiPhongCay(TREE_DocGia &root);
 // Ho tro sap xep
 void BSTtoArray(TREE_DocGia root, DocGia* arr[], int &index);
 
-void canBangLaiCay(QuanLyDocGia& ql);
+void canBangLaiCay(QuanLyDocGia& ql); // <--- Thêm dòng này
+void inTheoTen(QuanLyDocGia &ql);
+// ...

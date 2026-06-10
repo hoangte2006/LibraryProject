@@ -171,7 +171,7 @@ bool loadDauSach(const char* filename, ListDauSach& ds)
                 break;
             }
         }
-        // Chi goi Quick Sort khi du lieu bi lech - tranh truong hop ai sua file 
+        // Chi goi Quick Sort khi du lieu bi lech ()
         if (!isSorted) {
             quickSortDauSachTheoTen(ds.nodes, 0, ds.n - 1);
         }

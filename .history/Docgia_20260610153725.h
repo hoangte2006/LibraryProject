@@ -23,5 +23,5 @@ void giaiPhongCay(TREE_DocGia &root);
 
 // Ho tro sap xep
 void BSTtoArray(TREE_DocGia root, DocGia* arr[], int &index);
+        cout << "\n   (T) Them | (S) Sua | (X) Xoa | (K) Khoa/Mo | (F) Tim | (I) In DS | (Ctrl+Z) Hoan tac | ESC: Quay lai\n";
 
-void canBangLaiCay(QuanLyDocGia& ql);

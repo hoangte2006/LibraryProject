@@ -438,6 +438,11 @@ bool xoaDauSach(ListDauSach &ds, const char* ISBN) {
     for (int j = indexToDelete; j < ds.n - 1; j++) {
         ds.nodes[j] = ds.nodes[j + 1];
     }
+    // Su dung memmove de dich chuyen khoi bo nho, co the nhanh hon vong for
+    // Dich chuyen cac phan tu tu (indexToDelete + 1) ve vi tri indexToDelete
+    int numElementsToMove = ds.n - indexToDelete - 1;
+    if (numElementsToMove > 0)
+        memmove(&ds.nodes[indexToDelete], &ds.nodes[indexToDelete + 1], numElementsToMove * sizeof(DauSach*));
 
     ds.n--;
     ds.nodes[ds.n] = nullptr;

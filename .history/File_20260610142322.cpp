@@ -111,6 +111,16 @@ bool loadDauSach(const char* filename, ListDauSach& ds)
         //ss.ignore(1);
         //ss >> tongSoSach;
 
+        if (ds.n >= MAX_DAUSACH) {
+            cout << "Vuot gioi han MAX_DAUSACH, bo qua ISBN: " << ISBN << "\n";
+
+            getline(file, line); // #BOOK
+            while (getline(file, line)) {
+                if (line == "END") break;
+            }
+            continue;
+        }
+
         DauSach* dsNew = new DauSach;
 
         copyCStringSafe(dsNew->ISBN, sizeof(dsNew->ISBN), ISBN);
@@ -128,7 +138,10 @@ bool loadDauSach(const char* filename, ListDauSach& ds)
         dsNew->dsSach.pHead = dsNew->dsSach.pTail = nullptr; 
         dsNew->dsSach.tongSoSach = 0;
 
-        // Them vao cuoi mang dong cho nhanh
+        // Chen vao cuoi mang O(1) thay vi tim va doi mang O(N)
+        ds.nodes[ds.n] = dsNew;
+        ds.n++;
+        // Them vao cuoi mang dong, tu dong resize neu can
         appendDauSach(ds, dsNew);
 
         insertHashISBN(ds, dsNew); 
@@ -171,7 +184,7 @@ bool loadDauSach(const char* filename, ListDauSach& ds)
                 break;
             }
         }
-        // Chi goi Quick Sort khi du lieu bi lech - tranh truong hop ai sua file 
+        // Chi goi Quick Sort khi du lieu bi lech (do ai do sua file thu cong)
         if (!isSorted) {
             quickSortDauSachTheoTen(ds.nodes, 0, ds.n - 1);
         }

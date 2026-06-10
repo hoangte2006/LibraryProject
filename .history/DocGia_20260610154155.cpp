@@ -340,7 +340,6 @@ void canBangLaiCay(QuanLyDocGia& ql) {
     int n = 0;
     BSTtoArray(ql.root, arr, n);
 
-    // 2. Xay dung lai cay can bang tu mang
     ql.root = buildBalancedBST(arr, 0, n - 1);
 
     delete[] arr;

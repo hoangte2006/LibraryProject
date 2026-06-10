@@ -1,5 +1,6 @@
 #pragma once
 
+#define MAX_DAUSACH 1000
 #define MAX_SACH_MUON 3
 #define MAX_DOCGIA 1000
 #define HAN_MUON 7
@@ -94,6 +95,8 @@ struct HashEntry {
 };
 
 struct ListDauSach {
+    int n = 0;
+    DauSach* nodes[MAX_DAUSACH]; 
     int n = 0; // So luong phan tu hien tai
     int capacity = 0; // Suc chua cua mang dong
     DauSach** nodes = nullptr; // Mang dong cac con tro DauSach

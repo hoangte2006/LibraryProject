@@ -73,6 +73,7 @@ int timViTriChen(const ListDauSach &ds, const char* tenSach) {
 
 // Ham noi bo de noi rong mang dong khi day
 static void resizeListDauSach(ListDauSach& ds) {
+    // Neu capacity = 0, khoi tao ban dau. Neu khong, gap doi suc chua.
     int newCapacity = (ds.capacity == 0) ? 16 : ds.capacity * 2;
     
     // Cap phat mang con tro moi
@@ -593,6 +594,7 @@ void giaiPhongDanhSachDauSach(ListDauSach &ds) {
             delete temp;
             temp = next;
         }
+
         delete ds.nodes[i];
         ds.nodes[i] = nullptr; // cho an toan
     }

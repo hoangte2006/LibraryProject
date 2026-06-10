@@ -1391,6 +1391,7 @@ void quanLyDocGiaUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
         }
         
         setColor(36);
+        cout << "\n   (T) Them | (S) Sua | (X) Xoa | (K) Khoa/Mo | (F) Tim | (I) In DS | (Ctrl+Z) Hoan tac | ESC: Quay lai\n";
         cout << "\n   (T) Them | (S) Sua | (X) Xoa | (K) Khoa/Mo | (B) Can bang | (F) Tim | (I) In DS | (Ctrl+Z) Hoan tac | ESC: Quay lai\n";
         resetColor();
         
