@@ -1123,7 +1123,7 @@ void quanLySachUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
                     system("cls");
                     inDanhSachCuonSach(displayArr[luaChon]); 
                     setColor(36);
-                    cout << "\n\n   (T) Them cuon sach | (X) Thanh ly | ESC: Quay lai\n";
+                    cout << "\n\n   (T) Them | (X) Thanh ly | (D) Xoa vinh vien | ESC: Quay lai\n";
                     resetColor();
                     int k = _getch();
                     if (k == 't' || k == 'T') {
@@ -1171,6 +1171,31 @@ void quanLySachUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
                             _getch();
                         } else {
                             showCursor(false);
+                        }
+                    }
+                    else if (k == 'd' || k == 'D') {
+                        char suffix[10];
+                        char prompt[100];
+                        snprintf(prompt, sizeof(prompt), "Nhap Ma Sach can XOA VINH VIEN: %s_", displayArr[luaChon]->ISBN);
+                        cout << "\n";
+                        showCursor(true);
+                        if (nhapChuoiTuDo(prompt, suffix, 10)) {
+                            showCursor(false);
+                            char maSach[30];
+                            bool isNumber = true;
+                            for (int i = 0; suffix[i] != '\0'; i++) if (!isdigit(suffix[i])) isNumber = false;
+                            if (isNumber && strlen(suffix) > 0) {
+                                snprintf(maSach, sizeof(maSach), "%s_%04d", displayArr[luaChon]->ISBN, atoi(suffix));
+                            } else {
+                                snprintf(maSach, sizeof(maSach), "%s_%s", displayArr[luaChon]->ISBN, suffix);
+                            }
+                            
+                            if (xoaCuonSach(displayArr[luaChon], maSach)) {
+                                // Thanh cong da duoc in trong ham
+                            } else {
+                                setColor(31); cout << "Khong tim thay sach hoac sach dang duoc muon!\n"; resetColor();
+                            }
+                            cout << "Nhan phim bat ky de tiep tuc..."; _getch();
                         }
                     }
                     else if (k == 27) { break; }
