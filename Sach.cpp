@@ -58,13 +58,12 @@ int timViTriChen(const ListDauSach &ds, const char* tenSach) {
     while (left <= right) {
         int mid = left + ((right - left) >> 1); 
         int cmp = stricmp(ds.nodes[mid]->tenSach, tenSach);
-
-        if (cmp == 0)
-            return mid;
-        else if (cmp < 0 ) 
+ 
+        if (cmp < 0) {
             left = mid + 1;
-        else if (cmp > 0) 
+        } else { 
             right = mid - 1;
+        }
     }
     return left; 
 }
