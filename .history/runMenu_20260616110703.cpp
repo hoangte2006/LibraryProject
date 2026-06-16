@@ -18,6 +18,7 @@
 #include "Undo.h"
 
 #define ENABLE_SEED_DATA 0 // Doi thanh 0 truoc khi nop bai de xoa chuc nang phim G
+#define ENABLE_SEED_DATA 1 // Doi thanh 0 truoc khi nop bai de xoa chuc nang phim G
 
 using namespace std;
 
@@ -1926,6 +1927,7 @@ void runMenu(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
 #if ENABLE_SEED_DATA
         if (chonChinh == -2) { // Ma bi mat cho phim 'G'
             system("cls");
+            taoDuLieuGia(qlDocGia, ds, 50);
             taoDuLieuGia(qlDocGia, ds, 10);
             cout << "\nNhan phim bat ky de tiep tuc...";
             _getch();

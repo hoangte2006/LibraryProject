@@ -17,7 +17,7 @@
 #include "Test.h"
 #include "Undo.h"
 
-#define ENABLE_SEED_DATA 0 // Doi thanh 0 truoc khi nop bai de xoa chuc nang phim G
+#define ENABLE_SEED_DATA 1 // Doi thanh 0 truoc khi nop bai de xoa chuc nang phim G
 
 using namespace std;
 

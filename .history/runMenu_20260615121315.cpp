@@ -69,9 +69,22 @@ bool doUndo(undoStack& myUndo, QuanLyDocGia& ql, ListDauSach& ds) {
         case UNDO_MUON_SACH: {
             DocGia* dg = timDocGia(ql.root, ns.maThe);
             if (!dg) return false;
+            // Tim ban ghi MuonTra cuoi cung khop maSach va trangThai == 0
+            MuonTra* toDelete = nullptr;
+            for (MuonTra* cur = dg->dsMuonTra.pHead; cur; cur = cur->pNext)
+                if (strcmp(cur->maSach, ns.maSach) == 0 && cur->trangThai == 0)
+                    toDelete = cur; // Lay ban ghi muon cuoi cung
+            if (!toDelete) return false;
+            // Xoa node khoi danh sach lien ket
 
             // Tim va xoa ban ghi MuonTra trong 1 lan duyet de toi uu
             MuonTra* prev = nullptr;
+            for (MuonTra* cur = dg->dsMuonTra.pHead; cur != toDelete; cur = cur->pNext)
+                prev = cur;
+            if (!prev) dg->dsMuonTra.pHead = toDelete->pNext;
+            else        prev->pNext = toDelete->pNext;
+            if (toDelete == dg->dsMuonTra.pTail) dg->dsMuonTra.pTail = prev;
+            delete toDelete;
             MuonTra* current = dg->dsMuonTra.pHead;
             MuonTra* prev_to_delete = nullptr;
             MuonTra* node_to_delete = nullptr;
@@ -1926,7 +1939,7 @@ void runMenu(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
 #if ENABLE_SEED_DATA
         if (chonChinh == -2) { // Ma bi mat cho phim 'G'
             system("cls");
-            taoDuLieuGia(qlDocGia, ds, 10);
+            taoDuLieuGia(qlDocGia, ds, 50);
             cout << "\nNhan phim bat ky de tiep tuc...";
             _getch();
             continue;

@@ -69,30 +69,20 @@ bool doUndo(undoStack& myUndo, QuanLyDocGia& ql, ListDauSach& ds) {
         case UNDO_MUON_SACH: {
             DocGia* dg = timDocGia(ql.root, ns.maThe);
             if (!dg) return false;
-
-            // Tim va xoa ban ghi MuonTra trong 1 lan duyet de toi uu
+            // Tim ban ghi MuonTra cuoi cung khop maSach va trangThai == 0
+            MuonTra* toDelete = nullptr;
+            for (MuonTra* cur = dg->dsMuonTra.pHead; cur; cur = cur->pNext)
+                if (strcmp(cur->maSach, ns.maSach) == 0 && cur->trangThai == 0)
+                    toDelete = cur; // Lay ban ghi muon cuoi cung
+            if (!toDelete) return false;
+            // Xoa node khoi danh sach lien ket
             MuonTra* prev = nullptr;
-            MuonTra* current = dg->dsMuonTra.pHead;
-            MuonTra* prev_to_delete = nullptr;
-            MuonTra* node_to_delete = nullptr;
-
-            // Tim node cuoi cung khop dieu kien (vi muon sach luon them vao cuoi)
-            while(current != nullptr) {
-                if (strcmp(current->maSach, ns.maSach) == 0 && current->trangThai == 0) {
-                    node_to_delete = current;
-                    prev_to_delete = prev;
-                }
-                prev = current;
-                current = current->pNext;
-            }
-
-            if (!node_to_delete) return false;
-
-            if (prev_to_delete == nullptr) dg->dsMuonTra.pHead = node_to_delete->pNext;
-            else prev_to_delete->pNext = node_to_delete->pNext;
-            if (node_to_delete == dg->dsMuonTra.pTail) dg->dsMuonTra.pTail = prev_to_delete;
-            delete node_to_delete;
-
+            for (MuonTra* cur = dg->dsMuonTra.pHead; cur != toDelete; cur = cur->pNext)
+                prev = cur;
+            if (!prev) dg->dsMuonTra.pHead = toDelete->pNext;
+            else        prev->pNext = toDelete->pNext;
+            if (toDelete == dg->dsMuonTra.pTail) dg->dsMuonTra.pTail = prev;
+            delete toDelete;
             // Khoi phuc trang thai sach va dem
             DauSach* dauSach = nullptr;
             Sach* sach = timSachTheoMa(ds, ns.maSach, dauSach);
@@ -1133,7 +1123,7 @@ void quanLySachUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
                     system("cls");
                     inDanhSachCuonSach(displayArr[luaChon]); 
                     setColor(36);
-                    cout << "\n\n   (T) Them | (X) Thanh ly | (D) Xoa vinh vien | ESC: Quay lai\n";
+                    cout << "\n\n   (T) Them cuon sach | (X) Thanh ly | ESC: Quay lai\n";
                     resetColor();
                     int k = _getch();
                     if (k == 't' || k == 'T') {
@@ -1181,31 +1171,6 @@ void quanLySachUI(QuanLyDocGia& ql, ListDauSach& ds, undoStack& myUndo) {
                             _getch();
                         } else {
                             showCursor(false);
-                        }
-                    }
-                    else if (k == 'd' || k == 'D') {
-                        char suffix[10];
-                        char prompt[100];
-                        snprintf(prompt, sizeof(prompt), "Nhap Ma Sach can XOA VINH VIEN: %s_", displayArr[luaChon]->ISBN);
-                        cout << "\n";
-                        showCursor(true);
-                        if (nhapChuoiTuDo(prompt, suffix, 10)) {
-                            showCursor(false);
-                            char maSach[30];
-                            bool isNumber = true;
-                            for (int i = 0; suffix[i] != '\0'; i++) if (!isdigit(suffix[i])) isNumber = false;
-                            if (isNumber && strlen(suffix) > 0) {
-                                snprintf(maSach, sizeof(maSach), "%s_%04d", displayArr[luaChon]->ISBN, atoi(suffix));
-                            } else {
-                                snprintf(maSach, sizeof(maSach), "%s_%s", displayArr[luaChon]->ISBN, suffix);
-                            }
-                            
-                            if (xoaCuonSach(displayArr[luaChon], maSach)) {
-                                // Thanh cong da duoc in trong ham
-                            } else {
-                                setColor(31); cout << "Khong tim thay sach hoac sach dang duoc muon!\n"; resetColor();
-                            }
-                            cout << "Nhan phim bat ky de tiep tuc..."; _getch();
                         }
                     }
                     else if (k == 27) { break; }
@@ -1926,7 +1891,7 @@ void runMenu(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
 #if ENABLE_SEED_DATA
         if (chonChinh == -2) { // Ma bi mat cho phim 'G'
             system("cls");
-            taoDuLieuGia(qlDocGia, ds, 10);
+            taoDuLieuGia(qlDocGia, ds, 50);
             cout << "\nNhan phim bat ky de tiep tuc...";
             _getch();
             continue;

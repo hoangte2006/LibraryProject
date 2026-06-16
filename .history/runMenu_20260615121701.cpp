@@ -1926,7 +1926,7 @@ void runMenu(QuanLyDocGia& qlDocGia, ListDauSach& ds) {
 #if ENABLE_SEED_DATA
         if (chonChinh == -2) { // Ma bi mat cho phim 'G'
             system("cls");
-            taoDuLieuGia(qlDocGia, ds, 10);
+            taoDuLieuGia(qlDocGia, ds, 50);
             cout << "\nNhan phim bat ky de tiep tuc...";
             _getch();
             continue;
